@@ -1,8 +1,8 @@
-package com.halill.domain.login.usecase
+package com.halill.domain.auth.usecase
 
 import com.halill.domain.base.UseCase
-import com.halill.domain.login.parameter.RegisterParameter
-import com.halill.domain.login.repository.RegisterRepository
+import com.halill.domain.auth.parameter.RegisterParameter
+import com.halill.domain.auth.repository.RegisterRepository
 import javax.inject.Inject
 
 class RegisterUseCase @Inject constructor(

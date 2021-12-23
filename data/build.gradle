@@ -46,4 +46,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     implementation 'javax.inject:javax.inject:1'
+
+    //jetpack data store
+    implementation "androidx.datastore:datastore:1.0.0"
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
 }

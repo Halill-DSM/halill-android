@@ -11,6 +11,6 @@ class RegisterRepositoryImpl @Inject constructor(
     private val localAuthDataSource: LocalAuthDataSource
 ): RegisterRepository {
     override suspend fun register(parameter: RegisterParameter) {
-        TODO("Not yet implemented")
+        remoteAuthDataSource.register(parameter)
     }
 }

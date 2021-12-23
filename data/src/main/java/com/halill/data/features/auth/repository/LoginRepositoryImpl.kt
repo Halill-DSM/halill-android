@@ -11,6 +11,6 @@ class LoginRepositoryImpl @Inject constructor(
     private val localAuthDataSource: LocalAuthDataSource
 ): LoginRepository {
     override suspend fun login(parameter: LoginParameter) {
-        TODO("Not yet implemented")
+        remoteAuthDataSource.login(parameter)
     }
 }

@@ -3,8 +3,8 @@ package com.halill.data.features.auth.datasource.remote
 import com.halill.data.features.auth.dto.request.toRequest
 import com.halill.data.features.auth.dto.response.LoginResponse
 import com.halill.data.features.auth.remote.AuthApi
-import com.halill.domain.auth.parameter.LoginParameter
-import com.halill.domain.auth.parameter.RegisterParameter
+import com.halill.domain.features.auth.parameter.LoginParameter
+import com.halill.domain.features.auth.parameter.RegisterParameter
 import com.halill.domain.exception.InternetErrorException
 import java.net.UnknownHostException
 import javax.inject.Inject

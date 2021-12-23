@@ -1,7 +1,7 @@
-package com.halill.domain.auth.usecase
+package com.halill.domain.features.auth.usecase
 
-import com.halill.domain.auth.parameter.LoginParameter
-import com.halill.domain.auth.repository.LoginRepository
+import com.halill.domain.features.auth.parameter.LoginParameter
+import com.halill.domain.features.auth.repository.LoginRepository
 import com.halill.domain.base.UseCase
 import javax.inject.Inject
 

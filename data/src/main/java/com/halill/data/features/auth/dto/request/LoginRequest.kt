@@ -1,6 +1,6 @@
 package com.halill.data.features.auth.dto.request
 
-import com.halill.domain.auth.parameter.LoginParameter
+import com.halill.domain.features.auth.parameter.LoginParameter
 
 data class LoginRequest(val email: String, val password: String)
 

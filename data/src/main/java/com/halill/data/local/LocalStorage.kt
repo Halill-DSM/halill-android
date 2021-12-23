@@ -1,9 +1,13 @@
 package com.halill.data.local
 
+import kotlinx.coroutines.flow.Flow
+
 interface LocalStorage {
-    fun saveToken(token: String)
+    suspend fun saveAccessToken(token: String)
 
-    fun getAccessToken(): String
+    suspend fun saveRefreshToken(token: String)
 
-    fun getRefreshToken(): String
+    fun getAccessToken(): Flow<String?>
+
+    fun getRefreshToken(): Flow<String?>
 }

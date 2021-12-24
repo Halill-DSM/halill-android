@@ -1,4 +1,4 @@
-package com.halill.halill
+package com.halill.halill.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,9 +8,10 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.halill.halill.main.presenter.MainContract
 import com.halill.halill.ui.theme.Halill_AndroidTheme
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), MainContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

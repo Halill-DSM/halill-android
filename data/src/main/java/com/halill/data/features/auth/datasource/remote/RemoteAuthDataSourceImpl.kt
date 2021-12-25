@@ -30,9 +30,9 @@ class RemoteAuthDataSourceImpl @Inject constructor(
             throw InternetErrorException()
         }
 
-    override suspend fun refreshToken(refreshToken: String) {
+    override suspend fun refreshToken(refreshToken: String?) {
         try {
-            if(refreshToken.isEmpty()) {
+            if(refreshToken.isNullOrEmpty()) {
                 throw NotLoginException()
             }
             authApi.refreshToken(refreshToken.toRequest())

@@ -30,7 +30,7 @@ fun Main(viewModel: MainViewModel = viewModel()) {
     val pagerState = rememberPagerState(
         pageCount = tabData.size,
         initialOffscreenLimit = tabData.size,
-        infiniteLoop = true
+        infiniteLoop = false
     )
 
     val tabIndex = pagerState.currentPage

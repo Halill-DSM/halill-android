@@ -7,4 +7,8 @@ interface LocalAuthDataSource {
     suspend fun saveTokens(tokenData: TokenData)
 
     suspend fun saveUser(userData: UserData)
+
+    suspend fun getRefreshToken(): String?
+
+    suspend fun getUser(): UserData
 }

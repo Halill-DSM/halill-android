@@ -16,4 +16,10 @@ class LocalAuthDataSourceImpl @Inject constructor(
     override suspend fun saveUser(userData: UserData) {
         localStorage.saveUser(userData)
     }
+
+    override suspend fun getRefreshToken(): String? =
+        localStorage.getRefreshToken()
+
+    override suspend fun getUser(): UserData =
+        localStorage.getUser()
 }

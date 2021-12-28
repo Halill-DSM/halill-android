@@ -40,6 +40,7 @@ fun Main(viewModel: MainViewModel = viewModel()) {
         TabRow(
             selectedTabIndex = tabIndex
         ) {
+            viewModel.showingPage.value = tabIndex
             tabData.forEachIndexed { index, text ->
                 Tab(selected = tabIndex == index, onClick = {
                     coroutineScope.launch {

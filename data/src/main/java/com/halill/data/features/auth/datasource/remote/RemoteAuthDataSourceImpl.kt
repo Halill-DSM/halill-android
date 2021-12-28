@@ -6,6 +6,9 @@ import com.halill.data.features.auth.remote.AuthApi
 import com.halill.domain.features.auth.parameter.LoginParameter
 import com.halill.domain.features.auth.parameter.RegisterParameter
 import com.halill.domain.exception.InternetErrorException
+import com.halill.domain.exception.NotLoginException
+import com.halill.domain.exception.UnAuthorizedException
+import retrofit2.HttpException
 import java.net.UnknownHostException
 import javax.inject.Inject
 
@@ -26,4 +29,17 @@ class RemoteAuthDataSourceImpl @Inject constructor(
         } catch (e: UnknownHostException) {
             throw InternetErrorException()
         }
+
+    override suspend fun refreshToken(refreshToken: String?) {
+        try {
+            if(refreshToken.isNullOrEmpty()) {
+                throw NotLoginException()
+            }
+            authApi.refreshToken(refreshToken.toRequest())
+        } catch (e: HttpException) {
+            if(e.code() == 401) {
+                throw UnAuthorizedException()
+            }
+        }
+    }
 }

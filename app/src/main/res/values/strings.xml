@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">Halill_Android</string>
+    <string name="app_name">HalIll</string>
+    <string name="todo">Todo</string>
+    <string name="done">Done</string>
 </resources>

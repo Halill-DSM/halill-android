@@ -1,6 +1,6 @@
 package com.halill.data.features.todo.remote
 
-import com.halill.data.features.todo.datasource.dto.response.GetTodoResponse
+import com.halill.data.features.todo.dto.response.GetTodoResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

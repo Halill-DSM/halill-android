@@ -10,7 +10,6 @@ import javax.inject.Singleton
 @Singleton
 @InstallIn(SingletonComponent::class)
 object ApiModule {
-    private const val TODO_BASE_URL = "/todo"
     @Provides
     fun provideAuthApi(
         retrofit: Retrofit

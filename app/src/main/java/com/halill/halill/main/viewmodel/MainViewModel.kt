@@ -30,7 +30,6 @@ class MainViewModel @Inject constructor(
             } catch (e: NotLoginException) {
                 _mainState.value = MainState.NotLoginState
             }
-
         }
 
     }

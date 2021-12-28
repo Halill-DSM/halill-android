@@ -7,14 +7,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.halill.halill.features.auth.Login
 import com.halill.halill.ui.theme.Halill_AndroidTheme
 
 @Composable
 fun HalIllApp() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "main") {
-        composable("main") { Main()}
-        composable("login") {}
+        composable("main") { Main(navController)}
+        composable("login") { Login()}
         composable("writeTodo") {}
     }
 }

@@ -1,4 +1,4 @@
-package com.halill.data.features.todolist.repository
+package com.halill.data.features.todo.repository
 
 import com.halill.domain.features.todolist.entity.TodoModel
 import com.halill.domain.features.todolist.repository.GetTodoListRepository

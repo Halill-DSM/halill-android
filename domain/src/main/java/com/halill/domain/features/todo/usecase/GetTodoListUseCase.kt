@@ -11,14 +11,13 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class GetUserInfoAndTodoListUseCase @Inject constructor(
-    private val getUserInfoRepository: GetUserInfoRepository,
+class GetTodoListUseCase @Inject constructor(
     private val getTodoListRepository: GetTodoListRepository
 ): UseCase<Unit, Flow<UserTodoList>>() {
     override suspend fun execute(data: Unit): Flow<UserTodoList> =
         flow {
             getTodoListRepository.getTodoList().collect { todoList ->
-                UserTodoList(getUserInfoRepository.getUserInfo(), todoList.todoList(), todoList.doneList())
+                UserTodoList(todoList.todoList(), todoList.doneList())
             }
         }
 }

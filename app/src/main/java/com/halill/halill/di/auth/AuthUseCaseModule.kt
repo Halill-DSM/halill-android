@@ -2,7 +2,7 @@ package com.halill.halill.di.auth
 
 import com.halill.domain.features.todo.repository.GetTodoListRepository
 import com.halill.domain.features.todo.repository.GetUserInfoRepository
-import com.halill.domain.features.todo.usecase.GetUserInfoAndTodoListUseCase
+import com.halill.domain.features.todo.usecase.GetTodoListUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,6 +17,6 @@ object AuthUseCaseModule {
     fun provideGetUserInfoAndTodoListUseCase(
         getTodoListRepository: GetTodoListRepository,
         getUserInfoRepository: GetUserInfoRepository
-    ): GetUserInfoAndTodoListUseCase =
-        GetUserInfoAndTodoListUseCase(getUserInfoRepository, getTodoListRepository)
+    ): GetTodoListUseCase =
+        GetTodoListUseCase(getUserInfoRepository, getTodoListRepository)
 }

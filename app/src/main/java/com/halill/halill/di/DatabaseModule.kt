@@ -1,8 +1,9 @@
 package com.halill.halill.di
 
 import android.content.Context
-import com.halill.data.local.localstorage.LocalStorage
-import com.halill.data.local.localstorage.LocalStorageImpl
+import androidx.room.Room
+import com.halill.data.features.todo.database.dao.TodoDao
+import com.halill.data.local.database.TodoDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,8 +13,9 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object LocalStorageModule {
+object DatabaseModule {
     @Singleton
     @Provides
-    fun provideLocalStorage(@ApplicationContext context: Context): LocalStorage = LocalStorageImpl(context)
+    fun provideTodoDao(@ApplicationContext context: Context): TodoDao =
+        Room.databaseBuilder(context, TodoDatabase::class.java, "todo-database").build().todoDao()
 }

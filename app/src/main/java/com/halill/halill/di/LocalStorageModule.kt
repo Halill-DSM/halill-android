@@ -1,8 +1,8 @@
 package com.halill.halill.di
 
 import android.content.Context
-import com.halill.data.local.LocalStorage
-import com.halill.data.local.LocalStorageImpl
+import com.halill.data.local.localstorage.LocalStorage
+import com.halill.data.local.localstorage.LocalStorageImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

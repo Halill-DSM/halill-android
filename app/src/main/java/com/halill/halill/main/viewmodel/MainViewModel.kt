@@ -10,6 +10,7 @@ import com.halill.domain.features.todolist.usecase.GetUserInfoAndTodoListUseCase
 import com.halill.halill.main.model.MainState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,8 +26,10 @@ class MainViewModel @Inject constructor(
     fun loadUserInfoAndTodoList() {
         viewModelScope.launch {
             try {
-                val loadData = getUserInfoAndTodoListUseCase.execute(Unit)
-                _mainState.value = if(showingPage.value == 0)MainState.ShowTodoListState(loadData.user, loadData.todoList) else MainState.ShowDoneListState(loadData.user, loadData.doneList)
+                getUserInfoAndTodoListUseCase.execute(Unit).collect { loadData ->
+                    _mainState.value = if(showingPage.value == 0)MainState.ShowTodoListState(loadData.user, loadData.todoList)
+                    else MainState.ShowDoneListState(loadData.user, loadData.doneList)
+                }
             } catch (e: NotLoginException) {
                 _mainState.value = MainState.NotLoginState
             }

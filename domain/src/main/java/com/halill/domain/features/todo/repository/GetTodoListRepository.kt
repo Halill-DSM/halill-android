@@ -1,6 +1,6 @@
-package com.halill.domain.features.todolist.repository
+package com.halill.domain.features.todo.repository
 
-import com.halill.domain.features.todolist.entity.TodoModel
+import com.halill.domain.features.todo.entity.TodoModel
 import kotlinx.coroutines.flow.Flow
 
 interface GetTodoListRepository {

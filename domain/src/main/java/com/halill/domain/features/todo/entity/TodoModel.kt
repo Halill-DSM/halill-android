@@ -1,4 +1,4 @@
-package com.halill.domain.features.todolist.entity
+package com.halill.domain.features.todo.entity
 
 import java.time.LocalDateTime
 

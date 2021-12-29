@@ -4,7 +4,7 @@ import com.halill.data.features.auth.datasource.local.LocalAuthDataSource
 import com.halill.data.features.auth.datasource.remote.RemoteAuthDataSource
 import com.halill.data.features.auth.entity.toEntity
 import com.halill.domain.features.auth.entity.User
-import com.halill.domain.features.todolist.repository.GetUserInfoRepository
+import com.halill.domain.features.todo.repository.GetUserInfoRepository
 import javax.inject.Inject
 
 class GetUserInfoRepositoryImpl @Inject constructor(

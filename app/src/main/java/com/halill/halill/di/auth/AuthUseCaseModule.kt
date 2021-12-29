@@ -1,8 +1,8 @@
 package com.halill.halill.di.auth
 
-import com.halill.domain.features.todolist.repository.GetTodoListRepository
-import com.halill.domain.features.todolist.repository.GetUserInfoRepository
-import com.halill.domain.features.todolist.usecase.GetUserInfoAndTodoListUseCase
+import com.halill.domain.features.todo.repository.GetTodoListRepository
+import com.halill.domain.features.todo.repository.GetUserInfoRepository
+import com.halill.domain.features.todo.usecase.GetUserInfoAndTodoListUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

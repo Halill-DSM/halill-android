@@ -1,7 +1,7 @@
 package com.halill.halill.main.model
 
 import com.halill.domain.features.auth.entity.User
-import com.halill.domain.features.todolist.entity.TodoModel
+import com.halill.domain.features.todo.entity.TodoModel
 
 sealed class MainState {
     object LoadingState : MainState()

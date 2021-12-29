@@ -4,7 +4,7 @@ import com.halill.data.features.auth.datasource.local.LocalAuthDataSource
 import com.halill.data.features.todo.datasource.local.LocalTodoDataSource
 import com.halill.data.features.todo.datasource.remote.RemoteTodoDataSource
 import com.halill.data.features.todo.repository.GetTodoListRepositoryImpl
-import com.halill.domain.features.todolist.repository.GetTodoListRepository
+import com.halill.domain.features.todo.repository.GetTodoListRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

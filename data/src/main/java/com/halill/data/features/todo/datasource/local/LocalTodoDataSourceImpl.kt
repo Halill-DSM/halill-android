@@ -6,4 +6,8 @@ class LocalTodoDataSourceImpl: LocalTodoDataSource {
     override suspend fun getTodoList(): List<TodoModel> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun saveTodoList(todoList: List<TodoModel>) {
+        TODO("Not yet implemented")
+    }
 }

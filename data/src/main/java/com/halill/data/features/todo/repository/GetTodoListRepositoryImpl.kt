@@ -7,8 +7,9 @@ import com.halill.data.util.OfflineCacheUtil
 import com.halill.domain.features.todolist.entity.TodoModel
 import com.halill.domain.features.todolist.repository.GetTodoListRepository
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class GetTodoListRepositoryImpl(
+class GetTodoListRepositoryImpl @Inject constructor(
     private val localTodoDataSource: LocalTodoDataSource,
     private val localAuthDataSource: LocalAuthDataSource,
     private val remoteTodoDataSource: RemoteTodoDataSource
@@ -18,6 +19,7 @@ class GetTodoListRepositoryImpl(
         return OfflineCacheUtil<List<TodoModel>>()
             .localData { localTodoDataSource.getTodoList() }
             .remoteData { remoteTodoDataSource.getTodoList(email) }
+            .doOnNeedRefresh { localTodoDataSource.saveTodoList(it) }
             .createFlow()
     }
 

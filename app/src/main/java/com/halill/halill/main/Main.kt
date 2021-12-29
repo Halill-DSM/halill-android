@@ -25,11 +25,10 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Main(navController: NavController) {
-    val viewModel: MainViewModel = hiltViewModel()
-    viewModel.loadUserInfoAndTodoList()
+fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     val mainState = viewModel.mainState.observeAsState()
 
+    viewModel.loadUserInfo()
     when(mainState.value) {
         MainState.NotLoginState -> {
             navController.navigate("login")

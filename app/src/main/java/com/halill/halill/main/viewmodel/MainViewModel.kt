@@ -17,16 +17,27 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getTodoListUseCase: GetTodoListUseCase
-): ViewModel() {
+) : ViewModel() {
     private val _mainState = MutableLiveData<MainState>()
     val mainState: LiveData<MainState> get() = _mainState
 
     val showingPage = MutableLiveData(0)
 
-    fun loadUserInfoAndTodoList() {
+    fun loadUserInfo() {
+        viewModelScope.launch {
+            try {
+                getUserInfoUseCase.execute(Unit)
+            } catch (e: NotLoginException) {
+                _mainState.value = MainState.NotLoginState
+            }
+        }
+    }
+
+    fun loadTodoList() {
         viewModelScope.launch {
             try {
                 getTodoListUseCase.execute(Unit).collect { loadData ->
+
                 }
             } catch (e: NotLoginException) {
                 _mainState.value = MainState.NotLoginState

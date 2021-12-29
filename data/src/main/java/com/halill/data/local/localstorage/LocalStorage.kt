@@ -12,7 +12,7 @@ interface LocalStorage {
 
     suspend fun getAccessToken(): String?
 
-    suspend fun getRefreshToken(): String?
+    suspend fun getRefreshToken(): Flow<String?>
 
     suspend fun getUser(): UserData
 }

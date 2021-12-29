@@ -12,6 +12,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.halill.halill.main.viewmodel.MainViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -24,7 +25,8 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Main(navController: NavController, viewModel: MainViewModel = viewModel()) {
+fun Main(navController: NavController) {
+    val viewModel: MainViewModel = hiltViewModel()
     viewModel.loadUserInfoAndTodoList()
     val mainState = viewModel.mainState.observeAsState()
 

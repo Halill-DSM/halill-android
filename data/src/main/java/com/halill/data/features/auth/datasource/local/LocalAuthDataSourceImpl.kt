@@ -2,7 +2,7 @@ package com.halill.data.features.auth.datasource.local
 
 import com.halill.data.features.auth.entity.TokenData
 import com.halill.data.features.auth.entity.UserData
-import com.halill.data.local.LocalStorage
+import com.halill.data.local.localstorage.LocalStorage
 import javax.inject.Inject
 
 class LocalAuthDataSourceImpl @Inject constructor(

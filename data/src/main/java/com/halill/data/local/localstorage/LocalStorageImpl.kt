@@ -1,4 +1,4 @@
-package com.halill.data.local
+package com.halill.data.local.localstorage
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -7,12 +7,12 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.halill.data.features.auth.entity.UserData
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
+import com.halill.data.local.localstorage.LocalStorage
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.single
+import javax.inject.Inject
 
-class LocalStorageImpl(private val context: Context) : LocalStorage {
+class LocalStorageImpl @Inject constructor(private val context: Context) : LocalStorage {
 
     companion object {
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")

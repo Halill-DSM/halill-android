@@ -19,9 +19,9 @@ class GetTodoListRepositoryImpl @Inject constructor(
         return OfflineCacheUtil<List<TodoModel>>()
             .localData { localTodoDataSource.getTodoList() }
             .remoteData { remoteTodoDataSource.getTodoList(email) }
+            .compareData { localData, remoteData -> localData.containsAll(remoteData) }
             .doOnNeedRefresh { localTodoDataSource.saveTodoList(it) }
             .createFlow()
     }
-
 
 }

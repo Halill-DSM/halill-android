@@ -1,4 +1,4 @@
-package com.halill.data.local
+package com.halill.data.local.localstorage
 
 import com.halill.data.features.auth.entity.UserData
 import kotlinx.coroutines.flow.Flow

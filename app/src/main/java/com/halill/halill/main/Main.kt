@@ -15,7 +15,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.halill.halill.main.viewmodel.MainViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -25,10 +24,10 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
+fun Main(navController: NavController) {
+    val viewModel: MainViewModel = hiltViewModel()
     val mainState = viewModel.mainState.observeAsState()
-
-    viewModel.loadUserInfo()
+    viewModel.loadTodoList()
     when(mainState.value) {
         MainState.NotLoginState -> {
             navController.navigate("login")

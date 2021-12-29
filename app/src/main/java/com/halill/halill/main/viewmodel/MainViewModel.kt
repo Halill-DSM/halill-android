@@ -23,7 +23,11 @@ class MainViewModel @Inject constructor(
 
     val showingPage = MutableLiveData(0)
 
-    fun loadUserInfo() {
+    init {
+        loadUserInfo()
+    }
+
+    private fun loadUserInfo() {
         viewModelScope.launch {
             try {
                 getUserInfoUseCase.execute(Unit)

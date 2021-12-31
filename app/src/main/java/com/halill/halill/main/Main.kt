@@ -17,6 +17,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.halill.halill.main.viewmodel.MainViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.halill.halill.R
 import com.halill.halill.main.model.MainState
@@ -45,24 +46,9 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
         infiniteLoop = false
     )
 
-    val tabIndex = pagerState.currentPage
-    val coroutineScope = rememberCoroutineScope()
-
     Column {
-        TabRow(
-            selectedTabIndex = tabIndex
-        ) {
-            viewModel.showingPage.value = tabIndex
-            tabData.forEachIndexed { index, text ->
-                Tab(selected = tabIndex == index, onClick = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(index)
-                    }
-                }, text = {
-                    Text(text = text)
-                })
-            }
-        }
+
+        MainTab(pagerState = pagerState, selectedTabIndex = pagerState.currentPage, tabData = tabData)
 
         HorizontalPager(state = pagerState) { index ->
             Column(
@@ -76,6 +62,26 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
 
                 }
             }
+        }
+    }
+}
+
+@ExperimentalPagerApi
+@Composable
+fun MainTab(pagerState: PagerState, selectedTabIndex: Int, tabData: List<String>, viewModel: MainViewModel = hiltViewModel()) {
+    val coroutineScope = rememberCoroutineScope()
+    TabRow(
+        selectedTabIndex = selectedTabIndex
+    ) {
+        viewModel.showingPage.value = selectedTabIndex
+        tabData.forEachIndexed { index, text ->
+            Tab(selected = selectedTabIndex == index, onClick = {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(index)
+                }
+            }, text = {
+                Text(text = text)
+            })
         }
     }
 }

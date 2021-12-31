@@ -30,9 +30,9 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
     viewModel.loadTodoList()
     when(mainState.value) {
         MainState.NotLoginState -> {
-            navController.navigate("login") {
+            /*navController.navigate("login") {
                 launchSingleTop = true
-            }
+            }*/
         }
     }
     val tabData = listOf(
@@ -48,7 +48,7 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
 
     Column {
 
-        MainTab(pagerState = pagerState, selectedTabIndex = pagerState.currentPage, tabData = tabData)
+        MainTab(pagerState = pagerState, tabData = tabData)
 
         HorizontalPager(state = pagerState) { index ->
             Column(
@@ -68,8 +68,9 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
 
 @ExperimentalPagerApi
 @Composable
-fun MainTab(pagerState: PagerState, selectedTabIndex: Int, tabData: List<String>, viewModel: MainViewModel = hiltViewModel()) {
+fun MainTab(pagerState: PagerState, tabData: List<String>, viewModel: MainViewModel = hiltViewModel()) {
     val coroutineScope = rememberCoroutineScope()
+    val selectedTabIndex = pagerState.currentPage
     TabRow(
         selectedTabIndex = selectedTabIndex
     ) {

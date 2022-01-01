@@ -30,9 +30,9 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
     viewModel.loadTodoList()
     when(mainState.value) {
         MainState.NotLoginState -> {
-            /*navController.navigate("login") {
+            navController.navigate("login") {
                 launchSingleTop = true
-            }*/
+            }
         }
     }
     val tabData = listOf(
@@ -47,22 +47,9 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
     )
 
     Column {
-
         MainTab(pagerState = pagerState, tabData = tabData)
 
-        HorizontalPager(state = pagerState) { index ->
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                if(tabData[index] == stringResource(id = R.string.todo)) {
-
-                } else {
-
-                }
-            }
-        }
+        MainPager(pagerState = pagerState, tabData = tabData)
     }
 }
 
@@ -83,6 +70,24 @@ fun MainTab(pagerState: PagerState, tabData: List<String>, viewModel: MainViewMo
             }, text = {
                 Text(text = text)
             })
+        }
+    }
+}
+
+@ExperimentalPagerApi
+@Composable
+fun MainPager(pagerState: PagerState, tabData: List<String>) {
+    HorizontalPager(state = pagerState) { index ->
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if(tabData[index] == stringResource(id = R.string.todo)) {
+
+            } else {
+
+            }
         }
     }
 }

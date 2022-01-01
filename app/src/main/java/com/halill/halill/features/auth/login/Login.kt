@@ -23,15 +23,15 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.halill.halill.R
 import com.halill.halill.features.auth.login.viewmodel.LoginViewModel
 import com.halill.halill.ui.theme.Gray200
-import com.halill.halill.ui.theme.HalIll_AndroidTheme
 import com.halill.halill.ui.theme.Teal200
 import com.halill.halill.ui.theme.Teal900
 
 @Composable
-fun Login(darkTheme: Boolean = isSystemInDarkTheme()) {
+fun Login(navController: NavController, darkTheme: Boolean = isSystemInDarkTheme()) {
     val backgroundColor = if (darkTheme) Color.Black else Teal200
     BoxWithConstraints(
         modifier = Modifier
@@ -42,7 +42,7 @@ fun Login(darkTheme: Boolean = isSystemInDarkTheme()) {
             LoginTitle()
             LoginComment()
             LoginIluImage()
-            LoginLayout()
+            LoginLayout(navController)
         }
     }
 }
@@ -98,7 +98,7 @@ fun LoginIluImage() {
 }
 
 @Composable
-fun LoginLayout() {
+fun LoginLayout(navController: NavController) {
     ConstraintLayout(
         loginLayoutConstraint(),
         modifier = Modifier
@@ -112,7 +112,7 @@ fun LoginLayout() {
         PasswordTextField()
         LoginButton()
         AskRegisterText()
-        RegisterButton()
+        StartRegisterButton(navController)
     }
 }
 
@@ -120,7 +120,7 @@ private fun loginLayoutConstraint(): ConstraintSet =
     ConstraintSet {
         val idTextField = createRefFor(LoginLayoutViews.IdTextField)
         val passwordTextField = createRefFor(LoginLayoutViews.PasswordField)
-        val loginButton = createRefFor(LoginLayoutViews.RegisterButton)
+        val loginButton = createRefFor(LoginLayoutViews.LoginButton)
         val askRegisterText = createRefFor(LoginLayoutViews.AskRegisterText)
         val registerButton = createRefFor(LoginLayoutViews.RegisterButton)
         constrain(idTextField) {
@@ -145,9 +145,9 @@ private fun loginLayoutConstraint(): ConstraintSet =
             bottom.linkTo(parent.bottom, margin = 25.dp)
         }
         constrain(registerButton) {
-            top.linkTo(loginButton.bottom, margin = 25.dp)
+            top.linkTo(askRegisterText.top)
             end.linkTo(loginButton.end)
-            bottom.linkTo(parent.bottom, margin = 25.dp)
+            bottom.linkTo(askRegisterText.bottom)
         }
     }
 
@@ -202,7 +202,7 @@ fun LoginButton(loginViewModel: LoginViewModel = hiltViewModel()) {
             contentColor = Color.White
         ),
         modifier = Modifier
-            .layoutId(LoginLayoutViews.RegisterButton)
+            .layoutId(LoginLayoutViews.LoginButton)
             .clip(RoundedCornerShape(30.dp))
     ) {
         Text(text = stringResource(id = R.string.login))
@@ -221,17 +221,13 @@ fun AskRegisterText() {
 }
 
 @Composable
-fun RegisterButton() {
-    TextButton(onClick = {  }) {
-        
-    }
-}
-@Preview
-@Composable
-fun LoginPreview() {
-    HalIll_AndroidTheme {
-        Surface(color = MaterialTheme.colors.background) {
-            Login()
-        }
+fun StartRegisterButton(navController: NavController) {
+    TextButton(
+        onClick = { navController.navigate("register") },
+        Modifier
+            .layoutId(LoginLayoutViews.RegisterButton)
+            .wrapContentSize(),
+    ) {
+        Text(text = stringResource(id = R.string.register), fontSize = 15.sp, color = Teal900)
     }
 }

@@ -3,6 +3,7 @@ package com.halill.halill.features.auth.login
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.ButtonDefaults.buttonColors
@@ -12,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -173,6 +175,7 @@ fun PasswordTextField(loginViewModel: LoginViewModel = hiltViewModel()) {
     var text by remember {
         mutableStateOf(loginViewModel.password.value)
     }
+    val focusManager = LocalFocusManager.current
     TextField(value = text ?: "", onValueChange = { text = it }, label = { Text("비밀번호") },
         colors = textFieldColors(
             backgroundColor = Color.White
@@ -180,6 +183,11 @@ fun PasswordTextField(loginViewModel: LoginViewModel = hiltViewModel()) {
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
             imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                focusManager.clearFocus()
+            }
         ),
         modifier = loginTextFieldModifier.layoutId(LoginLayoutViews.PasswordField)
     )

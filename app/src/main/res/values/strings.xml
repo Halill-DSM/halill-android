@@ -2,4 +2,5 @@
     <string name="app_name">HalIll</string>
     <string name="todo">Todo</string>
     <string name="done">Done</string>
+    <string name="login">로그인</string>
 </resources>

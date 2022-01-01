@@ -11,4 +11,11 @@ class LoginViewModel @Inject constructor(
 ): ViewModel() {
     val id = MutableLiveData<String>()
     val password = MutableLiveData<String>()
+
+    fun login() {
+
+    }
+
+    fun isIdAndPasswordFilled(): Boolean =
+        !id.value.isNullOrEmpty() && !password.value.isNullOrEmpty()
 }

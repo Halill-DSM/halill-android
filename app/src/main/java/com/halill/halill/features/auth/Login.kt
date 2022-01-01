@@ -3,30 +3,31 @@ package com.halill.halill.features.auth
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.material.TextFieldDefaults.textFieldColors
 import androidx.compose.runtime.*
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
+import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.halill.halill.R
 import com.halill.halill.features.auth.viewmodel.LoginViewModel
 import com.halill.halill.ui.theme.Gray200
 import com.halill.halill.ui.theme.HalIll_AndroidTheme
 import com.halill.halill.ui.theme.Teal200
+import com.halill.halill.ui.theme.Teal900
 
 @Composable
 fun Login(darkTheme: Boolean = isSystemInDarkTheme()) {
@@ -108,6 +109,7 @@ fun LoginLayout() {
     ) {
         IdTextField()
         PasswordTextField()
+        LoginButton()
     }
 }
 
@@ -115,6 +117,7 @@ private fun loginLayoutConstraint(): ConstraintSet =
     ConstraintSet {
         val idTextField = createRefFor(LoginLayoutViews.IdTextField)
         val passwordTextField = createRefFor(LoginLayoutViews.PasswordField)
+        val loginButton = createRefFor(LoginLayoutViews.RegisterButton)
         constrain(idTextField) {
             top.linkTo(parent.top, margin = 35.dp)
             start.linkTo(parent.start, margin = 15.dp)
@@ -124,6 +127,12 @@ private fun loginLayoutConstraint(): ConstraintSet =
             top.linkTo(idTextField.bottom, margin = 10.dp)
             start.linkTo(parent.start, margin = 15.dp)
             end.linkTo(parent.end, margin = 15.dp)
+        }
+        constrain(loginButton) {
+            top.linkTo(passwordTextField.bottom, margin = 15.dp)
+            start.linkTo(passwordTextField.start)
+            end.linkTo(passwordTextField.end)
+            width = Dimension.fillToConstraints
         }
     }
 
@@ -136,7 +145,10 @@ fun IdTextField(loginViewModel: LoginViewModel = hiltViewModel()) {
         colors = textFieldColors(
             backgroundColor = Color.White
         ),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Next
+        ),
         modifier = loginTextFieldModifier.layoutId(LoginLayoutViews.IdTextField)
     )
 }
@@ -150,7 +162,10 @@ fun PasswordTextField(loginViewModel: LoginViewModel = hiltViewModel()) {
         colors = textFieldColors(
             backgroundColor = Color.White
         ),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done
+        ),
         modifier = loginTextFieldModifier.layoutId(LoginLayoutViews.PasswordField)
     )
 }
@@ -163,6 +178,21 @@ private val loginTextFieldModifier = Modifier
         shape = RoundedCornerShape(30.dp)
     )
 
+@Composable
+fun LoginButton(loginViewModel: LoginViewModel = hiltViewModel()) {
+    Button(
+        onClick = { loginViewModel.login() },
+        colors = buttonColors(
+            backgroundColor = if (loginViewModel.isIdAndPasswordFilled()) Teal900 else Color.Gray,
+            contentColor = Color.White
+        ),
+        modifier = Modifier
+            .layoutId(LoginLayoutViews.RegisterButton)
+            .clip(RoundedCornerShape(30.dp))
+    ) {
+        Text(text = stringResource(id = R.string.login))
+    }
+}
 
 @Preview
 @Composable

@@ -1,4 +1,4 @@
-package com.halill.halill.features.auth
+package com.halill.halill.features.auth.login
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -24,7 +24,7 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.halill.halill.R
-import com.halill.halill.features.auth.viewmodel.LoginViewModel
+import com.halill.halill.features.auth.login.viewmodel.LoginViewModel
 import com.halill.halill.ui.theme.Gray200
 import com.halill.halill.ui.theme.HalIll_AndroidTheme
 import com.halill.halill.ui.theme.Teal200
@@ -112,6 +112,7 @@ fun LoginLayout() {
         PasswordTextField()
         LoginButton()
         AskRegisterText()
+        RegisterButton()
     }
 }
 
@@ -221,7 +222,7 @@ fun AskRegisterText() {
 
 @Composable
 fun RegisterButton() {
-    TextButton(onClick = { /*TODO*/ }) {
+    TextButton(onClick = {  }) {
         
     }
 }

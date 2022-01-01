@@ -1,4 +1,4 @@
-package com.halill.halill.features.auth.viewmodel
+package com.halill.halill.features.auth.login.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

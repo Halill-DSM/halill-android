@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
@@ -110,6 +111,7 @@ fun LoginLayout() {
         IdTextField()
         PasswordTextField()
         LoginButton()
+        AskRegisterText()
     }
 }
 
@@ -118,6 +120,8 @@ private fun loginLayoutConstraint(): ConstraintSet =
         val idTextField = createRefFor(LoginLayoutViews.IdTextField)
         val passwordTextField = createRefFor(LoginLayoutViews.PasswordField)
         val loginButton = createRefFor(LoginLayoutViews.RegisterButton)
+        val askRegisterText = createRefFor(LoginLayoutViews.AskRegisterText)
+        val registerButton = createRefFor(LoginLayoutViews.RegisterButton)
         constrain(idTextField) {
             top.linkTo(parent.top, margin = 35.dp)
             start.linkTo(parent.start, margin = 15.dp)
@@ -133,6 +137,16 @@ private fun loginLayoutConstraint(): ConstraintSet =
             start.linkTo(passwordTextField.start)
             end.linkTo(passwordTextField.end)
             width = Dimension.fillToConstraints
+        }
+        constrain(askRegisterText) {
+            top.linkTo(loginButton.bottom, margin = 25.dp)
+            start.linkTo(loginButton.start)
+            bottom.linkTo(parent.bottom, margin = 25.dp)
+        }
+        constrain(registerButton) {
+            top.linkTo(loginButton.bottom, margin = 25.dp)
+            end.linkTo(loginButton.end)
+            bottom.linkTo(parent.bottom, margin = 25.dp)
         }
     }
 
@@ -194,6 +208,23 @@ fun LoginButton(loginViewModel: LoginViewModel = hiltViewModel()) {
     }
 }
 
+@Composable
+fun AskRegisterText() {
+    Text(
+        text = stringResource(id = R.string.ask_register),
+        Modifier
+            .layoutId(LoginLayoutViews.AskRegisterText)
+            .wrapContentSize(),
+        fontSize = 15.sp
+    )
+}
+
+@Composable
+fun RegisterButton() {
+    TextButton(onClick = { /*TODO*/ }) {
+        
+    }
+}
 @Preview
 @Composable
 fun LoginPreview() {

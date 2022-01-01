@@ -3,4 +3,6 @@
     <string name="todo">Todo</string>
     <string name="done">Done</string>
     <string name="login">로그인</string>
+    <string name="ask_register">아직 아이디가 없으신가요?</string>
+    <string name="register">회원가입</string>
 </resources>

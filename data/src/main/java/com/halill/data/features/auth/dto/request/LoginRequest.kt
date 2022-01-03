@@ -6,6 +6,6 @@ data class LoginRequest(val email: String, val password: String)
 
 fun LoginParameter.toRequest() =
     LoginRequest(
-        email = this.user.email,
+        email = this.email,
         password = this.password
     )

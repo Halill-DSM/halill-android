@@ -1,5 +1,6 @@
 package com.halill.halill.features.auth.login
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,6 +12,8 @@ import androidx.compose.material.TextFieldDefaults.textFieldColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalFocusManager
@@ -18,7 +21,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -64,7 +66,7 @@ private fun decoupledConstraints(): ConstraintSet =
             start.linkTo(parent.start, margin = 20.dp)
         }
         constrain(loginIluImage) {
-            bottom.linkTo(loginConstraintLayout.top)
+            top.linkTo(titleImage.bottom)
             end.linkTo(parent.end, margin = 10.dp)
         }
         constrain(loginConstraintLayout) {
@@ -90,6 +92,7 @@ fun LoginComment() {
     )
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun LoginIluImage() {
     Image(
@@ -110,8 +113,9 @@ fun LoginLayout(navController: NavController) {
             .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
             .background(color = Color.White)
     ) {
-        IdTextField()
-        PasswordTextField()
+        val passwordFocusRequester = FocusRequester()
+        IdTextField(passwordFocusRequester)
+        PasswordTextField(passwordFocusRequester)
         LoginButton()
         AskRegisterText()
         StartRegisterButton(navController)
@@ -154,10 +158,14 @@ private fun loginLayoutConstraint(): ConstraintSet =
     }
 
 @Composable
-fun IdTextField(loginViewModel: LoginViewModel = hiltViewModel()) {
+fun IdTextField(
+    passwordFocusRequester: FocusRequester,
+    loginViewModel: LoginViewModel = hiltViewModel()
+) {
     var text by remember {
-        mutableStateOf(loginViewModel.id.value)
+        mutableStateOf(loginViewModel.email.value)
     }
+    val focusManager = LocalFocusManager.current
     TextField(value = text ?: "", onValueChange = { text = it }, label = { Text("이메일") },
         colors = textFieldColors(
             backgroundColor = Color.White
@@ -166,12 +174,22 @@ fun IdTextField(loginViewModel: LoginViewModel = hiltViewModel()) {
             keyboardType = KeyboardType.Email,
             imeAction = ImeAction.Next
         ),
-        modifier = loginTextFieldModifier.layoutId(LoginLayoutViews.IdTextField)
+        keyboardActions = KeyboardActions(
+            onNext = {
+                focusManager.clearFocus()
+                passwordFocusRequester.requestFocus()
+            }
+        ),
+        modifier = loginTextFieldModifier
+            .layoutId(LoginLayoutViews.IdTextField)
     )
 }
 
 @Composable
-fun PasswordTextField(loginViewModel: LoginViewModel = hiltViewModel()) {
+fun PasswordTextField(
+    passwordFocusRequester: FocusRequester,
+    loginViewModel: LoginViewModel = hiltViewModel()
+) {
     var text by remember {
         mutableStateOf(loginViewModel.password.value)
     }
@@ -189,7 +207,9 @@ fun PasswordTextField(loginViewModel: LoginViewModel = hiltViewModel()) {
                 focusManager.clearFocus()
             }
         ),
-        modifier = loginTextFieldModifier.layoutId(LoginLayoutViews.PasswordField)
+        modifier = loginTextFieldModifier
+            .focusRequester(passwordFocusRequester)
+            .layoutId(LoginLayoutViews.PasswordField)
     )
 }
 

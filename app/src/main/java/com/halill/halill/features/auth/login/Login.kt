@@ -35,6 +35,9 @@ import com.halill.halill.features.auth.login.viewmodel.LoginViewModel
 import com.halill.halill.ui.theme.Gray200
 import com.halill.halill.ui.theme.Teal200
 import com.halill.halill.ui.theme.Teal900
+import kotlinx.coroutines.launch
+
+lateinit var scaffoldState: ScaffoldState
 
 @Composable
 fun Login(
@@ -42,17 +45,20 @@ fun Login(
     darkTheme: Boolean = isSystemInDarkTheme(),
     loginViewModel: LoginViewModel = hiltViewModel()
 ) {
+    scaffoldState = rememberScaffoldState()
     val backgroundColor = if (darkTheme) Color.Black else Teal200
-    BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = backgroundColor)
-    ) {
-        ConstraintLayout(decoupledConstraints(), modifier = Modifier.fillMaxSize()) {
-            LoginTitle()
-            LoginComment()
-            LoginIluImage()
-            LoginLayout(navController, loginViewModel)
+    Scaffold(scaffoldState = scaffoldState) {
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = backgroundColor)
+        ) {
+            ConstraintLayout(decoupledConstraints(), modifier = Modifier.fillMaxSize()) {
+                LoginTitle()
+                LoginComment()
+                LoginIluImage()
+                LoginLayout(navController, loginViewModel)
+            }
         }
     }
 }
@@ -237,9 +243,12 @@ private val loginTextFieldModifier = Modifier
 
 @Composable
 fun LoginButton(loginViewModel: LoginViewModel) {
+    val scope = rememberCoroutineScope()
+
     val loginState = loginViewModel.loginState.observeAsState()
     val inputEmail = loginViewModel.email.observeAsState()
     val inputPassword = loginViewModel.password.observeAsState()
+
     if (!inputEmail.value.isNullOrEmpty() && !inputPassword.value.isNullOrEmpty()) {
         loginViewModel.loginState.value =
             LoginState.DoneInputState(inputEmail.value!!, inputPassword.value!!)
@@ -247,13 +256,16 @@ fun LoginButton(loginViewModel: LoginViewModel) {
         loginViewModel.loginState.value = LoginState.NotDoneInputState
     }
     val focusManager = LocalFocusManager.current
+    val emptyComment = stringResource(id = R.string.login_empty_comment)
     Button(
         onClick = {
             focusManager.clearFocus()
             if (loginState.value is LoginState.DoneInputState) {
                 loginViewModel.login()
             } else {
-
+                scope.launch {
+                    scaffoldState.snackbarHostState.showSnackbar(emptyComment, duration = SnackbarDuration.Short)
+                }
             }
         },
         colors = buttonColors(
@@ -266,6 +278,7 @@ fun LoginButton(loginViewModel: LoginViewModel) {
     ) {
         Text(text = stringResource(id = R.string.login))
     }
+
 }
 
 @Composable

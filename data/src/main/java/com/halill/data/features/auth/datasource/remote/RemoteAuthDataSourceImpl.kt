@@ -19,14 +19,14 @@ class RemoteAuthDataSourceImpl @Inject constructor(
     override suspend fun login(parameter: LoginParameter): LoginResponse =
         try {
             authApi.login(parameter.toRequest())
-        } catch (e: UnknownHostException) {
-            throw InternetErrorException()
         } catch (e: HttpException) {
             if (e.code() == 400) {
                 throw WrongIdException()
             } else {
                 throw InternetErrorException()
             }
+        } catch (e: UnknownHostException) {
+            throw InternetErrorException()
         }
 
 

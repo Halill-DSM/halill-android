@@ -246,8 +246,10 @@ fun LoginButton(loginViewModel: LoginViewModel) {
     } else {
         loginViewModel.loginState.value = LoginState.NotDoneInputState
     }
+    val focusManager = LocalFocusManager.current
     Button(
         onClick = {
+            focusManager.clearFocus()
             if (loginState.value is LoginState.DoneInputState) {
                 loginViewModel.login()
             } else {

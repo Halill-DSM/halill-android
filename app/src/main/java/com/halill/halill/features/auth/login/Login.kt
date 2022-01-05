@@ -10,6 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.material.TextFieldDefaults.textFieldColors
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
@@ -29,13 +30,18 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill.R
+import com.halill.halill.features.auth.login.model.LoginState
 import com.halill.halill.features.auth.login.viewmodel.LoginViewModel
 import com.halill.halill.ui.theme.Gray200
 import com.halill.halill.ui.theme.Teal200
 import com.halill.halill.ui.theme.Teal900
 
 @Composable
-fun Login(navController: NavController, darkTheme: Boolean = isSystemInDarkTheme()) {
+fun Login(
+    navController: NavController,
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    loginViewModel: LoginViewModel = hiltViewModel()
+) {
     val backgroundColor = if (darkTheme) Color.Black else Teal200
     BoxWithConstraints(
         modifier = Modifier
@@ -46,7 +52,7 @@ fun Login(navController: NavController, darkTheme: Boolean = isSystemInDarkTheme
             LoginTitle()
             LoginComment()
             LoginIluImage()
-            LoginLayout(navController)
+            LoginLayout(navController, loginViewModel)
         }
     }
 }
@@ -103,7 +109,7 @@ fun LoginIluImage() {
 }
 
 @Composable
-fun LoginLayout(navController: NavController) {
+fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel) {
     ConstraintLayout(
         loginLayoutConstraint(),
         modifier = Modifier
@@ -114,9 +120,9 @@ fun LoginLayout(navController: NavController) {
             .background(color = Color.White)
     ) {
         val passwordFocusRequester = FocusRequester()
-        IdTextField(passwordFocusRequester)
-        PasswordTextField(passwordFocusRequester)
-        LoginButton()
+        IdTextField(passwordFocusRequester, loginViewModel)
+        PasswordTextField(passwordFocusRequester, loginViewModel)
+        LoginButton(loginViewModel)
         AskRegisterText()
         StartRegisterButton(navController)
     }
@@ -160,13 +166,18 @@ private fun loginLayoutConstraint(): ConstraintSet =
 @Composable
 fun IdTextField(
     passwordFocusRequester: FocusRequester,
-    loginViewModel: LoginViewModel = hiltViewModel()
+    loginViewModel: LoginViewModel
 ) {
-    var text by remember {
+    val focusManager = LocalFocusManager.current
+    val text = remember {
         mutableStateOf(loginViewModel.email.value)
     }
-    val focusManager = LocalFocusManager.current
-    TextField(value = text ?: "", onValueChange = { text = it }, label = { Text("이메일") },
+    TextField(value = text.value ?: "",
+        onValueChange = {
+            text.value = it
+            loginViewModel.email.value = it
+        },
+        label = { Text("이메일") },
         colors = textFieldColors(
             backgroundColor = Color.White
         ),
@@ -188,13 +199,16 @@ fun IdTextField(
 @Composable
 fun PasswordTextField(
     passwordFocusRequester: FocusRequester,
-    loginViewModel: LoginViewModel = hiltViewModel()
+    loginViewModel: LoginViewModel
 ) {
-    var text by remember {
+    val focusManager = LocalFocusManager.current
+    val text = remember {
         mutableStateOf(loginViewModel.password.value)
     }
-    val focusManager = LocalFocusManager.current
-    TextField(value = text ?: "", onValueChange = { text = it }, label = { Text("비밀번호") },
+    TextField(value = text.value ?: "", onValueChange = {
+        text.value = it
+        loginViewModel.password.value = it
+    }, label = { Text("비밀번호") },
         colors = textFieldColors(
             backgroundColor = Color.White
         ),
@@ -222,11 +236,26 @@ private val loginTextFieldModifier = Modifier
     )
 
 @Composable
-fun LoginButton(loginViewModel: LoginViewModel = hiltViewModel()) {
+fun LoginButton(loginViewModel: LoginViewModel) {
+    val loginState = loginViewModel.loginState.observeAsState()
+    val inputEmail = loginViewModel.email.observeAsState()
+    val inputPassword = loginViewModel.password.observeAsState()
+    if (!inputEmail.value.isNullOrEmpty() && !inputPassword.value.isNullOrEmpty()) {
+        loginViewModel.loginState.value =
+            LoginState.DoneInputState(inputEmail.value!!, inputPassword.value!!)
+    } else {
+        loginViewModel.loginState.value = LoginState.NotDoneInputState
+    }
     Button(
-        onClick = { loginViewModel.login() },
+        onClick = {
+            if (loginState.value is LoginState.DoneInputState) {
+                loginViewModel.login()
+            } else {
+
+            }
+        },
         colors = buttonColors(
-            backgroundColor = if (loginViewModel.isIdAndPasswordFilled()) Teal900 else Color.Gray,
+            backgroundColor = if (loginState.value != LoginState.NotDoneInputState) Teal900 else Color.Gray,
             contentColor = Color.White
         ),
         modifier = Modifier

@@ -36,6 +36,4 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun isIdAndPasswordFilled(): Boolean =
-        !email.value.isNullOrEmpty() && !password.value.isNullOrEmpty()
 }

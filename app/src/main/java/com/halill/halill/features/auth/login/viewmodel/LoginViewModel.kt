@@ -1,5 +1,6 @@
 package com.halill.halill.features.auth.login.viewmodel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -32,8 +33,15 @@ class LoginViewModel @Inject constructor(
             } catch (e: InternetErrorException) {
                 loginState.value = LoginState.InternetExceptionState
             }
-
         }
+    }
+
+    fun setEmail(email: String) {
+        this.email.value = email
+    }
+
+    fun setPassword(password: String) {
+        this.password.value = password
     }
 
 }

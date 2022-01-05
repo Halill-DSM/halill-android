@@ -181,7 +181,7 @@ fun IdTextField(
     TextField(value = text.value ?: "",
         onValueChange = {
             text.value = it
-            loginViewModel.email.value = it
+            loginViewModel.setEmail(it)
         },
         label = { Text("이메일") },
         colors = textFieldColors(
@@ -213,7 +213,7 @@ fun PasswordTextField(
     }
     TextField(value = text.value ?: "", onValueChange = {
         text.value = it
-        loginViewModel.password.value = it
+        loginViewModel.setPassword(it)
     }, label = { Text("비밀번호") },
         colors = textFieldColors(
             backgroundColor = Color.White

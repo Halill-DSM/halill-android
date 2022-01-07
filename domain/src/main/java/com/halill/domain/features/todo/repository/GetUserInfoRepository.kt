@@ -1,4 +1,4 @@
-package com.halill.domain.features.todolist.repository
+package com.halill.domain.features.todo.repository
 
 import com.halill.domain.features.auth.entity.User
 

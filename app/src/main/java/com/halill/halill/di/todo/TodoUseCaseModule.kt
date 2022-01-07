@@ -1,8 +1,6 @@
-package com.halill.halill.di.auth
+package com.halill.halill.di.todo
 
-import com.halill.domain.features.auth.usecase.GetUserInfoUseCase
 import com.halill.domain.features.todo.repository.GetTodoListRepository
-import com.halill.domain.features.todo.repository.GetUserInfoRepository
 import com.halill.domain.features.todo.usecase.GetTodoListUseCase
 import dagger.Module
 import dagger.Provides
@@ -12,11 +10,10 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AuthUseCaseModule {
+object TodoUseCaseModule {
     @Singleton
     @Provides
-    fun provideGetUserInfoUseCase(
-        getUserInfoRepository: GetUserInfoRepository
-    ): GetUserInfoUseCase =
-        GetUserInfoUseCase(getUserInfoRepository)
+    fun provideGetTodoListUseCase(
+        getTodoListRepository: GetTodoListRepository
+    ): GetTodoListUseCase = GetTodoListUseCase(getTodoListRepository)
 }

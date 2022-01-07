@@ -1,7 +1,7 @@
 package com.halill.data.features.todo.dto.response
 
 import com.google.gson.annotations.SerializedName
-import com.halill.domain.features.todolist.entity.TodoModel
+import com.halill.domain.features.todo.entity.TodoModel
 import java.time.LocalDateTime
 
 data class GetTodoResponse(

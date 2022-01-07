@@ -3,7 +3,7 @@ package com.halill.data.features.todo.datasource.local
 import com.halill.data.features.todo.database.dao.TodoDao
 import com.halill.data.features.todo.database.entity.toDataEntity
 import com.halill.data.features.todo.database.entity.toEntity
-import com.halill.domain.features.todolist.entity.TodoModel
+import com.halill.domain.features.todo.entity.TodoModel
 import javax.inject.Inject
 
 class LocalTodoDataSourceImpl @Inject constructor(

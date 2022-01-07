@@ -2,7 +2,7 @@ package com.halill.data.features.todo.datasource.remote
 
 import com.halill.data.features.todo.dto.response.toEntity
 import com.halill.data.features.todo.remote.TodoApi
-import com.halill.domain.features.todolist.entity.TodoModel
+import com.halill.domain.features.todo.entity.TodoModel
 import javax.inject.Inject
 
 class RemoteTodoDataSourceImpl @Inject constructor(private val todoApi: TodoApi): RemoteTodoDataSource {

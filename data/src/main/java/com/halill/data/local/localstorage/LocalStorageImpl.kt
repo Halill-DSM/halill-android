@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.halill.data.features.auth.entity.UserData
 import com.halill.data.local.localstorage.LocalStorage
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.single
 import javax.inject.Inject
@@ -46,10 +47,10 @@ class LocalStorageImpl @Inject constructor(private val context: Context) : Local
             preferences[ACCESS_TOKEN_KEY]
         }.single()
 
-    override suspend fun getRefreshToken(): String? =
+    override suspend fun getRefreshToken(): Flow<String?> =
         context.dataStore.data.map { preferences ->
             preferences[REFRESH_TOKEN_KEY]
-        }.single()
+        }
 
     override suspend fun getUser(): UserData =
         context.dataStore.data.map { preferences ->

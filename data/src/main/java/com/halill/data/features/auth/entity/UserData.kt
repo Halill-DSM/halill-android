@@ -9,9 +9,3 @@ fun UserData.toEntity() =
     User(
         name, email
     )
-
-fun LoginParameter.toUserData() =
-    UserData(
-        user.name,
-        user.email
-    )

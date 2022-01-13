@@ -8,5 +8,5 @@ sealed class MainState {
     data class ShowTodoListState(val user: User, val data: List<TodoModel>) : MainState()
     data class ShowDoneListState(val user: User, val data: List<TodoModel>) : MainState()
     data class ErrorState(val date: String) : MainState()
-    object NotLoginState : MainState()
+    object EmptyListState : MainState()
 }

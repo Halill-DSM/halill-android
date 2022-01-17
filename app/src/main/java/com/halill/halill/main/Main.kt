@@ -7,7 +7,6 @@ import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,21 +19,23 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.halill.halill.R
-import com.halill.halill.main.model.MainState
+import com.halill.halill.base.observeWithLifecycle
+import com.halill.halill.main.model.MainEvent
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
-    val mainState = viewModel.mainState.observeAsState()
     viewModel.loadTodoList()
-    when(mainState.value) {
-        MainState.NotLoginState -> {
-            navController.navigate("login") {
-                launchSingleTop = true
+
+    viewModel.mainEvent.observeWithLifecycle { mainEvent ->
+        when(mainEvent) {
+            is MainEvent.StartLogin -> {
+                navController.navigate("login")
             }
         }
     }
+
     val tabData = listOf(
         stringResource(id = R.string.todo),
         stringResource(id = R.string.done)
@@ -55,7 +56,11 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
 
 @ExperimentalPagerApi
 @Composable
-fun MainTab(pagerState: PagerState, tabData: List<String>, viewModel: MainViewModel = hiltViewModel()) {
+fun MainTab(
+    pagerState: PagerState,
+    tabData: List<String>,
+    viewModel: MainViewModel = hiltViewModel()
+) {
     val coroutineScope = rememberCoroutineScope()
     val selectedTabIndex = pagerState.currentPage
     TabRow(
@@ -83,7 +88,7 @@ fun MainPager(pagerState: PagerState, tabData: List<String>) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if(tabData[index] == stringResource(id = R.string.todo)) {
+            if (tabData[index] == stringResource(id = R.string.todo)) {
 
             } else {
 

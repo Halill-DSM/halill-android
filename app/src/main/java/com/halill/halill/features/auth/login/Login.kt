@@ -10,7 +10,6 @@ import androidx.compose.material.*
 import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.material.TextFieldDefaults.textFieldColors
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
@@ -175,13 +174,11 @@ fun IdTextField(
     loginViewModel: LoginViewModel
 ) {
     val focusManager = LocalFocusManager.current
-    val text = remember {
-        mutableStateOf(loginViewModel.email.value)
-    }
-    TextField(value = text.value ?: "",
+    val text = loginViewModel.email.collectAsState(initial = "")
+    TextField(value = text.value,
         onValueChange = {
-            text.value = it
             loginViewModel.setEmail(it)
+            checkDoneInput(loginViewModel)
         },
         label = { Text("이메일") },
         colors = textFieldColors(
@@ -208,12 +205,10 @@ fun PasswordTextField(
     loginViewModel: LoginViewModel
 ) {
     val focusManager = LocalFocusManager.current
-    val text = remember {
-        mutableStateOf(loginViewModel.password.value)
-    }
-    TextField(value = text.value ?: "", onValueChange = {
-        text.value = it
+    val text = loginViewModel.password.collectAsState(initial = "")
+    TextField(value = text.value, onValueChange = {
         loginViewModel.setPassword(it)
+        checkDoneInput(loginViewModel)
     }, label = { Text("비밀번호") },
         colors = textFieldColors(
             backgroundColor = Color.White
@@ -233,6 +228,17 @@ fun PasswordTextField(
     )
 }
 
+private fun checkDoneInput(viewModel: LoginViewModel) {
+    val emailValue = viewModel.email.value
+    val passwordValue = viewModel.password.value
+
+    if (emailValue.isNotEmpty() && passwordValue.isNotEmpty()) viewModel.setDoneLoginState(
+        emailValue,
+        passwordValue
+    )
+    else viewModel.setNotDoneInputState()
+}
+
 private val loginTextFieldModifier = Modifier
     .clip(RoundedCornerShape(30.dp))
     .border(
@@ -245,16 +251,8 @@ private val loginTextFieldModifier = Modifier
 fun LoginButton(loginViewModel: LoginViewModel) {
     val scope = rememberCoroutineScope()
 
-    val loginState = loginViewModel.loginState.observeAsState()
-    val inputEmail = loginViewModel.email.observeAsState()
-    val inputPassword = loginViewModel.password.observeAsState()
+    val loginState = loginViewModel.loginState.collectAsState()
 
-    if (!inputEmail.value.isNullOrEmpty() && !inputPassword.value.isNullOrEmpty()) {
-        loginViewModel.loginState.value =
-            LoginState.DoneInputState(inputEmail.value!!, inputPassword.value!!)
-    } else {
-        loginViewModel.loginState.value = LoginState.NotDoneInputState
-    }
     val focusManager = LocalFocusManager.current
     val emptyComment = stringResource(id = R.string.login_empty_comment)
     Button(
@@ -264,12 +262,15 @@ fun LoginButton(loginViewModel: LoginViewModel) {
                 loginViewModel.login()
             } else {
                 scope.launch {
-                    scaffoldState.snackbarHostState.showSnackbar(emptyComment, duration = SnackbarDuration.Short)
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        emptyComment,
+                        duration = SnackbarDuration.Short
+                    )
                 }
             }
         },
         colors = buttonColors(
-            backgroundColor = if (loginState.value != LoginState.NotDoneInputState) Teal900 else Color.Gray,
+            backgroundColor = if (loginState.value is LoginState.DoneInputState) Teal900 else Color.Gray,
             contentColor = Color.White
         ),
         modifier = Modifier

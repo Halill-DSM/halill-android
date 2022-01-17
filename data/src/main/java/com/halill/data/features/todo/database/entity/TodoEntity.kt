@@ -6,7 +6,13 @@ import com.halill.domain.features.todo.entity.TodoModel
 import java.time.LocalDateTime
 
 @Entity(tableName = "todolist")
-data class TodoEntity(@PrimaryKey val id: Long, val title: String, val content: String, val deadline: LocalDateTime, val isCompleted: Boolean)
+data class TodoEntity(
+    @PrimaryKey val id: Long,
+    val title: String,
+    val content: String,
+    val deadline: LocalDateTime,
+    val isCompleted: Boolean
+)
 
 fun List<TodoEntity>.toEntity() =
     this.map { it.toEntity() }

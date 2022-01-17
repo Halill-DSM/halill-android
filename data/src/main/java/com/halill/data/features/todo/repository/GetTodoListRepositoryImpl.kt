@@ -4,9 +4,13 @@ import com.halill.data.features.auth.datasource.local.LocalAuthDataSource
 import com.halill.data.features.todo.datasource.local.LocalTodoDataSource
 import com.halill.data.features.todo.datasource.remote.RemoteTodoDataSource
 import com.halill.data.util.OfflineCacheUtil
+import com.halill.domain.features.todo.doneList
 import com.halill.domain.features.todo.entity.TodoModel
+import com.halill.domain.features.todo.entity.UserTodoList
 import com.halill.domain.features.todo.repository.GetTodoListRepository
+import com.halill.domain.features.todo.todoList
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class GetTodoListRepositoryImpl @Inject constructor(
@@ -14,7 +18,7 @@ class GetTodoListRepositoryImpl @Inject constructor(
     private val localAuthDataSource: LocalAuthDataSource,
     private val remoteTodoDataSource: RemoteTodoDataSource
 ) : GetTodoListRepository {
-    override suspend fun getTodoList(): Flow<List<TodoModel>> {
+    override suspend fun getTodoList(): Flow<UserTodoList> {
         val email = localAuthDataSource.getUser().email
         return OfflineCacheUtil<List<TodoModel>>()
             .localData { localTodoDataSource.getTodoList() }
@@ -22,6 +26,7 @@ class GetTodoListRepositoryImpl @Inject constructor(
             .compareData { localData, remoteData -> localData.containsAll(remoteData) }
             .doOnNeedRefresh { localTodoDataSource.saveTodoList(it) }
             .createFlow()
+            .map { UserTodoList(it.todoList(), it.doneList()) }
     }
 
 }

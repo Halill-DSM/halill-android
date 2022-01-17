@@ -5,5 +5,5 @@
     <string name="login">로그인</string>
     <string name="ask_register">아직 아이디가 없으신가요?</string>
     <string name="register">회원가입</string>
-    <string name="login_empty_comment">모든 정보를 입력해주세요!</string>
+    <string name="login_empty_comment">모든 정보를 입력해주세요</string>
 </resources>

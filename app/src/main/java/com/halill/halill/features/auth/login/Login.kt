@@ -9,6 +9,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.material.TextFieldDefaults.textFieldColors
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,6 +24,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -71,7 +76,7 @@ private fun EventHandle(viewModel: LoginViewModel) {
 
     val wrongComment = stringResource(id = R.string.wrong_id_comment)
     viewModel.loginEvent.observeWithLifecycle(action = {
-        when(it) {
+        when (it) {
             is LoginEvent.WrongId -> scope.launch {
                 scaffoldState.snackbarHostState.showSnackbar(
                     wrongComment,
@@ -227,6 +232,9 @@ fun PasswordTextField(
 ) {
     val focusManager = LocalFocusManager.current
     val text = loginViewModel.password.collectAsState(initial = "")
+    var passwordVisibility by remember {
+        mutableStateOf(false)
+    }
     TextField(value = text.value, onValueChange = {
         loginViewModel.setPassword(it)
         checkDoneInput(loginViewModel)
@@ -245,7 +253,19 @@ fun PasswordTextField(
         ),
         modifier = loginTextFieldModifier
             .focusRequester(passwordFocusRequester)
-            .layoutId(LoginLayoutViews.PasswordField)
+            .layoutId(LoginLayoutViews.PasswordField),
+        visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+        trailingIcon = {
+            val icon = if(passwordVisibility)
+                Icons.Filled.Visibility
+            else Icons.Filled.VisibilityOff
+            
+            IconButton(onClick = {
+                passwordVisibility = !passwordVisibility
+            }) {
+                Icon(imageVector = icon, contentDescription = "password visible")
+            }
+        }
     )
 }
 

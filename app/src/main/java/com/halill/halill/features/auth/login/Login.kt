@@ -29,6 +29,8 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill.R
+import com.halill.halill.base.observeWithLifecycle
+import com.halill.halill.features.auth.login.model.LoginEvent
 import com.halill.halill.features.auth.login.model.LoginState
 import com.halill.halill.features.auth.login.viewmodel.LoginViewModel
 import com.halill.halill.ui.theme.Gray200
@@ -60,6 +62,25 @@ fun Login(
             }
         }
     }
+    EventHandle(viewModel = loginViewModel)
+}
+
+@Composable
+private fun EventHandle(viewModel: LoginViewModel) {
+    val scope = rememberCoroutineScope()
+
+    val wrongComment = stringResource(id = R.string.wrong_id_comment)
+    viewModel.loginEvent.observeWithLifecycle(action = {
+        when(it) {
+            is LoginEvent.WrongId -> scope.launch {
+                scaffoldState.snackbarHostState.showSnackbar(
+                    wrongComment,
+                    duration = SnackbarDuration.Short
+                )
+            }
+
+        }
+    })
 }
 
 private fun decoupledConstraints(): ConstraintSet =

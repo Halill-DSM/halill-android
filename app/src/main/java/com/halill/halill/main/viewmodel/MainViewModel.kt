@@ -7,6 +7,7 @@ import com.halill.domain.features.auth.usecase.GetUserInfoUseCase
 import com.halill.domain.features.todo.usecase.GetTodoListUseCase
 import com.halill.halill.base.EventFlow
 import com.halill.halill.base.MutableEventFlow
+import com.halill.halill.base.asEventFlow
 import com.halill.halill.main.model.MainEvent
 import com.halill.halill.main.model.MainState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +26,7 @@ class MainViewModel @Inject constructor(
     val mainState: StateFlow<MainState> get() = _mainState
 
     private val _mainEvent = MutableEventFlow<MainEvent>()
-    val mainEvent: EventFlow<MainEvent> = _mainEvent
+    val mainEvent: EventFlow<MainEvent> = _mainEvent.asEventFlow()
 
     val showingPage = MutableStateFlow(0)
 

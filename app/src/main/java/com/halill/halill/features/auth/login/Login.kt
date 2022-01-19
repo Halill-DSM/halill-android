@@ -1,5 +1,7 @@
 package com.halill.halill.features.auth.login
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -19,6 +21,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -67,11 +70,11 @@ fun Login(
             }
         }
     }
-    EventHandle(viewModel = loginViewModel)
+    EventHandle(navController = navController, viewModel = loginViewModel)
 }
 
 @Composable
-private fun EventHandle(viewModel: LoginViewModel) {
+private fun EventHandle(navController: NavController, viewModel: LoginViewModel) {
     val scope = rememberCoroutineScope()
 
     val wrongComment = stringResource(id = R.string.wrong_id_comment)
@@ -84,10 +87,20 @@ private fun EventHandle(viewModel: LoginViewModel) {
                 )
             }
 
+            is LoginEvent.FinishLogin -> navController.popBackStack()
         }
     })
+    BackPressHandle()
 }
 
+@Composable
+private fun BackPressHandle() {
+    val backHandlingEnabled by remember { mutableStateOf(true) }
+    val activity = (LocalContext.current as? Activity)
+    BackHandler(backHandlingEnabled) {
+        activity?.finish()
+    }
+}
 private fun decoupledConstraints(): ConstraintSet =
     ConstraintSet {
         val titleImage = createRefFor(LoginViews.TitleImageView)
@@ -152,7 +165,11 @@ fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel) {
     ) {
         val passwordFocusRequester = FocusRequester()
         IdTextField(passwordFocusRequester, loginViewModel)
-        PasswordTextField(passwordFocusRequester, loginViewModel)
+        val passwordText = loginViewModel.password.collectAsState()
+        PasswordTextField(passwordFocusRequester, passwordText, doOnValueChange = {
+            loginViewModel.setPassword(it)
+            checkDoneInput(loginViewModel)
+        })
         LoginButton(loginViewModel)
         AskRegisterText()
         StartRegisterButton(navController)
@@ -228,16 +245,15 @@ fun IdTextField(
 @Composable
 fun PasswordTextField(
     passwordFocusRequester: FocusRequester,
-    loginViewModel: LoginViewModel
+    text: State<String>,
+    doOnValueChange: (text: String) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
-    val text = loginViewModel.password.collectAsState(initial = "")
     var passwordVisibility by remember {
         mutableStateOf(false)
     }
     TextField(value = text.value, onValueChange = {
-        loginViewModel.setPassword(it)
-        checkDoneInput(loginViewModel)
+        doOnValueChange(it)
     }, label = { Text("비밀번호") },
         colors = textFieldColors(
             backgroundColor = Color.White
@@ -256,10 +272,10 @@ fun PasswordTextField(
             .layoutId(LoginLayoutViews.PasswordField),
         visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
         trailingIcon = {
-            val icon = if(passwordVisibility)
+            val icon = if (passwordVisibility)
                 Icons.Filled.Visibility
             else Icons.Filled.VisibilityOff
-            
+
             IconButton(onClick = {
                 passwordVisibility = !passwordVisibility
             }) {

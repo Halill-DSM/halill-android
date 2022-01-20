@@ -101,6 +101,7 @@ private fun BackPressHandle() {
         activity?.finish()
     }
 }
+
 private fun decoupledConstraints(): ConstraintSet =
     ConstraintSet {
         val titleImage = createRefFor(LoginViews.TitleImageView)
@@ -166,7 +167,8 @@ fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel) {
         val passwordFocusRequester = FocusRequester()
         IdTextField(passwordFocusRequester, loginViewModel)
         val passwordText = loginViewModel.password.collectAsState()
-        PasswordTextField(passwordFocusRequester, passwordText, doOnValueChange = {
+        val passwordLabel = "비밀번호"
+        PasswordTextField(passwordFocusRequester, passwordText, passwordLabel, doOnValueChange = {
             loginViewModel.setPassword(it)
             checkDoneInput(loginViewModel)
         })
@@ -246,6 +248,7 @@ fun IdTextField(
 fun PasswordTextField(
     passwordFocusRequester: FocusRequester,
     text: State<String>,
+    label: String,
     doOnValueChange: (text: String) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
@@ -254,7 +257,7 @@ fun PasswordTextField(
     }
     TextField(value = text.value, onValueChange = {
         doOnValueChange(it)
-    }, label = { Text("비밀번호") },
+    }, label = { Text(label) },
         colors = textFieldColors(
             backgroundColor = Color.White
         ),

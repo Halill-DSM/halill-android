@@ -39,7 +39,7 @@ fun HalIllApp() {
     NavHost(navController = navController, startDestination = "main") {
         composable("main") { Main(navController) }
         composable("login") { Login(navController) }
-        composable("register") { Register() }
+        composable("register") { Register(navController) }
         composable("writeTodo") {}
     }
 }

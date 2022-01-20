@@ -170,13 +170,17 @@ fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel) {
         IdTextField(passwordFocusRequester, emailText, emailLabel, doOnValueChange = {
             loginViewModel.setEmail(it)
             checkDoneInput(loginViewModel)
-        })
+        },
+        imeAction = ImeAction.Next)
         val passwordText = loginViewModel.password.collectAsState()
         val passwordLabel = "비밀번호"
-        PasswordTextField(passwordFocusRequester, passwordText, passwordLabel, doOnValueChange = {
-            loginViewModel.setPassword(it)
-            checkDoneInput(loginViewModel)
-        })
+        PasswordTextField(
+            passwordFocusRequester, passwordText, passwordLabel, doOnValueChange = {
+                loginViewModel.setPassword(it)
+                checkDoneInput(loginViewModel)
+            },
+            imeAction = ImeAction.Done
+        )
         LoginButton(loginViewModel)
         AskRegisterText()
         StartRegisterButton(navController)
@@ -220,10 +224,11 @@ private fun loginLayoutConstraint(): ConstraintSet =
 
 @Composable
 fun IdTextField(
-    passwordFocusRequester: FocusRequester,
+    focusRequester: FocusRequester,
     text: State<String>,
     label: String,
-    doOnValueChange: (text: String) -> Unit
+    doOnValueChange: (text: String) -> Unit,
+    imeAction: ImeAction
 ) {
     val focusManager = LocalFocusManager.current
     TextField(value = text.value,
@@ -236,12 +241,15 @@ fun IdTextField(
         ),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next
+            imeAction = imeAction
         ),
         keyboardActions = KeyboardActions(
             onNext = {
                 focusManager.clearFocus()
-                passwordFocusRequester.requestFocus()
+                focusRequester.requestFocus()
+            },
+            onDone = {
+                focusManager.clearFocus()
             }
         ),
         modifier = loginTextFieldModifier
@@ -251,10 +259,11 @@ fun IdTextField(
 
 @Composable
 fun PasswordTextField(
-    passwordFocusRequester: FocusRequester,
+    focusRequester: FocusRequester,
     text: State<String>,
     label: String,
-    doOnValueChange: (text: String) -> Unit
+    doOnValueChange: (text: String) -> Unit,
+    imeAction: ImeAction
 ) {
     val focusManager = LocalFocusManager.current
     var passwordVisibility by remember {
@@ -268,15 +277,19 @@ fun PasswordTextField(
         ),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Done
+            imeAction = imeAction
         ),
         keyboardActions = KeyboardActions(
+            onNext = {
+                focusManager.clearFocus()
+                focusRequester.requestFocus()
+            },
             onDone = {
                 focusManager.clearFocus()
             }
         ),
         modifier = loginTextFieldModifier
-            .focusRequester(passwordFocusRequester)
+            .focusRequester(focusRequester)
             .layoutId(LoginLayoutViews.PasswordField),
         visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
         trailingIcon = {

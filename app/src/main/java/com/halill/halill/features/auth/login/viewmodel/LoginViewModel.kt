@@ -35,8 +35,8 @@ class LoginViewModel @Inject constructor(
 
     fun login() {
         viewModelScope.launch {
+            _loginState.emit(LoginState.LoadingState)
             if (email.value.isNotEmpty() && password.value.isNotEmpty())
-
                 try {
                     loginUseCase.execute(LoginParameter(email.value, password.value))
                     _loginEvent.emit(LoginEvent.FinishLogin)
@@ -44,6 +44,8 @@ class LoginViewModel @Inject constructor(
                     _loginEvent.emit(LoginEvent.WrongId)
                 } catch (e: InternetErrorException) {
                     _loginState.value = LoginState.InternetExceptionState
+                } finally {
+                    _loginState.emit(LoginState.NotDoneInputState)
                 }
         }
     }

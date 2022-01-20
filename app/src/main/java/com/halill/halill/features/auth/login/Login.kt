@@ -165,7 +165,12 @@ fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel) {
             .background(color = Color.White)
     ) {
         val passwordFocusRequester = FocusRequester()
-        IdTextField(passwordFocusRequester, loginViewModel)
+        val emailText = loginViewModel.email.collectAsState()
+        val emailLabel = "이메일"
+        IdTextField(passwordFocusRequester, emailText, emailLabel, doOnValueChange = {
+            loginViewModel.setEmail(it)
+            checkDoneInput(loginViewModel)
+        })
         val passwordText = loginViewModel.password.collectAsState()
         val passwordLabel = "비밀번호"
         PasswordTextField(passwordFocusRequester, passwordText, passwordLabel, doOnValueChange = {
@@ -216,16 +221,16 @@ private fun loginLayoutConstraint(): ConstraintSet =
 @Composable
 fun IdTextField(
     passwordFocusRequester: FocusRequester,
-    loginViewModel: LoginViewModel
+    text: State<String>,
+    label: String,
+    doOnValueChange: (text: String) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
-    val text = loginViewModel.email.collectAsState(initial = "")
     TextField(value = text.value,
         onValueChange = {
-            loginViewModel.setEmail(it)
-            checkDoneInput(loginViewModel)
+            doOnValueChange(it)
         },
-        label = { Text("이메일") },
+        label = { Text(label) },
         colors = textFieldColors(
             backgroundColor = Color.White
         ),

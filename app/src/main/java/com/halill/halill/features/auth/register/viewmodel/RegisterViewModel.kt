@@ -19,9 +19,29 @@ class RegisterViewModel : ViewModel() {
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name
 
-    fun setPassword(password: String) {
+    fun setEmail(email: String) {
         viewModelScope.launch {
-            _password.emit(password)
+            _email.value = email
         }
     }
+
+    fun setPassword(password: String) {
+        viewModelScope.launch {
+            _password.value = password
+        }
+    }
+
+    fun setCheckPassword(password: String) {
+        viewModelScope.launch {
+            _checkPassword.value = password
+        }
+    }
+
+    fun setName(name: String) {
+        viewModelScope.launch {
+            _name.value = name
+        }
+    }
+
+
 }

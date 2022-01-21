@@ -6,19 +6,12 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.ButtonDefaults.buttonColors
-import androidx.compose.material.TextFieldDefaults.textFieldColors
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
@@ -26,9 +19,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -38,10 +28,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill.R
 import com.halill.halill.base.observeWithLifecycle
+import com.halill.halill.features.auth.IdTextField
+import com.halill.halill.features.auth.PasswordTextField
 import com.halill.halill.features.auth.login.model.LoginEvent
 import com.halill.halill.features.auth.login.model.LoginState
 import com.halill.halill.features.auth.login.viewmodel.LoginViewModel
-import com.halill.halill.ui.theme.Gray200
 import com.halill.halill.ui.theme.Teal200
 import com.halill.halill.ui.theme.Teal900
 import kotlinx.coroutines.launch
@@ -164,18 +155,25 @@ fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel) {
             .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
             .background(color = Color.White)
     ) {
-        val passwordFocusRequester = FocusRequester()
+        val passwordFocusRequester = remember {
+            FocusRequester()
+        }
         val emailText = loginViewModel.email.collectAsState()
         val emailLabel = "이메일"
-        IdTextField(passwordFocusRequester, emailText, emailLabel, doOnValueChange = {
-            loginViewModel.setEmail(it)
-            checkDoneInput(loginViewModel)
-        },
-        imeAction = ImeAction.Next)
+        IdTextField(
+            passwordFocusRequester, emailText, emailLabel, doOnValueChange = {
+                loginViewModel.setEmail(it)
+                checkDoneInput(loginViewModel)
+            },
+            imeAction = ImeAction.Next
+        )
         val passwordText = loginViewModel.password.collectAsState()
         val passwordLabel = "비밀번호"
         PasswordTextField(
-            passwordFocusRequester, passwordText, passwordLabel, doOnValueChange = {
+            focusRequester = passwordFocusRequester,
+            text = passwordText,
+            label = passwordLabel,
+            doOnValueChange = {
                 loginViewModel.setPassword(it)
                 checkDoneInput(loginViewModel)
             },
@@ -222,90 +220,6 @@ private fun loginLayoutConstraint(): ConstraintSet =
         }
     }
 
-@Composable
-fun IdTextField(
-    focusRequester: FocusRequester,
-    text: State<String>,
-    label: String,
-    doOnValueChange: (text: String) -> Unit,
-    imeAction: ImeAction
-) {
-    val focusManager = LocalFocusManager.current
-    TextField(value = text.value,
-        onValueChange = {
-            doOnValueChange(it)
-        },
-        label = { Text(label) },
-        colors = textFieldColors(
-            backgroundColor = Color.White
-        ),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Email,
-            imeAction = imeAction
-        ),
-        keyboardActions = KeyboardActions(
-            onNext = {
-                focusManager.clearFocus()
-                focusRequester.requestFocus()
-            },
-            onDone = {
-                focusManager.clearFocus()
-            }
-        ),
-        modifier = loginTextFieldModifier
-            .layoutId(LoginLayoutViews.IdTextField)
-    )
-}
-
-@Composable
-fun PasswordTextField(
-    focusRequester: FocusRequester,
-    text: State<String>,
-    label: String,
-    doOnValueChange: (text: String) -> Unit,
-    imeAction: ImeAction
-) {
-    val focusManager = LocalFocusManager.current
-    var passwordVisibility by remember {
-        mutableStateOf(false)
-    }
-    TextField(value = text.value, onValueChange = {
-        doOnValueChange(it)
-    }, label = { Text(label) },
-        colors = textFieldColors(
-            backgroundColor = Color.White
-        ),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Password,
-            imeAction = imeAction
-        ),
-        keyboardActions = KeyboardActions(
-            onNext = {
-                focusManager.clearFocus()
-                focusRequester.requestFocus()
-            },
-            onDone = {
-                focusManager.clearFocus()
-            }
-        ),
-        modifier = loginTextFieldModifier
-            .focusRequester(focusRequester)
-            .layoutId(LoginLayoutViews.PasswordField),
-        visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-        trailingIcon = {
-            val icon = if (passwordVisibility)
-                Icons.Filled.Visibility
-            else Icons.Filled.VisibilityOff
-
-            IconButton(onClick = {
-                passwordVisibility = !passwordVisibility
-            }) {
-                Icon(imageVector = icon, contentDescription = "password visible")
-            }
-        }
-    )
-}
-
 private fun checkDoneInput(viewModel: LoginViewModel) {
     val emailValue = viewModel.email.value
     val passwordValue = viewModel.password.value
@@ -316,14 +230,6 @@ private fun checkDoneInput(viewModel: LoginViewModel) {
     )
     else viewModel.setNotDoneInputState()
 }
-
-private val loginTextFieldModifier = Modifier
-    .clip(RoundedCornerShape(30.dp))
-    .border(
-        width = 1.dp,
-        color = Gray200,
-        shape = RoundedCornerShape(30.dp)
-    )
 
 @Composable
 fun LoginButton(loginViewModel: LoginViewModel) {

@@ -23,13 +23,10 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = hiltVi
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val focusRequester = remember {
-            FocusRequester()
-        }
+        val focusRequester = remember { FocusRequester() }
         val emailText = viewModel.email.collectAsState()
         val emailLabel = "이메일을 입력해주세요"
         IdTextField(
-            focusRequester = focusRequester,
             text = emailText,
             label = emailLabel,
             layoutId = "register_email_tf",
@@ -42,7 +39,6 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = hiltVi
         val passwordText = viewModel.password.collectAsState()
         val passwordLabel = "비밀번호를 입력해주세요"
         PasswordTextField(
-            focusRequester = focusRequester,
             text = passwordText,
             label = passwordLabel,
             layoutId = "register_password_tf",
@@ -55,7 +51,6 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = hiltVi
         val checkPasswordText = viewModel.checkPassword.collectAsState()
         val checkPasswordLabel = "비밀번호를 한번 더 입력해주세요"
         PasswordTextField(
-            focusRequester = focusRequester,
             text = checkPasswordText,
             label = checkPasswordLabel,
             layoutId = "register_check_password_tf",
@@ -68,7 +63,6 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = hiltVi
         val nameText = viewModel.name.collectAsState()
         val nameLabel = "이름을 입력해주세요"
         IdTextField(
-            focusRequester = focusRequester,
             text = nameText,
             label = nameLabel,
             layoutId = "register_name_tf",

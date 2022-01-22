@@ -11,8 +11,7 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalFocusManager
@@ -26,7 +25,6 @@ import com.halill.halill.ui.theme.Gray200
 
 @Composable
 fun IdTextField(
-    focusRequester: FocusRequester,
     text: State<String>,
     label: String,
     layoutId: Any = LoginLayoutViews.IdTextField,
@@ -49,8 +47,7 @@ fun IdTextField(
         ),
         keyboardActions = KeyboardActions(
             onNext = {
-                focusManager.clearFocus()
-                focusRequester.requestFocus()
+                focusManager.moveFocus(FocusDirection.Down)
             },
             onDone = {
                 focusManager.clearFocus()
@@ -63,7 +60,6 @@ fun IdTextField(
 
 @Composable
 fun PasswordTextField(
-    focusRequester: FocusRequester,
     text: State<String>,
     layoutId: Any = LoginLayoutViews.PasswordField,
     label: String,
@@ -86,20 +82,17 @@ fun PasswordTextField(
         ),
         keyboardActions = KeyboardActions(
             onNext = {
-                focusManager.clearFocus()
-                focusRequester.requestFocus()
+                focusManager.moveFocus(FocusDirection.Down)
             },
             onDone = {
                 focusManager.clearFocus()
             }
         ),
         modifier = loginTextFieldModifier
-            .focusRequester(focusRequester)
             .layoutId(layoutId),
         visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
         trailingIcon = {
-            val icon = if (passwordVisibility)
-                Icons.Filled.Visibility
+            val icon = if (passwordVisibility) Icons.Filled.Visibility
             else Icons.Filled.VisibilityOff
 
             IconButton(onClick = {
@@ -111,10 +104,12 @@ fun PasswordTextField(
     )
 }
 
-private val loginTextFieldModifier = Modifier
-    .clip(RoundedCornerShape(30.dp))
-    .border(
-        width = 1.dp,
-        color = Gray200,
-        shape = RoundedCornerShape(30.dp)
-    )
+private val loginTextFieldModifier by lazy {
+    Modifier
+        .clip(RoundedCornerShape(30.dp))
+        .border(
+            width = 1.dp,
+            color = Gray200,
+            shape = RoundedCornerShape(30.dp)
+        )
+}

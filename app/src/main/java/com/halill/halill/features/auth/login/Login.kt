@@ -11,7 +11,6 @@ import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
@@ -155,13 +154,12 @@ fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel) {
             .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
             .background(color = Color.White)
     ) {
-        val passwordFocusRequester = remember {
-            FocusRequester()
-        }
         val emailText = loginViewModel.email.collectAsState()
         val emailLabel = "이메일"
         IdTextField(
-            passwordFocusRequester, emailText, emailLabel, doOnValueChange = {
+            text = emailText,
+            label = emailLabel,
+            doOnValueChange = {
                 loginViewModel.setEmail(it)
                 checkDoneInput(loginViewModel)
             },
@@ -170,7 +168,6 @@ fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel) {
         val passwordText = loginViewModel.password.collectAsState()
         val passwordLabel = "비밀번호"
         PasswordTextField(
-            focusRequester = passwordFocusRequester,
             text = passwordText,
             label = passwordLabel,
             doOnValueChange = {

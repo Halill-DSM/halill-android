@@ -2,11 +2,16 @@ package com.halill.halill.features.auth.register.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.halill.halill.features.auth.register.model.RegisterState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class RegisterViewModel : ViewModel() {
+
+    private val _registerState = MutableStateFlow(RegisterState.NotDoneInputState)
+    val registerState: StateFlow<RegisterState> = _registerState
+
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email
 
@@ -43,5 +48,7 @@ class RegisterViewModel : ViewModel() {
         }
     }
 
+    fun register() {
 
+    }
 }

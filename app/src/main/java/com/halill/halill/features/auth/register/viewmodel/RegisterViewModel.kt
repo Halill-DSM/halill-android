@@ -5,7 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.halill.domain.features.auth.entity.User
 import com.halill.domain.features.auth.parameter.RegisterParameter
 import com.halill.domain.features.auth.usecase.RegisterUseCase
+import com.halill.halill.base.EventFlow
+import com.halill.halill.base.MutableEventFlow
+import com.halill.halill.base.asEventFlow
 import com.halill.halill.features.auth.register.checkPassword
+import com.halill.halill.features.auth.register.model.RegisterEvent
 import com.halill.halill.features.auth.register.model.RegisterState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +25,9 @@ class RegisterViewModel @Inject constructor(
 
     private val _registerState = MutableStateFlow<RegisterState>(RegisterState.NotDoneInputState)
     val registerState: StateFlow<RegisterState> = _registerState
+
+    private val _registerEvent = MutableEventFlow<RegisterEvent>()
+    val registerEvent: EventFlow<RegisterEvent> = _registerEvent.asEventFlow()
 
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email

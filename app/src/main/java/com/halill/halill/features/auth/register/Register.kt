@@ -68,6 +68,11 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = hiltVi
 }
 
 @Composable
+private fun EventHandle() {
+
+}
+
+@Composable
 fun RegisterEmailTextField(viewModel: RegisterViewModel) {
     val emailText = viewModel.email.collectAsState()
     val emailLabel = "이메일을 입력해주세요"

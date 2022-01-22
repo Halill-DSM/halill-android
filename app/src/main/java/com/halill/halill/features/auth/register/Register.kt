@@ -1,13 +1,10 @@
 package com.halill.halill.features.auth.register
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.SnackbarDuration
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
@@ -17,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -28,36 +24,47 @@ import com.halill.halill.R
 import com.halill.halill.features.auth.IdTextField
 import com.halill.halill.features.auth.PasswordTextField
 import com.halill.halill.features.auth.login.LoginLayoutViews
-import com.halill.halill.features.auth.login.model.LoginState
 import com.halill.halill.features.auth.login.scaffoldState
 import com.halill.halill.features.auth.register.model.RegisterState
 import com.halill.halill.features.auth.register.viewmodel.RegisterViewModel
+import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.ui.theme.Teal900
 import kotlinx.coroutines.launch
 
 @Composable
 fun Register(navController: NavController, viewModel: RegisterViewModel = hiltViewModel()) {
-    Image(painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-        contentDescription = "registerBack",
-        modifier = Modifier
-            .size(50.dp)
-            .padding(10.dp)
-            .clickable(enabled = true) {
-                navController.popBackStack()
+    scaffoldState = rememberScaffoldState()
+    Scaffold(scaffoldState = scaffoldState,
+        topBar = {
+            TopAppBar(
+                title = {
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
+                        Icon(Icons.Filled.ArrowBack, "")
+                    }
+                },
+                backgroundColor = Teal700,
+                contentColor = Color.White,
+                elevation = 12.dp
+            )
+        }, content = {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                RegisterEmailTextField(viewModel = viewModel)
+                val passwordText = viewModel.password.collectAsState()
+                RegisterPasswordTextField(viewModel = viewModel, password = passwordText)
+                RegisterCheckPasswordTextField(viewModel = viewModel, password = passwordText)
+                RegisterNameTextField(viewModel = viewModel)
+                RegisterButton(viewModel = viewModel)
             }
-    )
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        RegisterEmailTextField(viewModel = viewModel)
-        val passwordText = viewModel.password.collectAsState()
-        RegisterPasswordTextField(viewModel = viewModel, password = passwordText)
-        RegisterCheckPasswordTextField(viewModel = viewModel, password = passwordText)
-        RegisterNameTextField(viewModel = viewModel)
-        RegisterButton(viewModel = viewModel)
-    }
+        })
+    
 }
 
 @Composable
@@ -150,9 +157,10 @@ fun RegisterButton(viewModel: RegisterViewModel) {
         ),
         modifier = Modifier
             .layoutId(LoginLayoutViews.LoginButton)
+            .width(200.dp)
             .clip(RoundedCornerShape(30.dp))
     ) {
-        Text(text = stringResource(id = R.string.login))
+        Text(text = stringResource(id = R.string.register))
     }
 }
 

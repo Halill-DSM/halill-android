@@ -64,7 +64,7 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = hiltVi
                 RegisterButton(viewModel = viewModel)
             }
         })
-    
+
 }
 
 @Composable
@@ -164,5 +164,5 @@ fun RegisterButton(viewModel: RegisterViewModel) {
     }
 }
 
-private fun String.checkPassword(password: String): Boolean =
+fun String.checkPassword(password: String): Boolean =
     this.isNotEmpty() && this != password

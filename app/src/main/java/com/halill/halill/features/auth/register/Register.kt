@@ -21,10 +21,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill.R
+import com.halill.halill.base.EventFlow
+import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.features.auth.IdTextField
 import com.halill.halill.features.auth.PasswordTextField
 import com.halill.halill.features.auth.login.LoginLayoutViews
 import com.halill.halill.features.auth.login.scaffoldState
+import com.halill.halill.features.auth.register.model.RegisterEvent
 import com.halill.halill.features.auth.register.model.RegisterState
 import com.halill.halill.features.auth.register.viewmodel.RegisterViewModel
 import com.halill.halill.ui.theme.Teal700
@@ -64,12 +67,36 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = hiltVi
                 RegisterButton(viewModel = viewModel)
             }
         })
-
+    val event = viewModel.registerEvent
+    EventHandle(navController = navController, event = event)
 }
 
 @Composable
-private fun EventHandle() {
-
+private fun EventHandle(navController: NavController, event: EventFlow<RegisterEvent>) {
+    val scope = rememberCoroutineScope()
+    val successComment = stringResource(id = R.string.success_register_comment)
+    val failRegisterComment = stringResource(id = R.string.fail_register_comment)
+    event.observeWithLifecycle(action = {
+        when(it) {
+            is RegisterEvent.FinishRegister -> {
+                scope.launch {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        successComment,
+                        duration = SnackbarDuration.Short
+                    )
+                    navController.popBackStack()
+                }
+            }
+            is RegisterEvent.FailRegister -> {
+                scope.launch {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        failRegisterComment,
+                        duration = SnackbarDuration.Short
+                    )
+                }
+            }
+        }
+    })
 }
 
 @Composable

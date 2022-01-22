@@ -1,6 +1,8 @@
 package com.halill.halill.features.auth
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -64,44 +66,60 @@ fun PasswordTextField(
     layoutId: Any = LoginLayoutViews.PasswordField,
     label: String,
     doOnValueChange: (text: String) -> Unit,
+    isError: Boolean = false,
     imeAction: ImeAction
 ) {
     val focusManager = LocalFocusManager.current
     var passwordVisibility by remember {
         mutableStateOf(false)
     }
-    TextField(value = text.value, onValueChange = {
-        doOnValueChange(it)
-    }, label = { Text(label) },
-        colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = Color.White
-        ),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Password,
-            imeAction = imeAction
-        ),
-        keyboardActions = KeyboardActions(
-            onNext = {
-                focusManager.moveFocus(FocusDirection.Down)
-            },
-            onDone = {
-                focusManager.clearFocus()
-            }
-        ),
+    Column(
         modifier = loginTextFieldModifier
-            .layoutId(layoutId),
-        visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-        trailingIcon = {
-            val icon = if (passwordVisibility) Icons.Filled.Visibility
-            else Icons.Filled.VisibilityOff
+            .layoutId(layoutId)
+    ) {
+        TextField(value = text.value,
+            onValueChange = {
+                doOnValueChange(it)
+            },
+            label = { Text(label) },
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.White
+            ),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = imeAction
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = {
+                    focusManager.moveFocus(FocusDirection.Down)
+                },
+                onDone = {
+                    focusManager.clearFocus()
+                }
+            ),
+            isError = isError,
+            visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                val icon = if (passwordVisibility) Icons.Filled.Visibility
+                else Icons.Filled.VisibilityOff
 
-            IconButton(onClick = {
-                passwordVisibility = !passwordVisibility
-            }) {
-                Icon(imageVector = icon, contentDescription = "password visible")
+                IconButton(onClick = {
+                    passwordVisibility = !passwordVisibility
+                }) {
+                    Icon(imageVector = icon, contentDescription = "password visible")
+                }
             }
+        )
+        if (isError) {
+            val errorMessage = "비밀번호가 일치하지 않습니다"
+            Text(
+                text = errorMessage,
+                color = MaterialTheme.colors.error,
+                style = MaterialTheme.typography.caption,
+                modifier = Modifier.padding(start = 16.dp)
+            )
         }
-    )
+    }
 }
 
 private val loginTextFieldModifier by lazy {

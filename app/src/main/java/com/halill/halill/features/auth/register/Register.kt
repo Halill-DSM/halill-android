@@ -57,6 +57,7 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = hiltVi
             doOnValueChange = {
                 viewModel.setCheckPassword(it)
             },
+            isError = checkPasswordText.value.checkPassword(passwordText.value),
             imeAction = ImeAction.Next
         )
         Spacer(modifier = Modifier.height(25.dp))
@@ -74,3 +75,6 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = hiltVi
         )
     }
 }
+
+private fun String.checkPassword(password: String): Boolean =
+    this.isNotEmpty() && this != password

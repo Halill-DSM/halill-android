@@ -167,7 +167,7 @@ fun RegisterNameTextField(viewModel: RegisterViewModel) {
 @Composable
 fun RegisterButton(viewModel: RegisterViewModel) {
     val scope = rememberCoroutineScope()
-    val registerState = viewModel.registerState
+    val registerState = viewModel.registerState.collectAsState()
     val emptyComment = stringResource(id = R.string.login_empty_comment)
     Spacer(modifier = Modifier.height(25.dp))
     Button(

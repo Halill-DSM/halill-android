@@ -33,6 +33,8 @@ class RemoteAuthDataSourceImpl @Inject constructor(
     override suspend fun register(parameter: RegisterParameter) =
         try {
             authApi.register(parameter.toRequest())
+        }catch (e: HttpException) {
+            print(e.code())
         } catch (e: UnknownHostException) {
             throw InternetErrorException()
         }

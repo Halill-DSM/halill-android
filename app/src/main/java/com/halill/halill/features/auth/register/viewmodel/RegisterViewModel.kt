@@ -72,7 +72,7 @@ class RegisterViewModel @Inject constructor(
     private fun checkDoneInput() {
         if (email.value.isNotBlank() &&
             password.value.isNotBlank() &&
-            checkPassword.value.checkPassword(password.value) &&
+            !checkPassword.value.checkPassword(password.value) &&
             name.value.isNotBlank()
         ) {
             _registerState.value = RegisterState.DoneInputState
@@ -89,8 +89,9 @@ class RegisterViewModel @Inject constructor(
             )
             try {
                 registerUseCase.execute(parameter)
+                _registerEvent.emit(RegisterEvent.FinishRegister)
             } catch (e:Exception) {
-
+                _registerEvent.emit(RegisterEvent.FailRegister)
             }
         }
     }

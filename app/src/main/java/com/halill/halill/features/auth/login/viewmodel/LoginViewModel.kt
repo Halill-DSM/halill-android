@@ -37,7 +37,8 @@ class LoginViewModel @Inject constructor(
             _loginState.emit(LoginState.LoadingState)
             if (email.value.isNotEmpty() && password.value.isNotEmpty())
                 try {
-                    loginUseCase.execute(LoginParameter(email.value, password.value))
+                    val parameter = LoginParameter(email.value, password.value)
+                    loginUseCase.execute(parameter)
                     _loginEvent.emit(LoginEvent.FinishLogin)
                 } catch (e: WrongIdException) {
                     _loginEvent.emit(LoginEvent.WrongId)

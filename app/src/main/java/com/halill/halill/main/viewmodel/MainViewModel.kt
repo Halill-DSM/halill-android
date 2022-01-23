@@ -2,6 +2,7 @@ package com.halill.halill.main.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.halill.domain.exception.BadRequestException
 import com.halill.domain.exception.NotLoginException
 import com.halill.domain.features.auth.usecase.GetUserInfoUseCase
 import com.halill.domain.features.todo.usecase.GetTodoListUseCase
@@ -53,6 +54,8 @@ class MainViewModel @Inject constructor(
                 }
             } catch (e: NotLoginException) {
                 _mainState.value = MainState.EmptyListState
+            } catch (e: BadRequestException) {
+                
             }
         }
     }

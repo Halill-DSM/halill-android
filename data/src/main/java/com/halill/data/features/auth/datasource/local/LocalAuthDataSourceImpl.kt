@@ -21,6 +21,6 @@ class LocalAuthDataSourceImpl @Inject constructor(
     override suspend fun getRefreshToken(): Flow<String?> =
         localStorage.getRefreshToken()
 
-    override suspend fun getUser(): UserData =
+    override suspend fun getUser(): Flow<UserData> =
         localStorage.getUser()
 }

@@ -84,8 +84,8 @@ private fun EventHandle(navController: NavController, event: EventFlow<RegisterE
                         successComment,
                         duration = SnackbarDuration.Short
                     )
-                    navController.popBackStack()
                 }
+                navController.popBackStack()
             }
             is RegisterEvent.FailRegister -> {
                 scope.launch {

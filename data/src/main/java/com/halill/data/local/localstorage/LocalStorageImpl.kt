@@ -7,10 +7,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.halill.data.features.auth.entity.UserData
-import com.halill.data.local.localstorage.LocalStorage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.single
 import javax.inject.Inject
 
 class LocalStorageImpl @Inject constructor(private val context: Context) : LocalStorage {
@@ -42,22 +40,22 @@ class LocalStorageImpl @Inject constructor(private val context: Context) : Local
         }
     }
 
-    override suspend fun getAccessToken(): String? =
+    override suspend fun getAccessToken(): Flow<String?> =
         context.dataStore.data.map { preferences ->
             preferences[ACCESS_TOKEN_KEY]
-        }.single()
+        }
 
     override suspend fun getRefreshToken(): Flow<String?> =
         context.dataStore.data.map { preferences ->
             preferences[REFRESH_TOKEN_KEY]
         }
 
-    override suspend fun getUser(): UserData =
+    override suspend fun getUser(): Flow<UserData> =
         context.dataStore.data.map { preferences ->
             val name = preferences[USER_NAME_KEY]?:""
             val email = preferences[USER_EMAIL_KEY]?:""
             UserData(name, email)
-        }.single()
+        }
 }
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "halill")

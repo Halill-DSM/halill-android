@@ -11,5 +11,5 @@ interface LocalAuthDataSource {
 
     suspend fun getRefreshToken(): Flow<String?>
 
-    suspend fun getUser(): UserData
+    suspend fun getUser(): Flow<UserData>
 }

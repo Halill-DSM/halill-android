@@ -1,26 +1,23 @@
 package com.halill.halill.features.auth.login
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.ButtonDefaults.buttonColors
-import androidx.compose.material.TextFieldDefaults.textFieldColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -29,9 +26,12 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill.R
+import com.halill.halill.base.observeWithLifecycle
+import com.halill.halill.features.auth.IdTextField
+import com.halill.halill.features.auth.PasswordTextField
+import com.halill.halill.features.auth.login.model.LoginEvent
 import com.halill.halill.features.auth.login.model.LoginState
 import com.halill.halill.features.auth.login.viewmodel.LoginViewModel
-import com.halill.halill.ui.theme.Gray200
 import com.halill.halill.ui.theme.Teal200
 import com.halill.halill.ui.theme.Teal900
 import kotlinx.coroutines.launch
@@ -59,6 +59,36 @@ fun Login(
                 LoginLayout(navController, loginViewModel)
             }
         }
+    }
+    EventHandle(navController = navController, viewModel = loginViewModel)
+}
+
+@Composable
+private fun EventHandle(navController: NavController, viewModel: LoginViewModel) {
+    val scope = rememberCoroutineScope()
+
+    val wrongComment = stringResource(id = R.string.wrong_id_comment)
+    viewModel.loginEvent.observeWithLifecycle(action = {
+        when (it) {
+            is LoginEvent.WrongId -> scope.launch {
+                scaffoldState.snackbarHostState.showSnackbar(
+                    wrongComment,
+                    duration = SnackbarDuration.Short
+                )
+            }
+
+            is LoginEvent.FinishLogin -> navController.popBackStack()
+        }
+    })
+    BackPressHandle()
+}
+
+@Composable
+private fun BackPressHandle() {
+    val backHandlingEnabled by remember { mutableStateOf(true) }
+    val activity = (LocalContext.current as? Activity)
+    BackHandler(backHandlingEnabled) {
+        activity?.finish()
     }
 }
 
@@ -124,9 +154,28 @@ fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel) {
             .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
             .background(color = Color.White)
     ) {
-        val passwordFocusRequester = FocusRequester()
-        IdTextField(passwordFocusRequester, loginViewModel)
-        PasswordTextField(passwordFocusRequester, loginViewModel)
+        val emailText = loginViewModel.email.collectAsState()
+        val emailLabel = "이메일"
+        IdTextField(
+            text = emailText,
+            label = emailLabel,
+            doOnValueChange = {
+                loginViewModel.setEmail(it)
+                checkDoneInput(loginViewModel)
+            },
+            imeAction = ImeAction.Next
+        )
+        val passwordText = loginViewModel.password.collectAsState()
+        val passwordLabel = "비밀번호"
+        PasswordTextField(
+            text = passwordText,
+            label = passwordLabel,
+            doOnValueChange = {
+                loginViewModel.setPassword(it)
+                checkDoneInput(loginViewModel)
+            },
+            imeAction = ImeAction.Done
+        )
         LoginButton(loginViewModel)
         AskRegisterText()
         StartRegisterButton(navController)
@@ -168,66 +217,6 @@ private fun loginLayoutConstraint(): ConstraintSet =
         }
     }
 
-@Composable
-fun IdTextField(
-    passwordFocusRequester: FocusRequester,
-    loginViewModel: LoginViewModel
-) {
-    val focusManager = LocalFocusManager.current
-    val text = loginViewModel.email.collectAsState(initial = "")
-    TextField(value = text.value,
-        onValueChange = {
-            loginViewModel.setEmail(it)
-            checkDoneInput(loginViewModel)
-        },
-        label = { Text("이메일") },
-        colors = textFieldColors(
-            backgroundColor = Color.White
-        ),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next
-        ),
-        keyboardActions = KeyboardActions(
-            onNext = {
-                focusManager.clearFocus()
-                passwordFocusRequester.requestFocus()
-            }
-        ),
-        modifier = loginTextFieldModifier
-            .layoutId(LoginLayoutViews.IdTextField)
-    )
-}
-
-@Composable
-fun PasswordTextField(
-    passwordFocusRequester: FocusRequester,
-    loginViewModel: LoginViewModel
-) {
-    val focusManager = LocalFocusManager.current
-    val text = loginViewModel.password.collectAsState(initial = "")
-    TextField(value = text.value, onValueChange = {
-        loginViewModel.setPassword(it)
-        checkDoneInput(loginViewModel)
-    }, label = { Text("비밀번호") },
-        colors = textFieldColors(
-            backgroundColor = Color.White
-        ),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Done
-        ),
-        keyboardActions = KeyboardActions(
-            onDone = {
-                focusManager.clearFocus()
-            }
-        ),
-        modifier = loginTextFieldModifier
-            .focusRequester(passwordFocusRequester)
-            .layoutId(LoginLayoutViews.PasswordField)
-    )
-}
-
 private fun checkDoneInput(viewModel: LoginViewModel) {
     val emailValue = viewModel.email.value
     val passwordValue = viewModel.password.value
@@ -238,14 +227,6 @@ private fun checkDoneInput(viewModel: LoginViewModel) {
     )
     else viewModel.setNotDoneInputState()
 }
-
-private val loginTextFieldModifier = Modifier
-    .clip(RoundedCornerShape(30.dp))
-    .border(
-        width = 1.dp,
-        color = Gray200,
-        shape = RoundedCornerShape(30.dp)
-    )
 
 @Composable
 fun LoginButton(loginViewModel: LoginViewModel) {

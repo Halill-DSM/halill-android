@@ -9,13 +9,7 @@ import com.halill.domain.features.todo.entity.TodoModel
 import com.halill.domain.features.todo.entity.UserTodoList
 import com.halill.domain.features.todo.repository.GetTodoListRepository
 import com.halill.domain.features.todo.todoList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 class GetTodoListRepositoryImpl @Inject constructor(
@@ -24,7 +18,8 @@ class GetTodoListRepositoryImpl @Inject constructor(
     private val remoteTodoDataSource: RemoteTodoDataSource
 ) : GetTodoListRepository {
     override suspend fun getTodoList(): Flow<UserTodoList> {
-        val email = "test@naver.com"
+        val email = localAuthDataSource.getUser().singleOrNull()?.email?:""
+
         return OfflineCacheUtil<List<TodoModel>>()
             .localData { localTodoDataSource.getTodoList() }
             .remoteData { remoteTodoDataSource.getTodoList(email) }

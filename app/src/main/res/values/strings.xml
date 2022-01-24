@@ -2,4 +2,11 @@
     <string name="app_name">HalIll</string>
     <string name="todo">Todo</string>
     <string name="done">Done</string>
+    <string name="login">로그인</string>
+    <string name="ask_register">아직 아이디가 없으신가요?</string>
+    <string name="register">회원가입</string>
+    <string name="login_empty_comment">모든 정보를 입력해주세요</string>
+    <string name="wrong_id_comment">잘못된 로그인 정보입니다</string>
+    <string name="success_register_comment">회원가입을 완료하였습니다</string>
+    <string name="fail_register_comment">회원가입에 실패하였습니다</string>
 </resources>

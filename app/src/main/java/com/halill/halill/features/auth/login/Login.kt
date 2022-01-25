@@ -32,11 +32,10 @@ import com.halill.halill.features.auth.PasswordTextField
 import com.halill.halill.features.auth.login.model.LoginEvent
 import com.halill.halill.features.auth.login.model.LoginState
 import com.halill.halill.features.auth.login.viewmodel.LoginViewModel
+import com.halill.halill.main.scaffoldState
 import com.halill.halill.ui.theme.Teal200
 import com.halill.halill.ui.theme.Teal900
 import kotlinx.coroutines.launch
-
-lateinit var scaffoldState: ScaffoldState
 
 @Composable
 fun Login(
@@ -44,7 +43,6 @@ fun Login(
     darkTheme: Boolean = isSystemInDarkTheme(),
     loginViewModel: LoginViewModel = hiltViewModel()
 ) {
-    scaffoldState = rememberScaffoldState()
     val backgroundColor = if (darkTheme) Color.Black else Teal200
     Scaffold(scaffoldState = scaffoldState) {
         BoxWithConstraints(

@@ -3,9 +3,7 @@ package com.halill.halill.main
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Tab
-import androidx.compose.material.TabRow
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -23,9 +21,12 @@ import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.main.model.MainEvent
 import kotlinx.coroutines.launch
 
+lateinit var scaffoldState: ScaffoldState
+
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
+    scaffoldState = rememberScaffoldState()
     viewModel.loadTodoList()
 
     viewModel.mainEvent.observeWithLifecycle { mainEvent ->

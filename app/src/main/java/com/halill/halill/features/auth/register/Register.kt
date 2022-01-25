@@ -26,17 +26,16 @@ import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.features.auth.IdTextField
 import com.halill.halill.features.auth.PasswordTextField
 import com.halill.halill.features.auth.login.LoginLayoutViews
-import com.halill.halill.features.auth.login.scaffoldState
 import com.halill.halill.features.auth.register.model.RegisterEvent
 import com.halill.halill.features.auth.register.model.RegisterState
 import com.halill.halill.features.auth.register.viewmodel.RegisterViewModel
+import com.halill.halill.main.scaffoldState
 import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.ui.theme.Teal900
 import kotlinx.coroutines.launch
 
 @Composable
 fun Register(navController: NavController, viewModel: RegisterViewModel = hiltViewModel()) {
-    scaffoldState = rememberScaffoldState()
     Scaffold(scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(

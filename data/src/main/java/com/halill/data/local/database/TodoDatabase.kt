@@ -4,10 +4,10 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.halill.data.features.todo.database.dao.TodoDao
-import com.halill.data.features.todo.database.entity.TodoEntity
+import com.halill.data.features.todo.database.entity.TodoRoomEntity
 import com.halill.data.local.database.converter.LocalDateTimeConverter
 
-@Database(entities = [TodoEntity::class], version = 1)
+@Database(entities = [TodoRoomEntity::class], version = 1)
 @TypeConverters(LocalDateTimeConverter::class)
 abstract class TodoDatabase : RoomDatabase() {
     abstract fun todoDao(): TodoDao

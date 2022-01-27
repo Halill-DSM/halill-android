@@ -4,13 +4,13 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.halill.data.features.todo.database.entity.TodoEntity
+import com.halill.data.features.todo.database.entity.TodoRoomEntity
 
 @Dao
 interface TodoDao {
     @Query("SELECT * FROM todolist")
-    suspend fun getTodoList(): List<TodoEntity>
+    suspend fun getTodoList(): List<TodoRoomEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveTodoList(todoList: List<TodoEntity>)
+    suspend fun saveTodoList(todoRoomList: TodoRoomEntity)
 }

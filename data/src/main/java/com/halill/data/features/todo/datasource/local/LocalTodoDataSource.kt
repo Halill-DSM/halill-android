@@ -5,5 +5,5 @@ import com.halill.domain.features.todo.entity.TodoEntity
 interface LocalTodoDataSource {
     suspend fun getTodoList(): List<TodoEntity>
 
-    suspend fun saveTodoList(todoList: List<TodoEntity>)
+    suspend fun saveTodoList(todoList: TodoEntity)
 }

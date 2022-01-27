@@ -2,7 +2,7 @@ package com.halill.halill.features.auth.register.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.halill.domain.features.auth.entity.User
+import com.halill.domain.features.auth.entity.UserEntity
 import com.halill.domain.features.auth.parameter.RegisterParameter
 import com.halill.domain.features.auth.usecase.RegisterUseCase
 import com.halill.halill.base.EventFlow
@@ -84,7 +84,7 @@ class RegisterViewModel @Inject constructor(
     fun register() {
         viewModelScope.launch {
             val parameter = RegisterParameter(
-                user = User(name = name.value, email = email.value),
+                userEntity = UserEntity(name = name.value, email = email.value),
                 password = password.value
             )
             try {

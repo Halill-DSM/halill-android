@@ -1,9 +1,9 @@
 package com.halill.domain.features.todo
 
-import com.halill.domain.features.todo.entity.TodoModel
+import com.halill.domain.features.todo.entity.TodoEntity
 
-fun List<TodoModel>.todoList(): List<TodoModel> =
+fun List<TodoEntity>.todoList(): List<TodoEntity> =
     this.filter { !it.isCompleted }
 
-fun List<TodoModel>.doneList(): List<TodoModel> =
+fun List<TodoEntity>.doneList(): List<TodoEntity> =
     this.filter { it.isCompleted }

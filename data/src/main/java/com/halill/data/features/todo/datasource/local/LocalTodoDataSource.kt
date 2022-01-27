@@ -1,9 +1,9 @@
 package com.halill.data.features.todo.datasource.local
 
-import com.halill.domain.features.todo.entity.TodoModel
+import com.halill.domain.features.todo.entity.TodoEntity
 
 interface LocalTodoDataSource {
-    suspend fun getTodoList(): List<TodoModel>
+    suspend fun getTodoList(): List<TodoEntity>
 
-    suspend fun saveTodoList(todoList: List<TodoModel>)
+    suspend fun saveTodoList(todoList: List<TodoEntity>)
 }

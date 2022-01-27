@@ -5,8 +5,6 @@ import com.halill.domain.features.todo.entity.TodoEntity
 
 sealed class MainState {
     object LoadingState : MainState()
-    data class ShowTodoListState(val userEntity: UserEntity, val data: List<TodoEntity>) : MainState()
-    data class ShowDoneListState(val userEntity: UserEntity, val data: List<TodoEntity>) : MainState()
-    data class ErrorState(val date: String) : MainState()
-    object EmptyListState : MainState()
+    data class ShowTodoListState(val userEntity: UserEntity, val todoList: List<TodoEntity>, val doneList: List<TodoEntity>) : MainState()
+    data class EmptyListState(val userEntity: UserEntity) : MainState()
 }

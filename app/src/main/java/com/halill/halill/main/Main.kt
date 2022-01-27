@@ -3,12 +3,17 @@ package com.halill.halill.main
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -21,6 +26,7 @@ import com.halill.halill.R
 import com.halill.halill.base.EventFlow
 import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.main.model.MainEvent
+import com.halill.halill.main.model.MainState
 import com.halill.halill.ui.theme.Teal900
 import kotlinx.coroutines.launch
 
@@ -30,7 +36,6 @@ lateinit var scaffoldState: ScaffoldState
 @Composable
 fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     scaffoldState = rememberScaffoldState()
-    viewModel.loadTodoList()
 
     val tabData = listOf(
         stringResource(id = R.string.todo),
@@ -44,9 +49,31 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
     )
 
     Scaffold(scaffoldState = scaffoldState,
+        floatingActionButton = {
+            FloatingActionButton(onClick = { /* ... */ }) {
+                Icon(
+                    painter = rememberVectorPainter(image = Icons.Filled.Add),
+                    contentDescription = "write todo"
+                )
+            }
+        },
+        isFloatingActionButtonDocked = true,
         bottomBar = {
-            BottomAppBar {
-
+            BottomAppBar(
+                cutoutShape = MaterialTheme.shapes.small.copy(
+                    CornerSize(percent = 50)
+                )
+            ) {
+                val userName =
+                    when (val mainState = viewModel.mainState.collectAsState().value) {
+                        is MainState.ShowTodoListState -> mainState.userEntity.name
+                        is MainState.EmptyListState -> mainState.userEntity.name
+                        else -> {
+                            val needLoginText = "로그인이 필요합니다"
+                            needLoginText
+                        }
+                    }
+                Text(text = userName)
             }
         }) {
         Column {

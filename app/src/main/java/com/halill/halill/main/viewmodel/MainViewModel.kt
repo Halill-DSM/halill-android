@@ -2,8 +2,8 @@ package com.halill.halill.main.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.halill.domain.exception.BadRequestException
 import com.halill.domain.exception.NotLoginException
+import com.halill.domain.features.auth.entity.UserEntity
 import com.halill.domain.features.auth.usecase.GetUserInfoUseCase
 import com.halill.domain.features.todo.usecase.GetTodoListUseCase
 import com.halill.halill.base.EventFlow
@@ -23,7 +23,7 @@ class MainViewModel @Inject constructor(
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getTodoListUseCase: GetTodoListUseCase
 ) : ViewModel() {
-    private val _mainState = MutableStateFlow(MainState.EmptyListState)
+    private val _mainState = MutableStateFlow<MainState>(MainState.LoadingState)
     val mainState: StateFlow<MainState> get() = _mainState
 
     private val _mainEvent = MutableEventFlow<MainEvent>()
@@ -38,24 +38,28 @@ class MainViewModel @Inject constructor(
     private fun loadUserInfo() {
         viewModelScope.launch {
             try {
-                getUserInfoUseCase.execute(Unit)
+                getUserInfoUseCase.execute(Unit).collect {
+                    loadTodoList(it)
+                }
             } catch (e: NotLoginException) {
-                _mainState.value = MainState.EmptyListState
                 _mainEvent.emit(MainEvent.StartLogin)
             }
         }
     }
 
-    fun loadTodoList() {
+    private fun loadTodoList(user: UserEntity) {
         viewModelScope.launch {
             try {
-                getTodoListUseCase.execute(Unit).collect { loadData ->
-
+                getTodoListUseCase.execute(Unit).collect { todoList ->
+                    if (todoList.doneList.isNotEmpty() && todoList.todoList.isNotEmpty()) {
+                        _mainState.value =
+                            MainState.ShowTodoListState(user, todoList.todoList, todoList.doneList)
+                    } else {
+                        _mainState.value = MainState.EmptyListState(user)
+                    }
                 }
             } catch (e: NotLoginException) {
-                _mainState.value = MainState.EmptyListState
-            } catch (e: BadRequestException) {
-
+                _mainEvent.emit(MainEvent.StartLogin)
             }
         }
     }

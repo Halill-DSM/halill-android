@@ -50,7 +50,7 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
 
     Scaffold(scaffoldState = scaffoldState,
         floatingActionButton = {
-            FloatingActionButton(onClick = { /* ... */ }) {
+            FloatingActionButton(onClick = { navController.navigate("writeTodo") }) {
                 Icon(
                     painter = rememberVectorPainter(image = Icons.Filled.Add),
                     contentDescription = "write todo"

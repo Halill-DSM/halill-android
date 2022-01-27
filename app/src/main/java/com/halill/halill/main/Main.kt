@@ -84,11 +84,11 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
     }
 
     val mainEvent = viewModel.mainEvent
-    handleMainEvent(navController = navController, event = mainEvent)
+    HandleMainEvent(navController = navController, event = mainEvent)
 }
 
 @Composable
-private fun handleMainEvent(navController: NavController, event: EventFlow<MainEvent>) {
+private fun HandleMainEvent(navController: NavController, event: EventFlow<MainEvent>) {
     event.observeWithLifecycle { mainEvent ->
         when (mainEvent) {
             is MainEvent.StartLogin -> {

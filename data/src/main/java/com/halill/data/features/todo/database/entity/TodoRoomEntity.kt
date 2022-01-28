@@ -13,7 +13,7 @@ data class TodoRoomEntity(
     val deadline: LocalDateTime,
     val isCompleted: Boolean
 ) {
-    @PrimaryKey(autoGenerate = true) val id: Long = 0
+    @PrimaryKey(autoGenerate = true) var id: Long = 0
 }
 
 fun List<TodoRoomEntity>.toEntity() =

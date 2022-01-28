@@ -33,17 +33,14 @@ class RemoteAuthDataSourceImpl @Inject constructor(
     override suspend fun register(parameter: RegisterParameter) =
         try {
             authApi.register(parameter.toRequest())
-        }catch (e: HttpException) {
+        } catch (e: HttpException) {
             print(e.code())
         } catch (e: UnknownHostException) {
             throw InternetErrorException()
         }
 
-    override suspend fun refreshToken(refreshToken: String?) {
+    override suspend fun refreshToken(refreshToken: String) {
         try {
-            if (refreshToken.isNullOrEmpty()) {
-                throw NotLoginException()
-            }
             authApi.refreshToken(refreshToken.toRequest())
         } catch (e: HttpException) {
             if (e.code() == 401) {

@@ -9,5 +9,5 @@ interface RemoteAuthDataSource {
 
     suspend fun register(parameter: RegisterParameter)
 
-    suspend fun refreshToken(refreshToken: String?)
+    suspend fun refreshToken(refreshToken: String)
 }

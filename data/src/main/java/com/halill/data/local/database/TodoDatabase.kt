@@ -7,7 +7,7 @@ import com.halill.data.features.todo.database.dao.TodoDao
 import com.halill.data.features.todo.database.entity.TodoRoomEntity
 import com.halill.data.local.database.converter.LocalDateTimeConverter
 
-@Database(entities = [TodoRoomEntity::class], version = 1)
+@Database(entities = [TodoRoomEntity::class], version = 2)
 @TypeConverters(LocalDateTimeConverter::class)
 abstract class TodoDatabase : RoomDatabase() {
     abstract fun todoDao(): TodoDao

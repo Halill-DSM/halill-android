@@ -1,6 +1,8 @@
 package com.halill.halill.di.auth
 
+import com.halill.domain.features.auth.repository.CheckLoginRepository
 import com.halill.domain.features.auth.repository.RegisterRepository
+import com.halill.domain.features.auth.usecase.CheckLoginUseCase
 import com.halill.domain.features.auth.usecase.GetUserInfoUseCase
 import com.halill.domain.features.auth.usecase.RegisterUseCase
 import com.halill.domain.features.todo.repository.GetTodoListRepository
@@ -28,4 +30,10 @@ object AuthUseCaseModule {
         registerRepository: RegisterRepository
     ): RegisterUseCase =
         RegisterUseCase(registerRepository)
+
+    @Singleton
+    @Provides
+    fun provideCheckLoginUseCase(
+        checkLoginRepository: CheckLoginRepository
+    ): CheckLoginUseCase = CheckLoginUseCase(checkLoginRepository)
 }

@@ -10,6 +10,7 @@ import com.halill.domain.exception.NotLoginException
 import com.halill.domain.exception.UnAuthorizedException
 import com.halill.domain.features.auth.exception.WrongIdException
 import retrofit2.HttpException
+import java.lang.Exception
 import java.net.UnknownHostException
 import javax.inject.Inject
 
@@ -25,7 +26,7 @@ class RemoteAuthDataSourceImpl @Inject constructor(
             } else {
                 throw InternetErrorException()
             }
-        } catch (e: UnknownHostException) {
+        } catch (e: Exception) {
             throw InternetErrorException()
         }
 

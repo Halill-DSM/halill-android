@@ -3,7 +3,9 @@ package com.halill.halill.main.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.halill.domain.exception.NotLoginException
+import com.halill.domain.exception.UnAuthorizedException
 import com.halill.domain.features.auth.entity.UserEntity
+import com.halill.domain.features.auth.usecase.CheckLoginUseCase
 import com.halill.domain.features.auth.usecase.GetUserInfoUseCase
 import com.halill.domain.features.todo.usecase.GetTodoListUseCase
 import com.halill.halill.base.EventFlow
@@ -20,6 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    private val checkLoginUseCase: CheckLoginUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getTodoListUseCase: GetTodoListUseCase
 ) : ViewModel() {
@@ -32,34 +35,40 @@ class MainViewModel @Inject constructor(
     val showingPage = MutableStateFlow(0)
 
     init {
-        loadUserInfo()
+        checkLogin()
+    }
+
+    private fun checkLogin() {
+        viewModelScope.launch {
+            try {
+                checkLoginUseCase.execute(Unit)
+                loadUserInfo()
+            } catch (e: NotLoginException) {
+                _mainEvent.emit(MainEvent.StartLogin)
+            } catch (e: UnAuthorizedException) {
+                _mainEvent.emit(MainEvent.StartLogin)
+            }
+        }
+
     }
 
     private fun loadUserInfo() {
         viewModelScope.launch {
-            try {
-                getUserInfoUseCase.execute(Unit).collect {
-                    loadTodoList(it)
-                }
-            } catch (e: NotLoginException) {
-                _mainEvent.emit(MainEvent.StartLogin)
+            getUserInfoUseCase.execute(Unit).collect {
+                loadTodoList(it)
             }
         }
     }
 
     private fun loadTodoList(user: UserEntity) {
         viewModelScope.launch {
-            try {
-                getTodoListUseCase.execute(Unit).collect { todoList ->
-                    if (todoList.doneList.isNotEmpty() && todoList.todoList.isNotEmpty()) {
-                        _mainState.value =
-                            MainState.ShowTodoListState(user, todoList.todoList, todoList.doneList)
-                    } else {
-                        _mainState.value = MainState.EmptyListState(user)
-                    }
+            getTodoListUseCase.execute(Unit).collect { todoList ->
+                if (todoList.doneList.isNotEmpty() && todoList.todoList.isNotEmpty()) {
+                    _mainState.value =
+                        MainState.ShowTodoListState(user, todoList.todoList, todoList.doneList)
+                } else {
+                    _mainState.value = MainState.EmptyListState(user)
                 }
-            } catch (e: NotLoginException) {
-                _mainEvent.emit(MainEvent.StartLogin)
             }
         }
     }

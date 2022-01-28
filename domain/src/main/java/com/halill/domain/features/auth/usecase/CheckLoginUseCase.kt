@@ -8,7 +8,7 @@ class CheckLoginUseCase @Inject constructor(
     private val checkLoginRepository: CheckLoginRepository
 ): UseCase<Unit, Unit>() {
     override suspend fun execute(data: Unit) {
-        checkLoginRepository
+        checkLoginRepository.checkLogin()
     }
 
 }

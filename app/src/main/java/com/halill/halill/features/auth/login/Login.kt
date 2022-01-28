@@ -63,17 +63,21 @@ fun Login(
 
 @Composable
 private fun EventHandle(navController: NavController, viewModel: LoginViewModel) {
-    val scope = rememberCoroutineScope()
 
     val wrongComment = stringResource(id = R.string.wrong_id_comment)
+    val internetErrorComment = stringResource(id = R.string.internet_error_comment)
     viewModel.loginEvent.observeWithLifecycle(action = {
         when (it) {
-            is LoginEvent.WrongId -> scope.launch {
-                scaffoldState.snackbarHostState.showSnackbar(
-                    wrongComment,
-                    duration = SnackbarDuration.Short
-                )
-            }
+            is LoginEvent.WrongId -> scaffoldState.snackbarHostState.showSnackbar(
+                wrongComment,
+                duration = SnackbarDuration.Short
+            )
+
+
+            is LoginEvent.InternetError -> scaffoldState.snackbarHostState.showSnackbar(
+                internetErrorComment,
+                duration = SnackbarDuration.Short
+            )
 
             is LoginEvent.FinishLogin -> navController.popBackStack()
         }

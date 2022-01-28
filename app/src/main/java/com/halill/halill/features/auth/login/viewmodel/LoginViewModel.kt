@@ -43,7 +43,7 @@ class LoginViewModel @Inject constructor(
                 } catch (e: WrongIdException) {
                     _loginEvent.emit(LoginEvent.WrongId)
                 } catch (e: InternetErrorException) {
-                    _loginState.value = LoginState.InternetExceptionState
+                    _loginEvent.emit(LoginEvent.InternetError)
                 } finally {
                     _loginState.emit(LoginState.NotDoneInputState)
                 }

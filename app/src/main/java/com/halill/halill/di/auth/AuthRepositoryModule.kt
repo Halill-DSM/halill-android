@@ -4,7 +4,7 @@ import com.halill.data.features.auth.datasource.local.LocalAuthDataSource
 import com.halill.data.features.auth.datasource.remote.RemoteAuthDataSource
 import com.halill.data.features.auth.repository.LoginRepositoryImpl
 import com.halill.data.features.auth.repository.RegisterRepositoryImpl
-import com.halill.data.features.todo.repository.GetUserInfoRepositoryImpl
+import com.halill.data.features.auth.repository.GetUserInfoRepositoryImpl
 import com.halill.domain.features.auth.repository.LoginRepository
 import com.halill.domain.features.auth.repository.RegisterRepository
 import com.halill.domain.features.todo.repository.GetUserInfoRepository

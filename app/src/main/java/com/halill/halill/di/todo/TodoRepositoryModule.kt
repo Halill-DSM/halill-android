@@ -2,7 +2,9 @@ package com.halill.halill.di.todo
 
 import com.halill.data.features.todo.datasource.local.LocalTodoDataSource
 import com.halill.data.features.todo.repository.GetTodoListRepositoryImpl
+import com.halill.data.features.todo.repository.SaveTodoRepositoryImpl
 import com.halill.domain.features.todo.repository.GetTodoListRepository
+import com.halill.domain.features.todo.repository.SaveTodoRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,4 +19,10 @@ object TodoRepositoryModule {
     fun provideGetTodoListRepository(
         localTodoDataSource: LocalTodoDataSource
     ): GetTodoListRepository = GetTodoListRepositoryImpl(localTodoDataSource)
+
+    @Singleton
+    @Provides
+    fun provideSaveTodoRepository(
+        localTodoDataSource: LocalTodoDataSource
+    ): SaveTodoRepository = SaveTodoRepositoryImpl(localTodoDataSource)
 }

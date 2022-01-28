@@ -3,16 +3,18 @@ package com.halill.data.features.todo.database.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.halill.domain.features.todo.entity.TodoEntity
+import com.halill.domain.features.todo.param.WriteTodoParam
 import java.time.LocalDateTime
 
 @Entity(tableName = "todolist")
 data class TodoRoomEntity(
-    @PrimaryKey val id: Long,
     val title: String,
     val content: String,
     val deadline: LocalDateTime,
     val isCompleted: Boolean
-)
+) {
+    @PrimaryKey(autoGenerate = true) val id: Long = 0
+}
 
 fun List<TodoRoomEntity>.toEntity() =
     this.map { it.toEntity() }
@@ -26,7 +28,7 @@ fun TodoRoomEntity.toEntity(): TodoEntity =
         isCompleted = isCompleted
     )
 
-fun TodoEntity.toDataEntity() =
+fun WriteTodoParam.toDataEntity() =
     TodoRoomEntity(
-        id, title, content, deadline, isCompleted
+        title, content, deadline, isCompleted
     )

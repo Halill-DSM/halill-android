@@ -3,6 +3,7 @@ package com.halill.halill.features.todo
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.halill.domain.features.todo.usecase.SaveTodoUseCase
+import com.halill.halill.features.todo.model.WriteTodoState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WriteTodoViewModel @Inject constructor(
     private val saveTodoUseCase: SaveTodoUseCase
-): ViewModel() {
+) : ViewModel() {
 
     private val _title = MutableStateFlow("")
     val title: StateFlow<String> = _title
@@ -24,15 +25,20 @@ class WriteTodoViewModel @Inject constructor(
     private val _deadLine = MutableStateFlow(LocalDateTime.now())
     val deadLine: StateFlow<LocalDateTime> = _deadLine
 
+    private val _writeTodoState = MutableStateFlow<WriteTodoState>(WriteTodoState.NotDoneInputState)
+    val writeTodoState: StateFlow<WriteTodoState> = _writeTodoState
+
     fun setTitle(title: String) {
         viewModelScope.launch {
             _title.value = title
+            checkDoneInput()
         }
     }
 
     fun setContent(content: String) {
         viewModelScope.launch {
             _content.value = content
+            checkDoneInput()
         }
     }
 
@@ -42,5 +48,14 @@ class WriteTodoViewModel @Inject constructor(
         }
     }
 
+    fun writeTodo() {
+
+    }
+
+    private fun checkDoneInput() {
+        _writeTodoState.value =
+            if (title.value.isEmpty() || content.value.isEmpty()) WriteTodoState.NotDoneInputState
+            else WriteTodoState.DoneInputState
+    }
 
 }

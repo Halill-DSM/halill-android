@@ -13,4 +13,5 @@
     <string name="write_todo">할일추가</string>
     <string name="write_title">제목을 입력해주세요</string>
     <string name="write_content">내용을 입력해주세요</string>
+    <string name="dead_line">마감기간</string>
 </resources>

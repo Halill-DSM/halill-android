@@ -34,15 +34,10 @@ class MainViewModel @Inject constructor(
 
     val showingPage = MutableStateFlow(0)
 
-    init {
-        checkLogin()
-    }
-
-    private fun checkLogin() {
+    fun checkLogin() {
         viewModelScope.launch {
             try {
                 checkLoginUseCase.execute(Unit)
-                loadUserInfo()
             } catch (e: NotLoginException) {
                 _mainEvent.emit(MainEvent.StartLogin)
             } catch (e: UnAuthorizedException) {
@@ -52,7 +47,7 @@ class MainViewModel @Inject constructor(
 
     }
 
-    private fun loadUserInfo() {
+    fun loadUserInfo() {
         viewModelScope.launch {
             getUserInfoUseCase.execute(Unit).collect {
                 loadTodoList(it)

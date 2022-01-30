@@ -1,9 +1,6 @@
 package com.halill.halill.features.todo
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -47,7 +44,7 @@ fun WriteTodo(navController: NavController, viewModel: WriteTodoViewModel = hilt
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(scrollState),
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TitleTextField(viewModel = viewModel)
@@ -59,8 +56,11 @@ fun WriteTodo(navController: NavController, viewModel: WriteTodoViewModel = hilt
 @Composable
 fun TitleTextField(viewModel: WriteTodoViewModel) {
     val title = viewModel.title.collectAsState()
+    val titleLabel = stringResource(id = R.string.write_title)
     OutlinedTextField(value = title.value,
-        modifier = Modifier.fillMaxWidth(),
+        label = { Text(text = titleLabel) },
+        modifier = Modifier.fillMaxWidth().padding(10.dp),
+        singleLine = true,
         onValueChange = {
             viewModel.setTitle(it)
         })

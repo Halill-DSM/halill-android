@@ -23,7 +23,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill.R
 import com.halill.halill.features.auth.login.LoginLayoutViews
-import com.halill.halill.features.auth.register.model.RegisterState
 import com.halill.halill.features.todo.model.WriteTodoState
 import com.halill.halill.main.scaffoldState
 import com.halill.halill.ui.theme.Teal700
@@ -135,7 +134,7 @@ fun DeadLineDateView(viewModel: WriteTodoViewModel = hiltViewModel()) {
 @Composable
 fun DeadLineTimeView(viewModel: WriteTodoViewModel = hiltViewModel()) {
     val deadLine = viewModel.deadLine.value
-    val hour = "${deadLine.hour}시 "
+    val hour = "${deadLine.hour}시"
     val minute = "${deadLine.minute}분"
     val timeText = "$hour $minute"
     Text(

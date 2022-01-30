@@ -2,6 +2,7 @@ package com.halill.halill.features.todo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.halill.domain.features.todo.param.WriteTodoParam
 import com.halill.domain.features.todo.usecase.SaveTodoUseCase
 import com.halill.halill.features.todo.model.WriteTodoState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,6 +50,10 @@ class WriteTodoViewModel @Inject constructor(
     }
 
     fun writeTodo() {
+        viewModelScope.launch {
+            val parameter = WriteTodoParam(title.value, content.value, deadLine.value, false)
+            saveTodoUseCase.execute(parameter)
+        }
 
     }
 

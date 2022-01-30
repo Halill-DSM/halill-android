@@ -12,4 +12,5 @@
     <string name="fail_register_comment">회원가입에 실패하였습니다</string>
     <string name="write_todo">할일추가</string>
     <string name="write_title">제목을 입력해주세요</string>
+    <string name="write_content">내용을 입력해주세요</string>
 </resources>

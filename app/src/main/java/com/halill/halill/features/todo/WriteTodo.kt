@@ -47,21 +47,43 @@ fun WriteTodo(navController: NavController, viewModel: WriteTodoViewModel = hilt
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TitleTextField(viewModel = viewModel)
+                TitleTextField()
+                ContentTextField()
             }
         })
 
 }
 
 @Composable
-fun TitleTextField(viewModel: WriteTodoViewModel) {
+fun TitleTextField(viewModel: WriteTodoViewModel = hiltViewModel()) {
     val title = viewModel.title.collectAsState()
     val titleLabel = stringResource(id = R.string.write_title)
-    OutlinedTextField(value = title.value,
+    OutlinedTextField(
+        value = title.value,
         label = { Text(text = titleLabel) },
-        modifier = Modifier.fillMaxWidth().padding(10.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp),
         singleLine = true,
         onValueChange = {
             viewModel.setTitle(it)
-        })
+        }
+    )
+}
+
+@Composable
+fun ContentTextField(viewModel: WriteTodoViewModel = hiltViewModel()) {
+    val content = viewModel.content.collectAsState()
+    val contentLabel = stringResource(id = R.string.write_content)
+    OutlinedTextField(
+        value = content.value,
+        label = { Text(text = contentLabel) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = 300.dp, minWidth = 100.dp)
+            .padding(10.dp),
+        onValueChange = {
+            viewModel.setContent(it)
+        }
+    )
 }

@@ -58,12 +58,12 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = hiltVi
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                RegisterEmailTextField(viewModel = viewModel)
+                RegisterEmailTextField()
                 val passwordText = viewModel.password.collectAsState()
-                RegisterPasswordTextField(viewModel = viewModel, password = passwordText)
-                RegisterCheckPasswordTextField(viewModel = viewModel, password = passwordText)
-                RegisterNameTextField(viewModel = viewModel)
-                RegisterButton(viewModel = viewModel)
+                RegisterPasswordTextField(password = passwordText)
+                RegisterCheckPasswordTextField(password = passwordText)
+                RegisterNameTextField()
+                RegisterButton()
             }
         })
     val event = viewModel.registerEvent
@@ -99,7 +99,7 @@ private fun EventHandle(navController: NavController, event: EventFlow<RegisterE
 }
 
 @Composable
-fun RegisterEmailTextField(viewModel: RegisterViewModel) {
+fun RegisterEmailTextField(viewModel: RegisterViewModel = hiltViewModel()) {
     val emailText = viewModel.email.collectAsState()
     val emailLabel = "이메일을 입력해주세요"
     Spacer(modifier = Modifier.height(25.dp))
@@ -115,7 +115,7 @@ fun RegisterEmailTextField(viewModel: RegisterViewModel) {
 }
 
 @Composable
-fun RegisterPasswordTextField(viewModel: RegisterViewModel, password: State<String>) {
+fun RegisterPasswordTextField(viewModel: RegisterViewModel = hiltViewModel(), password: State<String>) {
     val passwordLabel = "비밀번호를 입력해주세요"
     Spacer(modifier = Modifier.height(25.dp))
     PasswordTextField(
@@ -130,7 +130,7 @@ fun RegisterPasswordTextField(viewModel: RegisterViewModel, password: State<Stri
 }
 
 @Composable
-fun RegisterCheckPasswordTextField(viewModel: RegisterViewModel, password: State<String>) {
+fun RegisterCheckPasswordTextField(viewModel: RegisterViewModel = hiltViewModel(), password: State<String>) {
     val checkPasswordText = viewModel.checkPassword.collectAsState()
     val checkPasswordLabel = "비밀번호를 한번 더 입력해주세요"
     Spacer(modifier = Modifier.height(25.dp))
@@ -147,7 +147,7 @@ fun RegisterCheckPasswordTextField(viewModel: RegisterViewModel, password: State
 }
 
 @Composable
-fun RegisterNameTextField(viewModel: RegisterViewModel) {
+fun RegisterNameTextField(viewModel: RegisterViewModel = hiltViewModel()) {
     val nameText = viewModel.name.collectAsState()
     val nameLabel = "이름을 입력해주세요"
     Spacer(modifier = Modifier.height(25.dp))
@@ -164,7 +164,7 @@ fun RegisterNameTextField(viewModel: RegisterViewModel) {
 }
 
 @Composable
-fun RegisterButton(viewModel: RegisterViewModel) {
+fun RegisterButton(viewModel: RegisterViewModel = hiltViewModel()) {
     val scope = rememberCoroutineScope()
     val registerState = viewModel.registerState.collectAsState()
     val emptyComment = stringResource(id = R.string.login_empty_comment)

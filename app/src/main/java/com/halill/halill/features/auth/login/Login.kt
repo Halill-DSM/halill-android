@@ -40,8 +40,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun Login(
     navController: NavController,
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    loginViewModel: LoginViewModel = hiltViewModel()
+    darkTheme: Boolean = isSystemInDarkTheme()
 ) {
     val backgroundColor = if (darkTheme) Color.Black else Teal200
     Scaffold(scaffoldState = scaffoldState) {
@@ -54,15 +53,15 @@ fun Login(
                 LoginTitle()
                 LoginComment()
                 LoginIluImage()
-                LoginLayout(navController, loginViewModel)
+                LoginLayout(navController)
             }
         }
     }
-    EventHandle(navController = navController, viewModel = loginViewModel)
+    EventHandle(navController = navController)
 }
 
 @Composable
-private fun EventHandle(navController: NavController, viewModel: LoginViewModel) {
+private fun EventHandle(navController: NavController, viewModel: LoginViewModel = hiltViewModel()) {
 
     val wrongComment = stringResource(id = R.string.wrong_id_comment)
     val internetErrorComment = stringResource(id = R.string.internet_error_comment)
@@ -146,7 +145,7 @@ fun LoginIluImage() {
 }
 
 @Composable
-fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel) {
+fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel = hiltViewModel()) {
     ConstraintLayout(
         loginLayoutConstraint(),
         modifier = Modifier
@@ -163,7 +162,6 @@ fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel) {
             label = emailLabel,
             doOnValueChange = {
                 loginViewModel.setEmail(it)
-                checkDoneInput(loginViewModel)
             },
             imeAction = ImeAction.Next
         )
@@ -174,11 +172,10 @@ fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel) {
             label = passwordLabel,
             doOnValueChange = {
                 loginViewModel.setPassword(it)
-                checkDoneInput(loginViewModel)
             },
             imeAction = ImeAction.Done
         )
-        LoginButton(loginViewModel)
+        LoginButton()
         AskRegisterText()
         StartRegisterButton(navController)
     }
@@ -219,19 +216,8 @@ private fun loginLayoutConstraint(): ConstraintSet =
         }
     }
 
-private fun checkDoneInput(viewModel: LoginViewModel) {
-    val emailValue = viewModel.email.value
-    val passwordValue = viewModel.password.value
-
-    if (emailValue.isNotEmpty() && passwordValue.isNotEmpty()) viewModel.setDoneLoginState(
-        emailValue,
-        passwordValue
-    )
-    else viewModel.setNotDoneInputState()
-}
-
 @Composable
-fun LoginButton(loginViewModel: LoginViewModel) {
+fun LoginButton(loginViewModel: LoginViewModel = hiltViewModel()) {
     val scope = rememberCoroutineScope()
 
     val loginState = loginViewModel.loginState.collectAsState()

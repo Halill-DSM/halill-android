@@ -60,15 +60,11 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun setDoneLoginState(email: String, password: String) {
-        viewModelScope.launch {
-            _loginState.emit(LoginState.DoneInputState(email, password))
-        }
-    }
-
-    fun setNotDoneInputState() {
-        viewModelScope.launch {
-            _loginState.emit(LoginState.NotDoneInputState)
-        }
+    private fun checkDoneInput() {
+        _loginState.value =
+            if (email.value.isEmpty() || password.value.isEmpty()) LoginState.NotDoneInputState else LoginState.DoneInputState(
+                email.value,
+                password.value
+            )
     }
 }

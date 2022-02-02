@@ -71,7 +71,7 @@ fun WriteTodo(navController: NavController, viewModel: WriteTodoViewModel = hilt
                 TitleTextField()
                 ContentTextField()
                 DeadLineView()
-                WriteTodoButton()
+                WriteTodoButton(navController)
                 val writeTodoState = viewModel.writeTodoState.collectAsState().value
                 if (writeTodoState is WriteTodoState.SelectDateState) {
                     SelectDateDialog()
@@ -187,7 +187,7 @@ fun ClearFocus() {
 }
 
 @Composable
-fun WriteTodoButton(viewModel: WriteTodoViewModel = hiltViewModel()) {
+fun WriteTodoButton(navController: NavController, viewModel: WriteTodoViewModel = hiltViewModel()) {
     val writeTodoState = viewModel.writeTodoState.collectAsState()
     val emptyComment = stringResource(id = R.string.login_empty_comment)
     val scope = rememberCoroutineScope()
@@ -195,6 +195,7 @@ fun WriteTodoButton(viewModel: WriteTodoViewModel = hiltViewModel()) {
         onClick = {
             if (writeTodoState.value is WriteTodoState.DoneInputState) {
                 viewModel.writeTodo()
+                navController.popBackStack()
             } else {
                 scope.launch {
                     scaffoldState.snackbarHostState.showSnackbar(

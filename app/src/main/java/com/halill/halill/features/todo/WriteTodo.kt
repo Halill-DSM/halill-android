@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -14,8 +15,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
@@ -67,6 +70,7 @@ fun WriteTodo(navController: NavController, viewModel: WriteTodoViewModel = hilt
                 val writeTodoState = viewModel.writeTodoState.collectAsState().value
                 if(writeTodoState is WriteTodoState.SelectDateState) {
                     SelectDateDialog()
+                    ClearFocus()
                 }
             }
         })
@@ -77,6 +81,7 @@ fun WriteTodo(navController: NavController, viewModel: WriteTodoViewModel = hilt
 fun TitleTextField(viewModel: WriteTodoViewModel = hiltViewModel()) {
     val title = viewModel.title.collectAsState()
     val titleLabel = stringResource(id = R.string.write_title)
+    val focusManager = LocalFocusManager.current
     OutlinedTextField(
         value = title.value,
         label = { Text(text = titleLabel) },
@@ -86,7 +91,12 @@ fun TitleTextField(viewModel: WriteTodoViewModel = hiltViewModel()) {
         singleLine = true,
         onValueChange = {
             viewModel.setTitle(it)
-        }
+        },
+        keyboardActions = KeyboardActions(
+            onDone = {
+                focusManager.moveFocus(FocusDirection.Down)
+            }
+        )
     )
 }
 
@@ -153,6 +163,12 @@ fun DeadLineTimeView(viewModel: WriteTodoViewModel = hiltViewModel()) {
         text = timeText,
         style = TextStyle(textDecoration = TextDecoration.Underline)
     )
+}
+
+@Composable
+fun ClearFocus() {
+    val focus = LocalFocusManager.current
+    focus.clearFocus()
 }
 
 @Composable

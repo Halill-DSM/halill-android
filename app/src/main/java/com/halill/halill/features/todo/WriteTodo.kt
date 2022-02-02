@@ -78,7 +78,7 @@ fun WriteTodo(navController: NavController, viewModel: WriteTodoViewModel = hilt
                 if (writeTodoState is WriteTodoState.SelectDateState) {
                     SelectDateDialog()
                     ClearFocus()
-                } else if(writeTodoState is WriteTodoState.SelectTimeState) {
+                } else if (writeTodoState is WriteTodoState.SelectTimeState) {
                     SelectTimeDialog()
                     ClearFocus()
                 }
@@ -172,7 +172,11 @@ fun DeadLineTimeView(viewModel: WriteTodoViewModel = hiltViewModel()) {
     val minute = "${deadLine.minute}분"
     val timeText = "$hour $minute"
     Text(
-        modifier = Modifier.padding(0.dp, 10.dp, 0.dp, 10.dp),
+        modifier = Modifier
+            .padding(0.dp, 10.dp, 0.dp, 10.dp)
+            .clickable(enabled = true, role = Role.Button) {
+                viewModel.setSelectTimeState()
+            },
         text = timeText,
         style = TextStyle(textDecoration = TextDecoration.Underline)
     )
@@ -322,7 +326,7 @@ fun SelectTimeDialog(viewModel: WriteTodoViewModel = hiltViewModel()) {
     Dialog(onDismissRequest = { viewModel.checkDoneInput() }) {
         Surface(
             modifier = Modifier
-                .width(250.dp),
+                .width(220.dp),
             color = Color.White,
             shape = RoundedCornerShape(15.dp)
         ) {
@@ -338,11 +342,11 @@ fun TimeDialogContent() {
         horizontalArrangement = Arrangement.Center
     ) {
         HourNumberPicker()
-        val yearText = stringResource(id = R.string.year)
+        val yearText = stringResource(id = R.string.hour)
         Text(text = yearText)
 
         MinuteNumberPicker()
-        val monthText = stringResource(id = R.string.month)
+        val monthText = stringResource(id = R.string.minute)
         Text(text = monthText)
     }
 }

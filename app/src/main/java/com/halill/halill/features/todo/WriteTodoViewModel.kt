@@ -44,12 +44,6 @@ class WriteTodoViewModel @Inject constructor(
         }
     }
 
-    fun setDeadLine(deadLine: LocalDateTime) {
-        viewModelScope.launch {
-            _deadline.value = deadLine
-        }
-    }
-
     fun writeTodo() {
         viewModelScope.launch {
             val parameter = WriteTodoParam(title.value, content.value, deadline.value, false)

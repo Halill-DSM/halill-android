@@ -39,8 +39,6 @@ import com.halill.halill.main.scaffoldState
 import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.ui.theme.Teal900
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 @Composable
 fun WriteTodo(navController: NavController, viewModel: WriteTodoViewModel = hiltViewModel()) {
@@ -148,7 +146,7 @@ fun DeadLineView() {
 
 @Composable
 fun DeadLineDateView(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    val deadLine = viewModel.deadline.value
+    val deadLine = viewModel.deadline.collectAsState().value
     val year = "${deadLine.year}년"
     val month = "${deadLine.monthValue}월"
     val date = "${deadLine.dayOfMonth}일"
@@ -167,7 +165,7 @@ fun DeadLineDateView(viewModel: WriteTodoViewModel = hiltViewModel()) {
 
 @Composable
 fun DeadLineTimeView(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    val deadLine = viewModel.deadline.value
+    val deadLine = viewModel.deadline.collectAsState().value
     val hour = "${deadLine.hour}시"
     val minute = "${deadLine.minute}분"
     val timeText = "$hour $minute"
@@ -259,15 +257,15 @@ fun YearNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
     AndroidView(
         modifier = Modifier.wrapContentSize(),
         factory = { context ->
-            yearNumberPicker(context, deadline.year)
+            yearNumberPicker(viewModel, context, deadline.year)
         }
     )
 }
 
-private fun yearNumberPicker(context: Context, year: Int) =
+private fun yearNumberPicker(viewModel: WriteTodoViewModel, context: Context, year: Int) =
     NumberPicker(context).apply {
         setOnValueChangedListener { picker, _, _ ->
-            picker.value
+            viewModel.setDeadlineYear(picker.value)
         }
         maxValue = year + 1
         minValue = year - 1
@@ -280,15 +278,15 @@ fun MonthNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
     AndroidView(
         modifier = Modifier.wrapContentSize(),
         factory = { context ->
-            monthNumberPicker(context, deadline.monthValue)
+            monthNumberPicker(viewModel, context, deadline.monthValue)
         }
     )
 }
 
-private fun monthNumberPicker(context: Context, month: Int) =
+private fun monthNumberPicker(viewModel: WriteTodoViewModel, context: Context, month: Int) =
     NumberPicker(context).apply {
         setOnValueChangedListener { picker, _, _ ->
-            picker.value
+           viewModel.setDeadlineMonth(picker.value)
         }
         maxValue = 12
         minValue = 1
@@ -301,22 +299,17 @@ fun DateNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
     AndroidView(
         modifier = Modifier.wrapContentSize(),
         factory = { context ->
-            dateNumberPicker(context, deadline.dayOfMonth, deadline.endDayOfMonth())
+            dateNumberPicker(viewModel, context, deadline.dayOfMonth)
         }
     )
 }
 
-private fun LocalDateTime.endDayOfMonth(): Int {
-    val localDate = LocalDate.of(year, month, dayOfMonth)
-    return localDate.withDayOfMonth(localDate.lengthOfMonth()).dayOfMonth
-}
-
-private fun dateNumberPicker(context: Context, day: Int, lastDay: Int) =
+private fun dateNumberPicker(viewModel: WriteTodoViewModel, context: Context, day: Int) =
     NumberPicker(context).apply {
         setOnValueChangedListener { picker, _, _ ->
-            picker.value
+            viewModel.setDeadlineDay(picker.value)
         }
-        maxValue = lastDay
+        maxValue = 31
         minValue = 1
         value = day
     }
@@ -357,15 +350,15 @@ fun HourNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
     AndroidView(
         modifier = Modifier.wrapContentSize(),
         factory = { context ->
-            hourNumberPicker(context, deadline.hour)
+            hourNumberPicker(viewModel, context, deadline.hour)
         }
     )
 }
 
-private fun hourNumberPicker(context: Context, hour: Int) =
+private fun hourNumberPicker(viewModel: WriteTodoViewModel, context: Context, hour: Int) =
     NumberPicker(context).apply {
         setOnValueChangedListener { picker, _, _ ->
-            picker.value
+            viewModel.setDeadlineHour(picker.value)
         }
         maxValue = 23
         minValue = 0
@@ -378,21 +371,17 @@ fun MinuteNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
     AndroidView(
         modifier = Modifier.wrapContentSize(),
         factory = { context ->
-            minuteNumberPicker(context, deadline.minute)
+            minuteNumberPicker(viewModel, context, deadline.minute)
         }
     )
 }
 
-private fun minuteNumberPicker(context: Context, minute: Int) =
+private fun minuteNumberPicker(viewModel: WriteTodoViewModel, context: Context, minute: Int) =
     NumberPicker(context).apply {
         setOnValueChangedListener { picker, _, _ ->
-            picker.value
+            viewModel.setDeadlineMinute(picker.value)
         }
         maxValue = 23
         minValue = 0
         value = minute
     }
-
-private fun setDeadlineDate() {
-
-}

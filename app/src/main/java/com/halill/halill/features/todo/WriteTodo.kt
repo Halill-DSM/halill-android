@@ -1,5 +1,7 @@
 package com.halill.halill.features.todo
 
+import android.content.Context
+import android.widget.NumberPicker
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -26,6 +28,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -36,6 +39,8 @@ import com.halill.halill.main.scaffoldState
 import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.ui.theme.Teal900
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Composable
 fun WriteTodo(navController: NavController, viewModel: WriteTodoViewModel = hiltViewModel()) {
@@ -70,7 +75,7 @@ fun WriteTodo(navController: NavController, viewModel: WriteTodoViewModel = hilt
                 DeadLineView()
                 WriteTodoButton()
                 val writeTodoState = viewModel.writeTodoState.collectAsState().value
-                if(writeTodoState is WriteTodoState.SelectDateState) {
+                if (writeTodoState is WriteTodoState.SelectDateState) {
                     SelectDateDialog()
                     ClearFocus()
                 }
@@ -222,5 +227,90 @@ fun SelectDateDialog(viewModel: WriteTodoViewModel = hiltViewModel()) {
 
 @Composable
 fun DateDialogContent() {
+    Row {
+        YearNumberPicker()
+        val yearText = stringResource(id = R.string.year)
+        Text(text = yearText)
+
+        MonthNumberPicker()
+        val monthText = stringResource(id = R.string.month)
+        Text(text = monthText)
+
+        DateNumberPicker()
+        val dayText = stringResource(id = R.string.day)
+        Text(text = dayText)
+    }
+}
+
+@Composable
+fun YearNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
+    val deadline = viewModel.deadLine.collectAsState().value
+    AndroidView(
+        modifier = Modifier.wrapContentSize(),
+        factory = { context ->
+            yearNumberPicker(context, deadline.year)
+        }
+    )
+}
+
+private fun yearNumberPicker(context: Context, year: Int) =
+    NumberPicker(context).apply {
+        setOnValueChangedListener { picker, _, _ ->
+            picker.value
+        }
+        maxValue = year + 1
+        minValue = year - 1
+        value = year
+    }
+
+@Composable
+fun MonthNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
+    val deadline = viewModel.deadLine.collectAsState().value
+    AndroidView(
+        modifier = Modifier.wrapContentSize(),
+        factory = { context ->
+            monthNumberPicker(context, deadline.monthValue)
+        }
+    )
+}
+
+private fun monthNumberPicker(context: Context, month: Int) =
+    NumberPicker(context).apply {
+        setOnValueChangedListener { picker, _, _ ->
+            picker.value
+        }
+        maxValue = 12
+        minValue = 1
+        value = month
+    }
+
+@Composable
+fun DateNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
+    val deadline = viewModel.deadLine.collectAsState().value
+    AndroidView(
+        modifier = Modifier.wrapContentSize(),
+        factory = { context ->
+            dateNumberPicker(context, deadline.dayOfMonth, deadline.endDayOfMonth())
+        }
+    )
+}
+
+private fun LocalDateTime.endDayOfMonth(): Int {
+    val localDate = LocalDate.of(year, month, dayOfMonth)
+    return localDate.withDayOfMonth(localDate.lengthOfMonth()).dayOfMonth
+}
+
+private fun dateNumberPicker(context: Context, day: Int, lastDay: Int) =
+    NumberPicker(context).apply {
+        setOnValueChangedListener { picker, _, _ ->
+            picker.value
+        }
+        maxValue = lastDay
+        minValue = 1
+        value = day
+    }
+
+
+private fun setDeadlineDate() {
 
 }

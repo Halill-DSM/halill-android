@@ -19,4 +19,6 @@
     <string name="day">일</string>
     <string name="hour">시</string>
     <string name="minute">분</string>
+    <string name="loading_comment">로딩중입니다</string>
+    <string name="main_exception_comment">오류가 발생하였습니다</string>
 </resources>

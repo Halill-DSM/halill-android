@@ -148,7 +148,7 @@ fun DeadLineView() {
 
 @Composable
 fun DeadLineDateView(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    val deadLine = viewModel.deadLine.value
+    val deadLine = viewModel.deadline.value
     val year = "${deadLine.year}년"
     val month = "${deadLine.monthValue}월"
     val date = "${deadLine.dayOfMonth}일"
@@ -167,7 +167,7 @@ fun DeadLineDateView(viewModel: WriteTodoViewModel = hiltViewModel()) {
 
 @Composable
 fun DeadLineTimeView(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    val deadLine = viewModel.deadLine.value
+    val deadLine = viewModel.deadline.value
     val hour = "${deadLine.hour}시"
     val minute = "${deadLine.minute}분"
     val timeText = "$hour $minute"
@@ -255,7 +255,7 @@ fun DateDialogContent() {
 
 @Composable
 fun YearNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    val deadline = viewModel.deadLine.collectAsState().value
+    val deadline = viewModel.deadline.collectAsState().value
     AndroidView(
         modifier = Modifier.wrapContentSize(),
         factory = { context ->
@@ -276,7 +276,7 @@ private fun yearNumberPicker(context: Context, year: Int) =
 
 @Composable
 fun MonthNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    val deadline = viewModel.deadLine.collectAsState().value
+    val deadline = viewModel.deadline.collectAsState().value
     AndroidView(
         modifier = Modifier.wrapContentSize(),
         factory = { context ->
@@ -297,7 +297,7 @@ private fun monthNumberPicker(context: Context, month: Int) =
 
 @Composable
 fun DateNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    val deadline = viewModel.deadLine.collectAsState().value
+    val deadline = viewModel.deadline.collectAsState().value
     AndroidView(
         modifier = Modifier.wrapContentSize(),
         factory = { context ->
@@ -353,7 +353,7 @@ fun TimeDialogContent() {
 
 @Composable
 fun HourNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    val deadline = viewModel.deadLine.collectAsState().value
+    val deadline = viewModel.deadline.collectAsState().value
     AndroidView(
         modifier = Modifier.wrapContentSize(),
         factory = { context ->
@@ -374,7 +374,7 @@ private fun hourNumberPicker(context: Context, hour: Int) =
 
 @Composable
 fun MinuteNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    val deadline = viewModel.deadLine.collectAsState().value
+    val deadline = viewModel.deadline.collectAsState().value
     AndroidView(
         modifier = Modifier.wrapContentSize(),
         factory = { context ->

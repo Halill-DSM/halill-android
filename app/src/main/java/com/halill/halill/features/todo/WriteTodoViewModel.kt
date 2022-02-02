@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.halill.domain.features.todo.param.WriteTodoParam
 import com.halill.domain.features.todo.usecase.SaveTodoUseCase
 import com.halill.halill.features.todo.model.WriteTodoState
+import com.halill.halill.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,8 +24,8 @@ class WriteTodoViewModel @Inject constructor(
     private val _content = MutableStateFlow("")
     val content: StateFlow<String> = _content
 
-    private val _deadLine = MutableStateFlow(LocalDateTime.now())
-    val deadLine: StateFlow<LocalDateTime> = _deadLine
+    private val _deadline = MutableStateFlow(LocalDateTime.now())
+    val deadline: StateFlow<LocalDateTime> = _deadline
 
     private val _writeTodoState = MutableStateFlow<WriteTodoState>(WriteTodoState.NotDoneInputState)
     val writeTodoState: StateFlow<WriteTodoState> = _writeTodoState
@@ -45,13 +46,13 @@ class WriteTodoViewModel @Inject constructor(
 
     fun setDeadLine(deadLine: LocalDateTime) {
         viewModelScope.launch {
-            _deadLine.value = deadLine
+            _deadline.value = deadLine
         }
     }
 
     fun writeTodo() {
         viewModelScope.launch {
-            val parameter = WriteTodoParam(title.value, content.value, deadLine.value, false)
+            val parameter = WriteTodoParam(title.value, content.value, deadline.value, false)
             saveTodoUseCase.execute(parameter)
         }
 
@@ -69,6 +70,31 @@ class WriteTodoViewModel @Inject constructor(
 
     fun setSelectTimeState() {
         _writeTodoState.value = WriteTodoState.SelectTimeState
+    }
+
+    fun setDeadlineYear(year: Int) {
+        val originalDeadline = deadline.value
+        _deadline.value = originalDeadline.changeYear(year)
+    }
+
+    fun setDeadlineMonth(month: Int) {
+        val originalDeadline = deadline.value
+        _deadline.value = originalDeadline.changeMonth(month)
+    }
+
+    fun setDeadlineDay(day: Int) {
+        val originalDeadline = deadline.value
+        _deadline.value = originalDeadline.changeDay(day)
+    }
+
+    fun setDeadlineHour(hour: Int) {
+        val originalDeadline = deadline.value
+        _deadline.value = originalDeadline.changeHour(hour)
+    }
+
+    fun setDeadlineMinute(minute: Int) {
+        val originalDeadline = deadline.value
+        _deadline.value = originalDeadline.changeMinute(minute)
     }
 
 }

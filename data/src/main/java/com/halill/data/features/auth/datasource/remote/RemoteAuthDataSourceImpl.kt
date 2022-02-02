@@ -10,6 +10,7 @@ import com.halill.domain.exception.NotLoginException
 import com.halill.domain.exception.UnAuthorizedException
 import com.halill.domain.features.auth.exception.WrongIdException
 import retrofit2.HttpException
+import java.lang.Exception
 import java.net.UnknownHostException
 import javax.inject.Inject
 
@@ -25,7 +26,7 @@ class RemoteAuthDataSourceImpl @Inject constructor(
             } else {
                 throw InternetErrorException()
             }
-        } catch (e: UnknownHostException) {
+        } catch (e: Exception) {
             throw InternetErrorException()
         }
 
@@ -33,17 +34,14 @@ class RemoteAuthDataSourceImpl @Inject constructor(
     override suspend fun register(parameter: RegisterParameter) =
         try {
             authApi.register(parameter.toRequest())
-        }catch (e: HttpException) {
+        } catch (e: HttpException) {
             print(e.code())
         } catch (e: UnknownHostException) {
             throw InternetErrorException()
         }
 
-    override suspend fun refreshToken(refreshToken: String?) {
+    override suspend fun refreshToken(refreshToken: String) {
         try {
-            if (refreshToken.isNullOrEmpty()) {
-                throw NotLoginException()
-            }
             authApi.refreshToken(refreshToken.toRequest())
         } catch (e: HttpException) {
             if (e.code() == 401) {

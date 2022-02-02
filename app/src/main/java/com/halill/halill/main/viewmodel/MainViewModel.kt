@@ -2,8 +2,10 @@ package com.halill.halill.main.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.halill.domain.exception.BadRequestException
 import com.halill.domain.exception.NotLoginException
+import com.halill.domain.exception.UnAuthorizedException
+import com.halill.domain.features.auth.entity.UserEntity
+import com.halill.domain.features.auth.usecase.CheckLoginUseCase
 import com.halill.domain.features.auth.usecase.GetUserInfoUseCase
 import com.halill.domain.features.todo.usecase.GetTodoListUseCase
 import com.halill.halill.base.EventFlow
@@ -20,10 +22,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    private val checkLoginUseCase: CheckLoginUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getTodoListUseCase: GetTodoListUseCase
 ) : ViewModel() {
-    private val _mainState = MutableStateFlow(MainState.EmptyListState)
+    private val _mainState = MutableStateFlow<MainState>(MainState.LoadingState)
     val mainState: StateFlow<MainState> get() = _mainState
 
     private val _mainEvent = MutableEventFlow<MainEvent>()
@@ -31,31 +34,36 @@ class MainViewModel @Inject constructor(
 
     val showingPage = MutableStateFlow(0)
 
-    init {
-        loadUserInfo()
-    }
-
-    private fun loadUserInfo() {
+    fun checkLogin() {
         viewModelScope.launch {
             try {
-                getUserInfoUseCase.execute(Unit)
+                checkLoginUseCase.execute(Unit)
             } catch (e: NotLoginException) {
-                _mainState.value = MainState.EmptyListState
                 _mainEvent.emit(MainEvent.StartLogin)
+            } catch (e: UnAuthorizedException) {
+                _mainEvent.emit(MainEvent.StartLogin)
+            }
+        }
+
+    }
+
+    fun loadUserInfo() {
+        viewModelScope.launch {
+            getUserInfoUseCase.execute(Unit).collect {
+                loadTodoList(it)
             }
         }
     }
 
-    fun loadTodoList() {
+    private fun loadTodoList(user: UserEntity) {
         viewModelScope.launch {
-            try {
-                getTodoListUseCase.execute(Unit).collect { loadData ->
-
+            getTodoListUseCase.execute(Unit).collect { todoList ->
+                if (todoList.doneList.isNotEmpty() && todoList.todoList.isNotEmpty()) {
+                    _mainState.value =
+                        MainState.ShowTodoListState(user, todoList.todoList, todoList.doneList)
+                } else {
+                    _mainState.value = MainState.EmptyListState(user)
                 }
-            } catch (e: NotLoginException) {
-                _mainState.value = MainState.EmptyListState
-            } catch (e: BadRequestException) {
-
             }
         }
     }

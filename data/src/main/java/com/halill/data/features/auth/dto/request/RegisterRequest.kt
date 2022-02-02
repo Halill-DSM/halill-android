@@ -6,7 +6,7 @@ data class RegisterRequest(val email: String, val password: String, val name: St
 
 fun RegisterParameter.toRequest() =
     RegisterRequest(
-        email = user.email,
+        email = userEntity.email,
         password = password,
-        name = user.name
+        name = userEntity.name
     )

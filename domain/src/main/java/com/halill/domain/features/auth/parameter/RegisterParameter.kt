@@ -1,5 +1,5 @@
 package com.halill.domain.features.auth.parameter
 
-import com.halill.domain.features.auth.entity.User
+import com.halill.domain.features.auth.entity.UserEntity
 
-data class RegisterParameter (val user: User, val password: String)
+data class RegisterParameter (val userEntity: UserEntity, val password: String)

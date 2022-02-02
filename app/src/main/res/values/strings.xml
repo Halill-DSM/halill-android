@@ -7,6 +7,16 @@
     <string name="register">회원가입</string>
     <string name="login_empty_comment">모든 정보를 입력해주세요</string>
     <string name="wrong_id_comment">잘못된 로그인 정보입니다</string>
+    <string name="internet_error_comment">인터넷 연결을 확인해주세요</string>
     <string name="success_register_comment">회원가입을 완료하였습니다</string>
     <string name="fail_register_comment">회원가입에 실패하였습니다</string>
+    <string name="write_todo">할일추가</string>
+    <string name="write_title">제목을 입력해주세요</string>
+    <string name="write_content">내용을 입력해주세요</string>
+    <string name="dead_line">마감기간</string>
+    <string name="year">년</string>
+    <string name="month">월</string>
+    <string name="day">일</string>
+    <string name="hour">시</string>
+    <string name="minute">분</string>
 </resources>

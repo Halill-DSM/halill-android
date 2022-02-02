@@ -3,13 +3,17 @@ package com.halill.halill.main
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Tab
-import androidx.compose.material.TabRow
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -19,23 +23,23 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.halill.halill.R
+import com.halill.halill.base.EventFlow
 import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.main.model.MainEvent
+import com.halill.halill.main.model.MainState
+import com.halill.halill.ui.theme.Teal900
 import kotlinx.coroutines.launch
+
+lateinit var scaffoldState: ScaffoldState
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
-    viewModel.loadTodoList()
-
-    viewModel.mainEvent.observeWithLifecycle { mainEvent ->
-        when(mainEvent) {
-            is MainEvent.StartLogin -> {
-                navController.navigate("login")
-            }
-        }
+    scaffoldState = rememberScaffoldState()
+    viewModel.run {
+        checkLogin()
+        loadUserInfo()
     }
-
     val tabData = listOf(
         stringResource(id = R.string.todo),
         stringResource(id = R.string.done)
@@ -47,10 +51,55 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
         infiniteLoop = false
     )
 
-    Column {
-        MainTab(pagerState = pagerState, tabData = tabData)
+    Scaffold(scaffoldState = scaffoldState,
+        floatingActionButton = {
+            FloatingActionButton(onClick = { navController.navigate("writeTodo") }) {
+                Icon(
+                    painter = rememberVectorPainter(image = Icons.Filled.Add),
+                    contentDescription = "write todo"
+                )
+            }
+        },
+        isFloatingActionButtonDocked = true,
+        bottomBar = {
+            BottomAppBar(
+                cutoutShape = MaterialTheme.shapes.small.copy(
+                    CornerSize(percent = 50)
+                )
+            ) {
+                val userName =
+                    when (val mainState = viewModel.mainState.collectAsState().value) {
+                        is MainState.ShowTodoListState -> mainState.userEntity.name
+                        is MainState.EmptyListState -> mainState.userEntity.name
+                        else -> {
+                            val needLoginText = "로그인이 필요합니다"
+                            needLoginText
+                        }
+                    }
+                Text(text = userName)
+            }
+        }) {
+        Column {
+            MainTab(pagerState = pagerState, tabData = tabData)
 
-        MainPager(pagerState = pagerState, tabData = tabData)
+            MainPager(pagerState = pagerState, tabData = tabData)
+        }
+    }
+
+    val mainEvent = viewModel.mainEvent
+    HandleMainEvent(navController = navController, event = mainEvent)
+}
+
+@Composable
+private fun HandleMainEvent(navController: NavController, event: EventFlow<MainEvent>) {
+    event.observeWithLifecycle { mainEvent ->
+        when (mainEvent) {
+            is MainEvent.StartLogin -> {
+                navController.navigate("login") {
+                    launchSingleTop = true
+                }
+            }
+        }
     }
 }
 
@@ -64,7 +113,9 @@ fun MainTab(
     val coroutineScope = rememberCoroutineScope()
     val selectedTabIndex = pagerState.currentPage
     TabRow(
-        selectedTabIndex = selectedTabIndex
+        selectedTabIndex = selectedTabIndex,
+        backgroundColor = Color.White,
+        contentColor = Teal900
     ) {
         viewModel.showingPage.value = selectedTabIndex
         tabData.forEachIndexed { index, text ->

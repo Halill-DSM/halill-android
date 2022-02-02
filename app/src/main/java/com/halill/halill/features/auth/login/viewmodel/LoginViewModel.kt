@@ -43,7 +43,7 @@ class LoginViewModel @Inject constructor(
                 } catch (e: WrongIdException) {
                     _loginEvent.emit(LoginEvent.WrongId)
                 } catch (e: InternetErrorException) {
-                    _loginState.value = LoginState.InternetExceptionState
+                    _loginEvent.emit(LoginEvent.InternetError)
                 } finally {
                     _loginState.emit(LoginState.NotDoneInputState)
                 }
@@ -60,15 +60,11 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun setDoneLoginState(email: String, password: String) {
-        viewModelScope.launch {
-            _loginState.emit(LoginState.DoneInputState(email, password))
-        }
-    }
-
-    fun setNotDoneInputState() {
-        viewModelScope.launch {
-            _loginState.emit(LoginState.NotDoneInputState)
-        }
+    private fun checkDoneInput() {
+        _loginState.value =
+            if (email.value.isEmpty() || password.value.isEmpty()) LoginState.NotDoneInputState else LoginState.DoneInputState(
+                email.value,
+                password.value
+            )
     }
 }

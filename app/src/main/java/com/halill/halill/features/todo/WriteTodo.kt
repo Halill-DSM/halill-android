@@ -1,5 +1,6 @@
 package com.halill.halill.features.todo
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,9 +17,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill.R
@@ -30,7 +33,7 @@ import com.halill.halill.ui.theme.Teal900
 import kotlinx.coroutines.launch
 
 @Composable
-fun WriteTodo(navController: NavController) {
+fun WriteTodo(navController: NavController, viewModel: WriteTodoViewModel = hiltViewModel()) {
     Scaffold(scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
@@ -61,6 +64,10 @@ fun WriteTodo(navController: NavController) {
                 ContentTextField()
                 DeadLineView()
                 WriteTodoButton()
+                val writeTodoState = viewModel.writeTodoState.collectAsState().value
+                if(writeTodoState is WriteTodoState.SelectDateState) {
+                    SelectDateDialog()
+                }
             }
         })
 
@@ -124,7 +131,11 @@ fun DeadLineDateView(viewModel: WriteTodoViewModel = hiltViewModel()) {
     val date = "${deadLine.dayOfMonth}일"
     val dateText = "$year $month $date"
     Text(
-        modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp),
+        modifier = Modifier
+            .padding(0.dp, 0.dp, 0.dp, 10.dp)
+            .clickable(enabled = true, role = Role.Button) {
+                viewModel.setSelectDateState()
+            },
         text = dateText,
         style = TextStyle(textDecoration = TextDecoration.Underline)
     )
@@ -173,4 +184,22 @@ fun WriteTodoButton(viewModel: WriteTodoViewModel = hiltViewModel()) {
     ) {
         Text(text = stringResource(id = R.string.write_todo))
     }
+}
+
+@Composable
+fun SelectDateDialog(viewModel: WriteTodoViewModel = hiltViewModel()) {
+    Dialog(onDismissRequest = { viewModel.checkDoneInput() }) {
+        Surface(
+            modifier = Modifier
+                .wrapContentSize(),
+            color = Color.White
+        ) {
+            DateDialogContent()
+        }
+    }
+}
+
+@Composable
+fun DateDialogContent() {
+
 }

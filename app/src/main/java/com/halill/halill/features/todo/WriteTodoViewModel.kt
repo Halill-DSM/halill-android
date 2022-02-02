@@ -57,10 +57,18 @@ class WriteTodoViewModel @Inject constructor(
 
     }
 
-    private fun checkDoneInput() {
+    fun checkDoneInput() {
         _writeTodoState.value =
             if (title.value.isEmpty() || content.value.isEmpty()) WriteTodoState.NotDoneInputState
             else WriteTodoState.DoneInputState
+    }
+
+    fun setSelectDateState() {
+        _writeTodoState.value = WriteTodoState.SelectDateState
+    }
+
+    fun setSelectTimeState() {
+        _writeTodoState.value = WriteTodoState.SelectTimeState
     }
 
 }

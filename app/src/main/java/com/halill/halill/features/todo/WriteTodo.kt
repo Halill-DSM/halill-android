@@ -78,6 +78,9 @@ fun WriteTodo(navController: NavController, viewModel: WriteTodoViewModel = hilt
                 if (writeTodoState is WriteTodoState.SelectDateState) {
                     SelectDateDialog()
                     ClearFocus()
+                } else if(writeTodoState is WriteTodoState.SelectTimeState) {
+                    SelectTimeDialog()
+                    ClearFocus()
                 }
             }
         })
@@ -314,6 +317,77 @@ private fun dateNumberPicker(context: Context, day: Int, lastDay: Int) =
         value = day
     }
 
+@Composable
+fun SelectTimeDialog(viewModel: WriteTodoViewModel = hiltViewModel()) {
+    Dialog(onDismissRequest = { viewModel.checkDoneInput() }) {
+        Surface(
+            modifier = Modifier
+                .width(250.dp),
+            color = Color.White,
+            shape = RoundedCornerShape(15.dp)
+        ) {
+            TimeDialogContent()
+        }
+    }
+}
+
+@Composable
+fun TimeDialogContent() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        HourNumberPicker()
+        val yearText = stringResource(id = R.string.year)
+        Text(text = yearText)
+
+        MinuteNumberPicker()
+        val monthText = stringResource(id = R.string.month)
+        Text(text = monthText)
+    }
+}
+
+@Composable
+fun HourNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
+    val deadline = viewModel.deadLine.collectAsState().value
+    AndroidView(
+        modifier = Modifier.wrapContentSize(),
+        factory = { context ->
+            hourNumberPicker(context, deadline.hour)
+        }
+    )
+}
+
+private fun hourNumberPicker(context: Context, hour: Int) =
+    NumberPicker(context).apply {
+        setOnValueChangedListener { picker, _, _ ->
+            picker.value
+        }
+        maxValue = 23
+        minValue = 0
+        value = hour
+    }
+
+@Composable
+fun MinuteNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
+    val deadline = viewModel.deadLine.collectAsState().value
+    AndroidView(
+        modifier = Modifier.wrapContentSize(),
+        factory = { context ->
+            minuteNumberPicker(context, deadline.minute)
+        }
+    )
+}
+
+private fun minuteNumberPicker(context: Context, minute: Int) =
+    NumberPicker(context).apply {
+        setOnValueChangedListener { picker, _, _ ->
+            picker.value
+        }
+        maxValue = 23
+        minValue = 0
+        value = minute
+    }
 
 private fun setDeadlineDate() {
 

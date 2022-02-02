@@ -217,7 +217,7 @@ fun SelectDateDialog(viewModel: WriteTodoViewModel = hiltViewModel()) {
     Dialog(onDismissRequest = { viewModel.checkDoneInput() }) {
         Surface(
             modifier = Modifier
-                .wrapContentSize(),
+                .width(275.dp),
             color = Color.White,
             shape = RoundedCornerShape(15.dp)
         ) {
@@ -228,7 +228,10 @@ fun SelectDateDialog(viewModel: WriteTodoViewModel = hiltViewModel()) {
 
 @Composable
 fun DateDialogContent() {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
         YearNumberPicker()
         val yearText = stringResource(id = R.string.year)
         Text(text = yearText)

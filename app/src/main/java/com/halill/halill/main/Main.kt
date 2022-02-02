@@ -71,9 +71,9 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
                     when (val mainState = viewModel.mainState.collectAsState().value) {
                         is MainState.ShowTodoListState -> mainState.userEntity.name
                         is MainState.EmptyListState -> mainState.userEntity.name
-                        else -> {
-                            val needLoginText = "로그인이 필요합니다"
-                            needLoginText
+                        is MainState.LoadingState -> {
+                            val loadingText = stringResource(id = R.string.loading_comment)
+                            loadingText
                         }
                     }
                 Text(text = userName)

@@ -38,6 +38,7 @@ import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.main.model.MainEvent
 import com.halill.halill.main.model.MainState
 import com.halill.halill.ui.theme.Teal500
+import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.ui.theme.Teal900
 import kotlinx.coroutines.launch
 
@@ -76,7 +77,8 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
             BottomAppBar(
                 cutoutShape = MaterialTheme.shapes.small.copy(
                     CornerSize(percent = 50)
-                )
+                ),
+                backgroundColor = Teal700
             ) {
                 val userName =
                     when (val mainState = viewModel.mainState.collectAsState().value) {
@@ -276,15 +278,51 @@ fun DoneList(doneList: List<TodoEntity>) {
             contentPadding = PaddingValues(0.dp, 4.dp)
         ) {
             items(doneList) {
-                TodoItem(todo = it)
+                DoneItem(it)
             }
         }
     }
 }
 
 @Composable
-fun DoneItem(done: TodoEntity) {
+fun DoneItem(done: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
+    val scope = rememberCoroutineScope()
+    val deleteComment = stringResource(id = R.string.delete_comment)
+    Box {
+        Column(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(PaddingValues(4.dp, 0.dp))
+        ) {
+            TitleText(title = done.title)
+            ContentText(content = done.content)
+            Divider(
+                modifier = Modifier.padding(PaddingValues(0.dp, 8.dp)),
+                color = Teal500,
+                thickness = 1.dp
+            )
+        }
+        Column(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .size(37.dp)
+                .clickable(enabled = true, role = Role.Button) {
+                    viewModel.deleteTodo(done.id)
+                    scope.launch {
+                        scaffoldState.snackbarHostState.showSnackbar(deleteComment)
+                    }
+                },
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ic_baseline_delete_24),
+                contentDescription = "delete"
+            )
+            val doneText = stringResource(id = R.string.delete)
+            Text(text = doneText, color = colorResource(id = R.color.red), fontSize = 12.sp)
+        }
 
+    }
 }
 
 @Composable

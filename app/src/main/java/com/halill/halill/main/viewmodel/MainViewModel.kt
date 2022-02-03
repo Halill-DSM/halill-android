@@ -76,4 +76,10 @@ class MainViewModel @Inject constructor(
             loadUserInfo()
         }
     }
+
+    fun deleteTodo(todoId: Long) {
+        viewModelScope.launch {
+
+        }
+    }
 }

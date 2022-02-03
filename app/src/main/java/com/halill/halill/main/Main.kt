@@ -1,5 +1,6 @@
 package com.halill.halill.main
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,7 +9,6 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -217,11 +217,12 @@ fun TodoItem(todo: TodoEntity) {
                 thickness = 1.dp
             )
         }
-        Icon(
+        Image(
             modifier = Modifier
-                .size(30.dp)
+                .size(37.dp)
+                .align(Alignment.CenterEnd)
                 .clickable(enabled = true, role = Role.Button) {
-                                                               
+
                 },
             painter = painterResource(R.drawable.ic_baseline_done_24),
             contentDescription = "doneIcon"
@@ -232,6 +233,7 @@ fun TodoItem(todo: TodoEntity) {
 @Composable
 fun TitleText(title: String) {
     Text(
+        modifier = Modifier.padding(0.dp, 0.dp, 40.dp, 0.dp),
         text = title,
         fontSize = 18.sp,
         fontWeight = Bold,
@@ -241,7 +243,13 @@ fun TitleText(title: String) {
 
 @Composable
 fun ContentText(content: String) {
-    Text(text = content, fontSize = 14.sp, overflow = TextOverflow.Ellipsis, maxLines = 1)
+    Text(
+        modifier = Modifier.padding(0.dp, 0.dp, 40.dp, 0.dp),
+        text = content,
+        fontSize = 14.sp,
+        overflow = TextOverflow.Ellipsis,
+        maxLines = 1
+    )
 }
 
 @Composable

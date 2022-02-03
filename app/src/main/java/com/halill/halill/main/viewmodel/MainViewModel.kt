@@ -7,6 +7,7 @@ import com.halill.domain.exception.UnAuthorizedException
 import com.halill.domain.features.auth.entity.UserEntity
 import com.halill.domain.features.auth.usecase.CheckLoginUseCase
 import com.halill.domain.features.auth.usecase.GetUserInfoUseCase
+import com.halill.domain.features.todo.usecase.DoneTodoUseCase
 import com.halill.domain.features.todo.usecase.GetTodoListUseCase
 import com.halill.halill.base.EventFlow
 import com.halill.halill.base.MutableEventFlow
@@ -24,7 +25,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val checkLoginUseCase: CheckLoginUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
-    private val getTodoListUseCase: GetTodoListUseCase
+    private val getTodoListUseCase: GetTodoListUseCase,
+    private val doneTodoUseCase: DoneTodoUseCase
 ) : ViewModel() {
     private val _mainState = MutableStateFlow<MainState>(MainState.LoadingState)
     val mainState: StateFlow<MainState> get() = _mainState
@@ -65,6 +67,13 @@ class MainViewModel @Inject constructor(
                     _mainState.value = MainState.EmptyListState(user)
                 }
             }
+        }
+    }
+
+    fun doneTodo(todoId: Long) {
+        viewModelScope.launch {
+            doneTodoUseCase.execute(todoId)
+            loadUserInfo()
         }
     }
 }

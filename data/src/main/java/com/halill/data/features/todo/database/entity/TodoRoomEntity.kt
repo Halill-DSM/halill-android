@@ -8,10 +8,10 @@ import java.time.LocalDateTime
 
 @Entity(tableName = "todolist")
 data class TodoRoomEntity(
-    val title: String,
-    val content: String,
-    val deadline: LocalDateTime,
-    val isCompleted: Boolean
+    var title: String,
+    var content: String,
+    var deadline: LocalDateTime,
+    var isCompleted: Boolean
 ) {
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0

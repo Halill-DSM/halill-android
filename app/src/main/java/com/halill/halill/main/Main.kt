@@ -203,7 +203,7 @@ fun TodoList(todoList: List<TodoEntity>) {
 }
 
 @Composable
-fun TodoItem(todo: TodoEntity) {
+fun TodoItem(todo: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
     Box {
         Column(
             modifier = Modifier
@@ -223,7 +223,7 @@ fun TodoItem(todo: TodoEntity) {
                 .align(Alignment.TopEnd)
                 .size(37.dp)
                 .clickable(enabled = true, role = Role.Button) {
-
+                    viewModel.doneTodo(todo.id)
                 },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

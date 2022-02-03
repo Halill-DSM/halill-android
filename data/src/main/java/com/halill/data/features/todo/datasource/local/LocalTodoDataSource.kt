@@ -9,4 +9,6 @@ interface LocalTodoDataSource {
     suspend fun saveTodoList(todoList: WriteTodoParam)
 
     suspend fun doneTodo(id: Long)
+
+    suspend fun deleteTodo(id: Long)
 }

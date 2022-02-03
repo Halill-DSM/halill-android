@@ -20,4 +20,8 @@ class LocalTodoDataSourceImpl @Inject constructor(
     override suspend fun doneTodo(id: Long) {
         todoDao.doneTodo(id)
     }
+
+    override suspend fun deleteTodo(id: Long) {
+        todoDao.deleteTodo(id)
+    }
 }

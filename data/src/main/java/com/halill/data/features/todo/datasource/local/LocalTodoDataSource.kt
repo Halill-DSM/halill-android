@@ -7,4 +7,6 @@ interface LocalTodoDataSource {
     suspend fun getTodoList(): List<TodoEntity>
 
     suspend fun saveTodoList(todoList: WriteTodoParam)
+
+    suspend fun doneTodo(id: Long)
 }

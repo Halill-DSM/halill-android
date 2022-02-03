@@ -8,6 +8,6 @@ class DeleteTodoRepositoryImpl @Inject constructor(
     private val localTodoDataSource: LocalTodoDataSource
 ): DeleteTodoRepository {
     override suspend fun deleteTodo(todoId: Long) {
-        localTodoDataSource
+        localTodoDataSource.deleteTodo(todoId)
     }
 }

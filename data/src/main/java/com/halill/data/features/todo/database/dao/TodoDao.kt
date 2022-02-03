@@ -13,4 +13,7 @@ interface TodoDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveTodoList(todoRoomList: TodoRoomEntity)
+
+    @Query("UPDATE todoList SET deadline where id = :todoId")
+    suspend fun doneTodo(todoId: Long)
 }

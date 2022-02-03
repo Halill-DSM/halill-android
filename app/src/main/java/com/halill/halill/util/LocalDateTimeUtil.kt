@@ -16,3 +16,7 @@ fun LocalDateTime.changeHour(hour: Int): LocalDateTime =
 
 fun LocalDateTime.changeMinute(minute: Int): LocalDateTime =
     LocalDateTime.of(this.year, this.monthValue, this.dayOfMonth, this.hour, minute)
+
+fun LocalDateTime.toShowDeadlineText(): String =
+    "${year}년 ${monthValue}월 ${dayOfMonth}일 ${hour}시 ${minute}분 까지"
+

@@ -40,7 +40,9 @@ import com.halill.halill.main.model.MainState
 import com.halill.halill.ui.theme.Teal500
 import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.ui.theme.Teal900
+import com.halill.halill.util.toShowDeadlineText
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 lateinit var scaffoldState: ScaffoldState
 
@@ -218,6 +220,7 @@ fun TodoItem(todo: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
         ) {
             TitleText(title = todo.title)
             ContentText(content = todo.content)
+            DeadlineText(deadline = todo.deadline)
             Divider(
                 modifier = Modifier.padding(PaddingValues(0.dp, 8.dp)),
                 color = Teal500,
@@ -267,10 +270,17 @@ fun ContentText(content: String) {
 }
 
 @Composable
+fun DeadlineText(deadline: LocalDateTime) {
+    val deadlineText = deadline.toShowDeadlineText()
+    Text(text = deadlineText, fontSize = 12.sp, color = Color.Gray)
+}
+
+@Composable
 fun EmptyTodoListText() {
     val emptyComment = stringResource(id = R.string.empty_todo_list)
     Text(text = emptyComment)
 }
+
 
 @Composable
 fun DoneList(doneList: List<TodoEntity>) {
@@ -298,6 +308,7 @@ fun DoneItem(done: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
         ) {
             TitleText(title = done.title)
             ContentText(content = done.content)
+            DeadlineText(deadline = done.deadline)
             Divider(
                 modifier = Modifier.padding(PaddingValues(0.dp, 8.dp)),
                 color = Teal500,

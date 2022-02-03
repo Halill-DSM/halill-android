@@ -1,5 +1,6 @@
 package com.halill.halill.main
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -7,6 +8,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -14,7 +16,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -213,6 +217,15 @@ fun TodoItem(todo: TodoEntity) {
                 thickness = 1.dp
             )
         }
+        Icon(
+            modifier = Modifier
+                .size(30.dp)
+                .clickable(enabled = true, role = Role.Button) {
+                                                               
+                },
+            painter = painterResource(R.drawable.ic_baseline_done_24),
+            contentDescription = "doneIcon"
+        )
     }
 }
 
@@ -242,7 +255,14 @@ fun DoneList(doneList: List<TodoEntity>) {
     if (doneList.isEmpty()) {
         EmptyDoneListText()
     } else {
-        
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(0.dp, 4.dp)
+        ) {
+            items(doneList) {
+                TodoItem(todo = it)
+            }
+        }
     }
 }
 

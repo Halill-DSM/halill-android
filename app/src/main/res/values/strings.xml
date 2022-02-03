@@ -21,4 +21,6 @@
     <string name="minute">분</string>
     <string name="loading_comment">로딩중입니다</string>
     <string name="main_exception_comment">오류가 발생하였습니다</string>
+    <string name="empty_todo_list">할일이 없습니다</string>
+    <string name="empty_done_list">완료한 할일이 없습니다</string>
 </resources>

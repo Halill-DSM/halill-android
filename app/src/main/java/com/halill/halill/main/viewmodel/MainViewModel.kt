@@ -58,7 +58,7 @@ class MainViewModel @Inject constructor(
     private fun loadTodoList(user: UserEntity) {
         viewModelScope.launch {
             getTodoListUseCase.execute(Unit).collect { todoList ->
-                if (todoList.doneList.isNotEmpty() && todoList.todoList.isNotEmpty()) {
+                if (todoList.doneList.isNotEmpty() || todoList.todoList.isNotEmpty()) {
                     _mainState.value =
                         MainState.ShowTodoListState(user, todoList.todoList, todoList.doneList)
                 } else {

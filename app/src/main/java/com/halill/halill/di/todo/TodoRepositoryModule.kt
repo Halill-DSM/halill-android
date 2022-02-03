@@ -37,6 +37,7 @@ object TodoRepositoryModule {
     ): DoneTodoRepository = DoneTodoRepositoryImpl(localTodoDataSource)
 
     @Singleton
+    @Provides
     fun provideDeleteTodoRepository(
         localTodoDataSource: LocalTodoDataSource
     ): DeleteTodoRepository = DeleteTodoRepositoryImpl(localTodoDataSource)

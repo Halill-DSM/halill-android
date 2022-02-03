@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -217,23 +218,30 @@ fun TodoItem(todo: TodoEntity) {
                 thickness = 1.dp
             )
         }
-        Image(
+        Column(
             modifier = Modifier
+                .align(Alignment.TopEnd)
                 .size(37.dp)
-                .align(Alignment.CenterEnd)
                 .clickable(enabled = true, role = Role.Button) {
 
                 },
-            painter = painterResource(R.drawable.ic_baseline_done_24),
-            contentDescription = "doneIcon"
-        )
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ic_baseline_done_24),
+                contentDescription = "doneIcon"
+            )
+            val doneText = stringResource(id = R.string.done)
+            Text(text = doneText, color = colorResource(id = R.color.green), fontSize = 12.sp)
+        }
+
     }
 }
 
 @Composable
 fun TitleText(title: String) {
     Text(
-        modifier = Modifier.padding(0.dp, 0.dp, 40.dp, 0.dp),
+        modifier = Modifier.padding(0.dp, 0.dp, 35.dp, 0.dp),
         text = title,
         fontSize = 18.sp,
         fontWeight = Bold,
@@ -244,7 +252,7 @@ fun TitleText(title: String) {
 @Composable
 fun ContentText(content: String) {
     Text(
-        modifier = Modifier.padding(0.dp, 0.dp, 40.dp, 0.dp),
+        modifier = Modifier.padding(0.dp, 0.dp, 35.dp, 0.dp),
         text = content,
         fontSize = 14.sp,
         overflow = TextOverflow.Ellipsis,

@@ -5,9 +5,7 @@ import com.halill.domain.features.auth.repository.RegisterRepository
 import com.halill.domain.features.auth.usecase.CheckLoginUseCase
 import com.halill.domain.features.auth.usecase.GetUserInfoUseCase
 import com.halill.domain.features.auth.usecase.RegisterUseCase
-import com.halill.domain.features.todo.repository.GetTodoListRepository
-import com.halill.domain.features.todo.repository.GetUserInfoRepository
-import com.halill.domain.features.todo.usecase.GetTodoListUseCase
+import com.halill.domain.features.auth.repository.GetUserInfoRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

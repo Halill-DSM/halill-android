@@ -3,7 +3,7 @@ package com.halill.data.features.auth.repository
 import com.halill.data.features.auth.datasource.local.LocalAuthDataSource
 import com.halill.data.features.auth.entity.toEntity
 import com.halill.domain.features.auth.entity.UserEntity
-import com.halill.domain.features.todo.repository.GetUserInfoRepository
+import com.halill.domain.features.auth.repository.GetUserInfoRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

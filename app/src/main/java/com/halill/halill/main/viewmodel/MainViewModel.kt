@@ -82,6 +82,7 @@ class MainViewModel @Inject constructor(
     fun deleteTodo(todoId: Long) {
         viewModelScope.launch {
             deleteTodoUseCase.execute(todoId)
+            _mainEvent.emit(MainEvent.DoneDeleteTodo)
             loadUserInfo()
         }
     }

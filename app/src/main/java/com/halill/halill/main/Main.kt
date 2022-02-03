@@ -105,12 +105,16 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
 
 @Composable
 private fun HandleMainEvent(navController: NavController, event: EventFlow<MainEvent>) {
+    val deleteComment = stringResource(id = R.string.delete_comment)
     event.observeWithLifecycle { mainEvent ->
         when (mainEvent) {
             is MainEvent.StartLogin -> {
                 navController.navigate("login") {
                     launchSingleTop = true
                 }
+            }
+            is MainEvent.DoneDeleteTodo -> {
+                scaffoldState.snackbarHostState.showSnackbar(deleteComment)
             }
         }
     }
@@ -286,8 +290,6 @@ fun DoneList(doneList: List<TodoEntity>) {
 
 @Composable
 fun DoneItem(done: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
-    val scope = rememberCoroutineScope()
-    val deleteComment = stringResource(id = R.string.delete_comment)
     Box {
         Column(
             modifier = Modifier
@@ -308,9 +310,6 @@ fun DoneItem(done: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
                 .size(37.dp)
                 .clickable(enabled = true, role = Role.Button) {
                     viewModel.deleteTodo(done.id)
-                    scope.launch {
-                        scaffoldState.snackbarHostState.showSnackbar(deleteComment)
-                    }
                 },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

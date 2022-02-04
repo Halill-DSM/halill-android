@@ -86,4 +86,10 @@ class MainViewModel @Inject constructor(
             loadUserInfo()
         }
     }
+
+    fun startDetailTodo(id: Long) {
+        viewModelScope.launch {
+            _mainEvent.emit(MainEvent.StartTodoDetail(id))
+        }
+    }
 }

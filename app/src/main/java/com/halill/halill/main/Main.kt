@@ -102,11 +102,11 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
     }
 
     val mainEvent = viewModel.mainEvent
-    HandleMainEvent(navController = navController, event = mainEvent)
+    handleMainEvent(navController = navController, event = mainEvent)
 }
 
 @Composable
-private fun HandleMainEvent(navController: NavController, event: EventFlow<MainEvent>) {
+private fun handleMainEvent(navController: NavController, event: EventFlow<MainEvent>) {
     val deleteComment = stringResource(id = R.string.delete_comment)
     event.observeWithLifecycle { mainEvent ->
         when (mainEvent) {
@@ -117,6 +117,10 @@ private fun HandleMainEvent(navController: NavController, event: EventFlow<MainE
             }
             is MainEvent.DoneDeleteTodo -> {
                 scaffoldState.snackbarHostState.showSnackbar(deleteComment)
+            }
+
+            is MainEvent.StartTodoDetail -> {
+                navController.navigate("todoDetail/${mainEvent.id}")
             }
         }
     }
@@ -212,7 +216,10 @@ fun TodoList(todoList: List<TodoEntity>) {
 
 @Composable
 fun TodoItem(todo: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
-    Box {
+    Box(modifier = Modifier
+        .clickable(enabled = true, role = Role.Tab) {
+            viewModel.startDetailTodo(todo.id)
+        }) {
         Column(
             modifier = Modifier
                 .align(Alignment.CenterStart)

@@ -7,7 +7,9 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,10 +17,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill.main.DeadlineText
+import com.halill.halill.main.DeleteButton
 import com.halill.halill.main.DoneButton
 import com.halill.halill.main.scaffoldState
 import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.util.toRemainTimeText
+import kotlinx.coroutines.launch
 
 @Composable
 fun TodoDetail(
@@ -26,7 +30,9 @@ fun TodoDetail(
     id: Long,
     viewModel: TodoDetailViewModel = hiltViewModel()
 ) {
-    viewModel.getDetail(id)
+    LaunchedEffect(Unit){
+        viewModel.getDetail(id)
+    }
     val state = viewModel.todoDetailState.collectAsState().value
     Scaffold(scaffoldState = scaffoldState,
         topBar = {
@@ -44,9 +50,26 @@ fun TodoDetail(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        DoneButton()
+                    val scope = rememberCoroutineScope()
+                    if (state is TodoDetailState.MainState) {
+                        if (state.todo.isCompleted) {
+                            IconButton(onClick = {
+                                scope.launch {
+                                    viewModel.deleteTodo(id)
+                                }
+                                navController.popBackStack()
+                            }) {
+                                DeleteButton()
+                            }
+                        } else {
+                            IconButton(onClick = {
+                                viewModel.doneTodo(state.todo.id)
+                            }) {
+                                DoneButton()
+                            }
+                        }
                     }
+
                 },
                 backgroundColor = Color.White,
                 contentColor = Teal700,

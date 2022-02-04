@@ -345,7 +345,10 @@ fun DoneList(doneList: List<TodoEntity>) {
 
 @Composable
 fun DoneItem(done: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
-    Box {
+    Box(modifier = Modifier
+        .clickable(enabled = true, role = Role.Tab) {
+            viewModel.startDetailTodo(done.id)
+        }) {
         Column(
             modifier = Modifier
                 .align(Alignment.CenterStart)
@@ -370,7 +373,7 @@ fun DoneItem(done: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun DeleteButton(modifier: Modifier) {
+fun DeleteButton(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally

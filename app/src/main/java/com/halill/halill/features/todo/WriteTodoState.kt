@@ -1,4 +1,4 @@
-package com.halill.halill.features.todo.model
+package com.halill.halill.features.todo
 
 sealed class WriteTodoState {
     object DoneInputState : WriteTodoState()

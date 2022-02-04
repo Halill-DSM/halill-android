@@ -7,6 +7,8 @@ import com.halill.domain.exception.UnAuthorizedException
 import com.halill.domain.features.auth.entity.UserEntity
 import com.halill.domain.features.auth.usecase.CheckLoginUseCase
 import com.halill.domain.features.auth.usecase.GetUserInfoUseCase
+import com.halill.domain.features.todo.usecase.DeleteTodoUseCase
+import com.halill.domain.features.todo.usecase.DoneTodoUseCase
 import com.halill.domain.features.todo.usecase.GetTodoListUseCase
 import com.halill.halill.base.EventFlow
 import com.halill.halill.base.MutableEventFlow
@@ -24,7 +26,9 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val checkLoginUseCase: CheckLoginUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
-    private val getTodoListUseCase: GetTodoListUseCase
+    private val getTodoListUseCase: GetTodoListUseCase,
+    private val doneTodoUseCase: DoneTodoUseCase,
+    private val deleteTodoUseCase: DeleteTodoUseCase
 ) : ViewModel() {
     private val _mainState = MutableStateFlow<MainState>(MainState.LoadingState)
     val mainState: StateFlow<MainState> get() = _mainState
@@ -58,13 +62,34 @@ class MainViewModel @Inject constructor(
     private fun loadTodoList(user: UserEntity) {
         viewModelScope.launch {
             getTodoListUseCase.execute(Unit).collect { todoList ->
-                if (todoList.doneList.isNotEmpty() && todoList.todoList.isNotEmpty()) {
+                if (todoList.doneList.isNotEmpty() || todoList.todoList.isNotEmpty()) {
                     _mainState.value =
                         MainState.ShowTodoListState(user, todoList.todoList, todoList.doneList)
                 } else {
                     _mainState.value = MainState.EmptyListState(user)
                 }
             }
+        }
+    }
+
+    fun doneTodo(todoId: Long) {
+        viewModelScope.launch {
+            doneTodoUseCase.execute(todoId)
+            loadUserInfo()
+        }
+    }
+
+    fun deleteTodo(todoId: Long) {
+        viewModelScope.launch {
+            deleteTodoUseCase.execute(todoId)
+            _mainEvent.emit(MainEvent.DoneDeleteTodo)
+            loadUserInfo()
+        }
+    }
+
+    fun startDetailTodo(id: Long) {
+        viewModelScope.launch {
+            _mainEvent.emit(MainEvent.StartTodoDetail(id))
         }
     }
 }

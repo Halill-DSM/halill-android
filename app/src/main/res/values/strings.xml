@@ -2,6 +2,8 @@
     <string name="app_name">HalIll</string>
     <string name="todo">Todo</string>
     <string name="done">Done</string>
+    <string name="delete">삭제</string>
+    <string name="delete_comment">삭제되었습니다</string>
     <string name="login">로그인</string>
     <string name="ask_register">아직 아이디가 없으신가요?</string>
     <string name="register">회원가입</string>
@@ -21,4 +23,6 @@
     <string name="minute">분</string>
     <string name="loading_comment">로딩중입니다</string>
     <string name="main_exception_comment">오류가 발생하였습니다</string>
+    <string name="empty_todo_list">할일이 없습니다</string>
+    <string name="empty_done_list">완료한 할일이 없습니다</string>
 </resources>

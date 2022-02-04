@@ -52,12 +52,12 @@ class LoginViewModel @Inject constructor(
 
     fun setEmail(email: String) {
         _email.value = email
+        checkDoneInput()
     }
 
     fun setPassword(password: String) {
-        viewModelScope.launch {
-            _password.emit(password)
-        }
+        _password.value = password
+        checkDoneInput()
     }
 
     private fun checkDoneInput() {

@@ -6,12 +6,15 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.halill.halill.features.auth.login.Login
 import com.halill.halill.features.auth.register.Register
+import com.halill.halill.features.todo.detail.TodoDetail
 import com.halill.halill.features.todo.WriteTodo
 import com.halill.halill.ui.theme.HalIll_AndroidTheme
 import com.halill.halill.ui.theme.Teal900
@@ -20,7 +23,7 @@ import com.halill.halill.ui.theme.Teal900
 fun HalIllApp() {
     val navController = rememberNavController()
     val systemUiController = rememberSystemUiController()
-    if(isSystemInDarkTheme()) {
+    if (isSystemInDarkTheme()) {
         systemUiController.setSystemBarsColor(
             color = Color.Black
         )
@@ -41,7 +44,14 @@ fun HalIllApp() {
         composable("main") { Main(navController) }
         composable("login") { Login(navController) }
         composable("register") { Register(navController) }
-        composable("writeTodo") { WriteTodo(navController)}
+        composable("writeTodo") { WriteTodo(navController) }
+        composable(
+            route = "todoDetail/{todoId}",
+            arguments = listOf(navArgument("todoId") { type = NavType.LongType })
+        ) {
+            val todoId = it.arguments!!.getLong("todoId")
+            TodoDetail(navController, todoId)
+        }
     }
 }
 

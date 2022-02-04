@@ -1,4 +1,4 @@
-package com.halill.domain.features.todo.repository
+package com.halill.domain.features.auth.repository
 
 import com.halill.domain.features.auth.entity.UserEntity
 import kotlinx.coroutines.flow.Flow

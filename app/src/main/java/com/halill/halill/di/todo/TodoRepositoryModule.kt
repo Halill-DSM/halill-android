@@ -1,10 +1,8 @@
 package com.halill.halill.di.todo
 
 import com.halill.data.features.todo.datasource.local.LocalTodoDataSource
-import com.halill.data.features.todo.repository.GetTodoListRepositoryImpl
-import com.halill.data.features.todo.repository.SaveTodoRepositoryImpl
-import com.halill.domain.features.todo.repository.GetTodoListRepository
-import com.halill.domain.features.todo.repository.SaveTodoRepository
+import com.halill.data.features.todo.repository.*
+import com.halill.domain.features.todo.repository.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,4 +23,22 @@ object TodoRepositoryModule {
     fun provideSaveTodoRepository(
         localTodoDataSource: LocalTodoDataSource
     ): SaveTodoRepository = SaveTodoRepositoryImpl(localTodoDataSource)
+
+    @Singleton
+    @Provides
+    fun provideDoneTodoRepository(
+        localTodoDataSource: LocalTodoDataSource
+    ): DoneTodoRepository = DoneTodoRepositoryImpl(localTodoDataSource)
+
+    @Singleton
+    @Provides
+    fun provideDeleteTodoRepository(
+        localTodoDataSource: LocalTodoDataSource
+    ): DeleteTodoRepository = DeleteTodoRepositoryImpl(localTodoDataSource)
+
+    @Singleton
+    @Provides
+    fun provideGetTodoDetailRepository(
+        localTodoDataSource: LocalTodoDataSource
+    ): GetTodoDetailRepository = GetTodoDetailRepositoryImpl(localTodoDataSource)
 }

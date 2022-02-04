@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.halill.domain.features.todo.param.WriteTodoParam
 import com.halill.domain.features.todo.usecase.SaveTodoUseCase
-import com.halill.halill.features.todo.model.WriteTodoState
 import com.halill.halill.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,7 +53,7 @@ class WriteTodoViewModel @Inject constructor(
 
     fun checkDoneInput() {
         _writeTodoState.value =
-            if (title.value.isEmpty() || content.value.isEmpty()) WriteTodoState.NotDoneInputState
+            if (title.value.isBlank() || content.value.isBlank()) WriteTodoState.NotDoneInputState
             else WriteTodoState.DoneInputState
     }
 

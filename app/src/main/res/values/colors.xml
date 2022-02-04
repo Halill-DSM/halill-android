@@ -10,4 +10,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="title">#000000</color>
+    <color name="green">#04cc89</color>
+    <color name="red">#cc0439</color>
 </resources>

@@ -1,9 +1,7 @@
 package com.halill.halill.di.todo
 
-import com.halill.domain.features.todo.repository.GetTodoListRepository
-import com.halill.domain.features.todo.repository.SaveTodoRepository
-import com.halill.domain.features.todo.usecase.GetTodoListUseCase
-import com.halill.domain.features.todo.usecase.SaveTodoUseCase
+import com.halill.domain.features.todo.repository.*
+import com.halill.domain.features.todo.usecase.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,4 +22,22 @@ object TodoUseCaseModule {
     fun provideSaveTodoUseCase(
         saveTodoRepository: SaveTodoRepository
     ): SaveTodoUseCase = SaveTodoUseCase(saveTodoRepository)
+
+    @Singleton
+    @Provides
+    fun provideDoneTodoUseCase(
+        doneTodoRepository: DoneTodoRepository
+    ): DoneTodoUseCase = DoneTodoUseCase(doneTodoRepository)
+
+    @Singleton
+    @Provides
+    fun provideDeleteTodoUseCase(
+        deleteTodoRepository: DeleteTodoRepository
+    ): DeleteTodoUseCase = DeleteTodoUseCase(deleteTodoRepository)
+
+    @Singleton
+    @Provides
+    fun provideGetTodoDetailUseCase(
+        detailTodoRepository: GetTodoDetailRepository
+    ): GetTodoDetailUseCase = GetTodoDetailUseCase(detailTodoRepository)
 }

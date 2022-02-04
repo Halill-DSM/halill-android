@@ -9,7 +9,7 @@ import com.halill.data.features.auth.repository.GetUserInfoRepositoryImpl
 import com.halill.domain.features.auth.repository.CheckLoginRepository
 import com.halill.domain.features.auth.repository.LoginRepository
 import com.halill.domain.features.auth.repository.RegisterRepository
-import com.halill.domain.features.todo.repository.GetUserInfoRepository
+import com.halill.domain.features.auth.repository.GetUserInfoRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

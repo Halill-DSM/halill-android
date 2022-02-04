@@ -227,23 +227,28 @@ fun TodoItem(todo: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
                 thickness = 1.dp
             )
         }
-        Column(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .size(37.dp)
-                .clickable(enabled = true, role = Role.Button) {
-                    viewModel.doneTodo(todo.id)
-                },
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                painter = painterResource(R.drawable.ic_baseline_done_24),
-                contentDescription = "doneIcon"
-            )
-            val doneText = stringResource(id = R.string.done)
-            Text(text = doneText, color = colorResource(id = R.color.green), fontSize = 12.sp)
-        }
+        DoneButton(modifier = Modifier
+            .align(Alignment.TopEnd)
+            .size(37.dp)
+            .clickable(enabled = true, role = Role.Button) {
+                viewModel.doneTodo(todo.id)
+            })
 
+    }
+}
+
+@Composable
+fun DoneButton(modifier: Modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_baseline_done_24),
+            contentDescription = "doneIcon"
+        )
+        val doneText = stringResource(id = R.string.done)
+        Text(text = doneText, color = colorResource(id = R.color.green), fontSize = 12.sp)
     }
 }
 
@@ -315,23 +320,27 @@ fun DoneItem(done: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
                 thickness = 1.dp
             )
         }
-        Column(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .size(37.dp)
-                .clickable(enabled = true, role = Role.Button) {
-                    viewModel.deleteTodo(done.id)
-                },
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                painter = painterResource(R.drawable.ic_baseline_delete_24),
-                contentDescription = "delete"
-            )
-            val doneText = stringResource(id = R.string.delete)
-            Text(text = doneText, color = colorResource(id = R.color.red), fontSize = 12.sp)
-        }
+        DeleteButton(modifier = Modifier
+            .align(Alignment.TopEnd)
+            .size(37.dp)
+            .clickable(enabled = true, role = Role.Button) {
+                viewModel.deleteTodo(done.id)
+            })
+    }
+}
 
+@Composable
+fun DeleteButton(modifier: Modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_baseline_delete_24),
+            contentDescription = "delete"
+        )
+        val doneText = stringResource(id = R.string.delete)
+        Text(text = doneText, color = colorResource(id = R.color.red), fontSize = 12.sp)
     }
 }
 

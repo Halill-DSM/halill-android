@@ -11,4 +11,6 @@ interface LocalTodoDataSource {
     suspend fun doneTodo(id: Long)
 
     suspend fun deleteTodo(id: Long)
+
+    suspend fun getTodoDetail(id: Long): TodoEntity
 }

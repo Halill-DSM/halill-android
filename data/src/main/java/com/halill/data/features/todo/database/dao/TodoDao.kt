@@ -19,4 +19,7 @@ interface TodoDao {
 
     @Query("DELETE FROM todoList WHERE id = :todoId")
     suspend fun deleteTodo(todoId: Long)
+
+    @Query("SELECT * FROM todolist WHERE id = :todoId")
+    suspend fun getTodoDetail(todoId: Long): TodoRoomEntity
 }

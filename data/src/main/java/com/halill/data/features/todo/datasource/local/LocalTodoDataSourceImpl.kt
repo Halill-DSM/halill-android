@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class LocalTodoDataSourceImpl @Inject constructor(
     private val todoDao: TodoDao
-): LocalTodoDataSource {
+) : LocalTodoDataSource {
     override suspend fun getTodoList(): List<TodoEntity> =
         todoDao.getTodoList().toEntity()
 
@@ -24,4 +24,7 @@ class LocalTodoDataSourceImpl @Inject constructor(
     override suspend fun deleteTodo(id: Long) {
         todoDao.deleteTodo(id)
     }
+
+    override suspend fun getTodoDetail(id: Long): TodoEntity =
+        todoDao.getTodoDetail(id).toEntity()
 }

@@ -1,8 +1,6 @@
 package com.halill.halill.features.todo.detail
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -16,8 +14,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.halill.halill.main.DeadlineText
 import com.halill.halill.main.scaffoldState
 import com.halill.halill.ui.theme.Teal700
+import com.halill.halill.util.toShowDeadlineText
 
 @Composable
 fun TodoDetail(
@@ -55,6 +55,16 @@ fun TodoDetail(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                if (state is TodoDetailState.MainState) {
+                    Text(
+                        text = state.todo.content,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .padding(4.dp)
+                    )
+                    DeadlineText(deadline = state.todo.deadline)
+                }
 
             }
         })

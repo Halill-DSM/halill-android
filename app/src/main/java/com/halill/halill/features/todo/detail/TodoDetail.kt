@@ -15,9 +15,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill.main.DeadlineText
+import com.halill.halill.main.DoneButton
 import com.halill.halill.main.scaffoldState
 import com.halill.halill.ui.theme.Teal700
-import com.halill.halill.util.toShowDeadlineText
+import com.halill.halill.util.toRemainTimeText
 
 @Composable
 fun TodoDetail(
@@ -42,8 +43,13 @@ fun TodoDetail(
                         Icon(Icons.Filled.ArrowBack, "back")
                     }
                 },
-                backgroundColor = Teal700,
-                contentColor = Color.White,
+                actions = {
+                    IconButton(onClick = { /*TODO*/ }) {
+                        DoneButton()
+                    }
+                },
+                backgroundColor = Color.White,
+                contentColor = Teal700,
                 elevation = 12.dp
             )
         }, content = {
@@ -64,6 +70,7 @@ fun TodoDetail(
                             .padding(4.dp)
                     )
                     DeadlineText(deadline = state.todo.deadline)
+                    Text(text = state.todo.deadline.toRemainTimeText())
                 }
 
             }

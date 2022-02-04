@@ -249,7 +249,7 @@ fun TodoItem(todo: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun DoneButton(modifier: Modifier) {
+fun DoneButton(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -353,7 +353,7 @@ fun DoneItem(done: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
         ) {
             TitleText(title = done.title)
             ContentText(content = done.content)
-            DeadlineText(deadline = done.deadline)
+            DeadlineText(deadline = done.deadline, done = true)
             Divider(
                 modifier = Modifier.padding(PaddingValues(0.dp, 8.dp)),
                 color = Teal500,

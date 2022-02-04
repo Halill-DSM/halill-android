@@ -1,10 +1,12 @@
 package com.halill.halill.main
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -14,6 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.colorResource
@@ -43,6 +46,7 @@ import com.halill.halill.ui.theme.Teal900
 import com.halill.halill.util.toShowDeadlineText
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 lateinit var scaffoldState: ScaffoldState
 
@@ -282,9 +286,38 @@ fun ContentText(content: String) {
 }
 
 @Composable
-fun DeadlineText(deadline: LocalDateTime) {
+fun DeadlineText(deadline: LocalDateTime, done: Boolean = false) {
     val deadlineText = deadline.toShowDeadlineText()
-    Text(text = deadlineText, fontSize = 12.sp, color = Color.Gray)
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (!done) {
+            val color = calculateRemainTimeToColor(deadline)
+            Box(
+                modifier = Modifier
+                    .size(8.dp)
+                    .clip(CircleShape)
+                    .background(color)
+                    .padding(2.dp)
+            )
+        }
+        Text(
+            text = deadlineText,
+            fontSize = 12.sp,
+            color = Color.Gray,
+            modifier = Modifier.padding(2.dp)
+        )
+    }
+}
+
+private fun calculateRemainTimeToColor(deadline: LocalDateTime): Color {
+    val currentTime = LocalDateTime.now()
+    val differenceTimeBetweenDeadline = ChronoUnit.DAYS.between(currentTime, deadline)
+    return when {
+        differenceTimeBetweenDeadline < 1 -> Color.Red
+        differenceTimeBetweenDeadline > 3 -> Teal700
+        else -> Color.Yellow
+    }
 }
 
 @Composable

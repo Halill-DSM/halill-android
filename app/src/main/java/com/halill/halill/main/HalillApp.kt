@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.halill.halill.features.auth.login.Login
 import com.halill.halill.features.auth.register.Register
+import com.halill.halill.features.todo.TodoDetail
 import com.halill.halill.features.todo.WriteTodo
 import com.halill.halill.ui.theme.HalIll_AndroidTheme
 import com.halill.halill.ui.theme.Teal900
@@ -42,6 +43,7 @@ fun HalIllApp() {
         composable("login") { Login(navController) }
         composable("register") { Register(navController) }
         composable("writeTodo") { WriteTodo(navController)}
+        composable("todoDetail") { TodoDetail(navController)}
     }
 }
 

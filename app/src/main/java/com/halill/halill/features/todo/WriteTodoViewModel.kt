@@ -53,7 +53,7 @@ class WriteTodoViewModel @Inject constructor(
 
     fun checkDoneInput() {
         _writeTodoState.value =
-            if (title.value.isEmpty() || content.value.isEmpty()) WriteTodoState.NotDoneInputState
+            if (title.value.isBlank() || content.value.isBlank()) WriteTodoState.NotDoneInputState
             else WriteTodoState.DoneInputState
     }
 

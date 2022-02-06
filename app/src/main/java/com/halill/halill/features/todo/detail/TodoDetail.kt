@@ -13,9 +13,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.halill.halill.R
 import com.halill.halill.main.DeadlineText
 import com.halill.halill.main.DeleteButton
 import com.halill.halill.main.DoneButton
@@ -39,7 +41,11 @@ fun TodoDetail(
             TopAppBar(
                 title = {
                     if (state is TodoDetailState.MainState) {
-                        Text(text = state.todo.title)
+                        var title = state.todo.title
+                        if(state.todo.isCompleted) {
+                            title += stringResource(id = R.string.done_comment)
+                        }
+                        Text(text = title)
                     }
                 },
                 navigationIcon = {

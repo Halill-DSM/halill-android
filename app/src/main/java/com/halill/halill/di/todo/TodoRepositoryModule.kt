@@ -41,4 +41,10 @@ object TodoRepositoryModule {
     fun provideGetTodoDetailRepository(
         localTodoDataSource: LocalTodoDataSource
     ): GetTodoDetailRepository = GetTodoDetailRepositoryImpl(localTodoDataSource)
+
+    @Singleton
+    @Provides
+    fun provideEditTodoRepository(
+        localTodoDataSource: LocalTodoDataSource
+    ): EditTodoRepository = EditTodoRepositoryImpl(localTodoDataSource)
 }

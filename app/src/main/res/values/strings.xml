@@ -1,3 +1,31 @@
 <resources>
-    <string name="app_name">Halill_Android</string>
+    <string name="app_name">HalIll</string>
+    <string name="todo">Todo</string>
+    <string name="done">Done</string>
+    <string name="edit">수정</string>
+    <string name="delete">삭제</string>
+    <string name="delete_comment">삭제되었습니다</string>
+    <string name="login">로그인</string>
+    <string name="ask_register">아직 아이디가 없으신가요?</string>
+    <string name="register">회원가입</string>
+    <string name="login_empty_comment">모든 정보를 입력해주세요</string>
+    <string name="wrong_id_comment">잘못된 로그인 정보입니다</string>
+    <string name="internet_error_comment">인터넷 연결을 확인해주세요</string>
+    <string name="success_register_comment">회원가입을 완료하였습니다</string>
+    <string name="fail_register_comment">회원가입에 실패하였습니다</string>
+    <string name="write_todo">할일추가</string>
+    <string name="edit_todo">할일수정</string>
+    <string name="write_title">제목을 입력해주세요</string>
+    <string name="write_content">내용을 입력해주세요</string>
+    <string name="dead_line">마감기간</string>
+    <string name="year">년</string>
+    <string name="month">월</string>
+    <string name="day">일</string>
+    <string name="hour">시</string>
+    <string name="minute">분</string>
+    <string name="loading_comment">로딩중입니다</string>
+    <string name="main_exception_comment">오류가 발생하였습니다</string>
+    <string name="empty_todo_list">할일이 없습니다</string>
+    <string name="empty_done_list">완료한 할일이 없습니다</string>
+    <string name="done_comment">(완료됨)</string>
 </resources>

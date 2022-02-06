@@ -44,7 +44,15 @@ fun HalIllApp() {
         composable("main") { Main(navController) }
         composable("login") { Login(navController) }
         composable("register") { Register(navController) }
-        composable("writeTodo") { WriteTodo(navController) }
+        composable(
+            route = "writeTodo?todoId={todoId}",
+            arguments = listOf(navArgument("todoId") {
+                defaultValue = -1L
+                type = NavType.LongType
+            })
+        ) {
+            WriteTodo(navController, it.arguments!!.getLong("todoId"))
+        }
         composable(
             route = "todoDetail/{todoId}",
             arguments = listOf(navArgument("todoId") { type = NavType.LongType })

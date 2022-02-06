@@ -2,7 +2,10 @@ package com.halill.halill.features.todo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.halill.domain.features.todo.param.EditTodoParam
 import com.halill.domain.features.todo.param.WriteTodoParam
+import com.halill.domain.features.todo.usecase.EditTodoUseCase
+import com.halill.domain.features.todo.usecase.GetTodoDetailUseCase
 import com.halill.domain.features.todo.usecase.SaveTodoUseCase
 import com.halill.halill.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +17,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WriteTodoViewModel @Inject constructor(
-    private val saveTodoUseCase: SaveTodoUseCase
+    private val saveTodoUseCase: SaveTodoUseCase,
+    private val editTodoUseCase: EditTodoUseCase,
+    private val getTodoDetailUseCase: GetTodoDetailUseCase
 ) : ViewModel() {
 
     private val _title = MutableStateFlow("")
@@ -90,4 +95,31 @@ class WriteTodoViewModel @Inject constructor(
         _deadline.value = originalDeadline.changeMinute(minute)
     }
 
+    var editTodoId = -1L
+    var editIsCompleted = false
+    suspend fun getTodoDataWhenEdit(id: Long) {
+        val todoData = getTodoDetailUseCase.execute(id)
+        _writeTodoState.value = WriteTodoState.EditTodoState(todoData)
+        editTodoId = todoData.id
+        editIsCompleted = todoData.isCompleted
+        _title.value = todoData.title
+        _content.value = todoData.content
+        _deadline.value = todoData.deadline
+    }
+
+    fun editTodo() {
+        val todoData = WriteTodoParam(
+            title = title.value,
+            content = content.value,
+            deadline = deadline.value,
+            isCompleted = editIsCompleted
+        )
+        val param = EditTodoParam(
+            todoId = editTodoId,
+            data = todoData
+        )
+        viewModelScope.launch {
+            editTodoUseCase.execute(param)
+        }
+    }
 }

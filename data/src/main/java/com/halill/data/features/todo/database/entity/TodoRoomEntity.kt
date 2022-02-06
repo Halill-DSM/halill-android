@@ -3,6 +3,7 @@ package com.halill.data.features.todo.database.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.halill.domain.features.todo.entity.TodoEntity
+import com.halill.domain.features.todo.param.EditTodoParam
 import com.halill.domain.features.todo.param.WriteTodoParam
 import java.time.LocalDateTime
 
@@ -36,3 +37,13 @@ fun WriteTodoParam.toDataEntity() =
         deadline = deadline,
         isCompleted = isCompleted
     )
+
+fun EditTodoParam.toDataEntity() =
+    TodoRoomEntity(
+        title = data.title,
+        content = data.content,
+        deadline = data.deadline,
+        isCompleted = data.isCompleted
+    ).apply {
+        id = todoId
+    }

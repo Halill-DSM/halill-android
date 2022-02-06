@@ -62,12 +62,13 @@ fun TodoDetail(
                 },
                 actions = {
                     val scope = rememberCoroutineScope()
-                    IconButton(onClick = {
 
-                    }) {
-                        EditButton()
-                    }
                     if (state is TodoDetailState.MainState) {
+                        IconButton(onClick = {
+                            navController.navigate("writeTodo?todoId=${state.todo.id}")
+                        }) {
+                            EditButton()
+                        }
                         if (state.todo.isCompleted) {
                             IconButton(onClick = {
                                 scope.launch {

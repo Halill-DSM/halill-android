@@ -40,4 +40,10 @@ object TodoUseCaseModule {
     fun provideGetTodoDetailUseCase(
         detailTodoRepository: GetTodoDetailRepository
     ): GetTodoDetailUseCase = GetTodoDetailUseCase(detailTodoRepository)
+
+    @Singleton
+    @Provides
+    fun provideEditTodoUseCase(
+        editTodoRepository: EditTodoRepository
+    ): EditTodoUseCase = EditTodoUseCase(editTodoRepository)
 }

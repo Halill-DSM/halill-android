@@ -16,6 +16,7 @@ import com.halill.halill.features.auth.login.Login
 import com.halill.halill.features.auth.register.Register
 import com.halill.halill.features.todo.detail.TodoDetail
 import com.halill.halill.features.todo.WriteTodo
+import com.halill.halill.features.todo.edit.EditTodo
 import com.halill.halill.ui.theme.HalIll_AndroidTheme
 import com.halill.halill.ui.theme.Teal900
 
@@ -51,6 +52,13 @@ fun HalIllApp() {
         ) {
             val todoId = it.arguments!!.getLong("todoId")
             TodoDetail(navController, todoId)
+        }
+        composable(
+            route = "editTodo/{todoId}",
+            arguments = listOf(navArgument("todoId") { type = NavType.LongType })
+        ) {
+            val todoId = it.arguments!!.getLong("todoId")
+            EditTodo(navController = navController, todoId)
         }
     }
 }

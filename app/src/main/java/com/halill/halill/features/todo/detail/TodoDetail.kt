@@ -65,7 +65,7 @@ fun TodoDetail(
 
                     if (state is TodoDetailState.MainState) {
                         IconButton(onClick = {
-                            navController.navigate("editTodo/${state.todo.id}")
+                            navController.navigate("writeTodo?todoId=${state.todo.id}")
                         }) {
                             EditButton()
                         }

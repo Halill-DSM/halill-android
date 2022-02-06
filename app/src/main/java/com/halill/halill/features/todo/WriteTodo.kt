@@ -13,6 +13,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -40,12 +41,26 @@ import com.halill.halill.ui.theme.Teal900
 import kotlinx.coroutines.launch
 
 @Composable
-fun WriteTodo(navController: NavController, viewModel: WriteTodoViewModel = hiltViewModel()) {
+fun WriteTodo(
+    navController: NavController,
+    todoId: Long,
+    viewModel: WriteTodoViewModel = hiltViewModel()
+) {
+    if (todoId.isEdit()) {
+        LaunchedEffect(key1 = Unit) {
+            viewModel.getTodoDataWhenEdit(todoId)
+        }
+    }
     Scaffold(scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = stringResource(id = R.string.write_todo))
+                    val title = if (todoId.isEdit()) {
+                        stringResource(id = R.string.edit_todo)
+                    } else {
+                        stringResource(id = R.string.write_todo)
+                    }
+                    Text(text = title)
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -70,7 +85,7 @@ fun WriteTodo(navController: NavController, viewModel: WriteTodoViewModel = hilt
                 TitleTextField()
                 ContentTextField()
                 DeadLineView()
-                WriteTodoButton(navController)
+                WriteTodoButton(navController, isEdit = todoId.isEdit())
                 val writeTodoState = viewModel.writeTodoState.collectAsState().value
                 if (writeTodoState is WriteTodoState.SelectDateState) {
                     SelectDateDialog()
@@ -83,6 +98,9 @@ fun WriteTodo(navController: NavController, viewModel: WriteTodoViewModel = hilt
         })
 
 }
+
+private fun Long.isEdit(): Boolean =
+    this != -1L
 
 @Composable
 fun TitleTextField(viewModel: WriteTodoViewModel = hiltViewModel()) {
@@ -186,14 +204,22 @@ fun ClearFocus() {
 }
 
 @Composable
-fun WriteTodoButton(navController: NavController, viewModel: WriteTodoViewModel = hiltViewModel()) {
+fun WriteTodoButton(
+    navController: NavController,
+    viewModel: WriteTodoViewModel = hiltViewModel(),
+    isEdit: Boolean
+) {
     val writeTodoState = viewModel.writeTodoState.collectAsState()
     val emptyComment = stringResource(id = R.string.login_empty_comment)
     val scope = rememberCoroutineScope()
     Button(
         onClick = {
             if (writeTodoState.value is WriteTodoState.DoneInputState) {
-                viewModel.writeTodo()
+                if (isEdit) {
+                    viewModel.editTodo()
+                } else {
+                    viewModel.writeTodo()
+                }
                 navController.popBackStack()
             } else {
                 scope.launch {
@@ -213,7 +239,9 @@ fun WriteTodoButton(navController: NavController, viewModel: WriteTodoViewModel 
             .width(200.dp)
             .clip(RoundedCornerShape(30.dp))
     ) {
-        Text(text = stringResource(id = R.string.write_todo))
+        val text =
+            if (isEdit) stringResource(id = R.string.edit_todo) else stringResource(id = R.string.write_todo)
+        Text(text = text)
     }
 }
 
@@ -286,7 +314,7 @@ fun MonthNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
 private fun monthNumberPicker(viewModel: WriteTodoViewModel, context: Context, month: Int) =
     NumberPicker(context).apply {
         setOnValueChangedListener { picker, _, _ ->
-           viewModel.setDeadlineMonth(picker.value)
+            viewModel.setDeadlineMonth(picker.value)
         }
         maxValue = 12
         minValue = 1

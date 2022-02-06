@@ -16,16 +16,13 @@ class TodoDetailViewModel @Inject constructor(
     private val getTodoDetailUseCase: GetTodoDetailUseCase,
     private val deleteTodoUseCase: DeleteTodoUseCase,
     private val doneTodoUseCase: DoneTodoUseCase
-): ViewModel() {
+) : ViewModel() {
     private val _todoDetailState = MutableStateFlow<TodoDetailState>(TodoDetailState.LoadingState)
     val todoDetailState: StateFlow<TodoDetailState> = _todoDetailState
 
-    fun getDetail(id: Long) {
-        viewModelScope.launch {
-            val todoDetail = getTodoDetailUseCase.execute(id)
-            _todoDetailState.value = TodoDetailState.MainState(todoDetail)
-        }
-
+    suspend fun getDetail(id: Long) {
+        val todoDetail = getTodoDetailUseCase.execute(id)
+        _todoDetailState.value = TodoDetailState.MainState(todoDetail)
     }
 
     fun deleteTodo(id: Long) {

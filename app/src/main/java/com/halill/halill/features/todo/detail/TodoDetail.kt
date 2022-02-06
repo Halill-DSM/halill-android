@@ -1,5 +1,7 @@
 package com.halill.halill.features.todo.detail
 
+import android.widget.ImageButton
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -13,9 +15,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.halill.halill.R
 import com.halill.halill.main.DeadlineText
 import com.halill.halill.main.DeleteButton
 import com.halill.halill.main.DoneButton
@@ -30,7 +37,7 @@ fun TodoDetail(
     id: Long,
     viewModel: TodoDetailViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         viewModel.getDetail(id)
     }
     val state = viewModel.todoDetailState.collectAsState().value
@@ -39,7 +46,11 @@ fun TodoDetail(
             TopAppBar(
                 title = {
                     if (state is TodoDetailState.MainState) {
-                        Text(text = state.todo.title)
+                        var title = state.todo.title
+                        if (state.todo.isCompleted) {
+                            title += stringResource(id = R.string.done_comment)
+                        }
+                        Text(text = title)
                     }
                 },
                 navigationIcon = {
@@ -51,6 +62,11 @@ fun TodoDetail(
                 },
                 actions = {
                     val scope = rememberCoroutineScope()
+                    IconButton(onClick = {
+
+                    }) {
+                        EditButton()
+                    }
                     if (state is TodoDetailState.MainState) {
                         if (state.todo.isCompleted) {
                             IconButton(onClick = {
@@ -98,4 +114,18 @@ fun TodoDetail(
 
             }
         })
+}
+
+@Composable
+fun EditButton() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_baseline_edit_24),
+            contentDescription = "editTodo"
+        )
+        val doneText = stringResource(id = R.string.edit)
+        Text(text = doneText, color = Color.Gray, fontSize = 12.sp)
+    }
 }

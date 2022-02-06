@@ -9,6 +9,6 @@ class EditTodoRepositoryImpl @Inject constructor(
     private val localTodoDataSource: LocalTodoDataSource
 ): EditTodoRepository{
     override suspend fun editTodo(param: EditTodoParam) {
-
+        localTodoDataSource.editTodo(param)
     }
 }

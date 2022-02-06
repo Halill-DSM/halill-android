@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,6 +47,8 @@ class MainViewModel @Inject constructor(
                 _mainEvent.emit(MainEvent.StartLogin)
             } catch (e: UnAuthorizedException) {
                 _mainEvent.emit(MainEvent.StartLogin)
+            } catch (e: Exception) {
+
             }
         }
 

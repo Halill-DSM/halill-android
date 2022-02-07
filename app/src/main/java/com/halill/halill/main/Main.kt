@@ -86,15 +86,8 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
                 ),
                 backgroundColor = Teal700
             ) {
-                val userName =
-                    when (val mainState = viewModel.mainState.collectAsState().value) {
-                        is MainState.ShowTodoListState -> mainState.userEntity.name
-                        is MainState.EmptyListState -> mainState.userEntity.name
-                        is MainState.LoadingState -> {
-                            val loadingText = stringResource(id = R.string.loading_comment)
-                            loadingText
-                        }
-                    }
+                val mainState = viewModel.mainState.collectAsState().value
+                val userName = mainState.user?.name ?: stringResource(id = R.string.loading_comment)
                 Text(text = userName)
             }
         }) {
@@ -171,17 +164,22 @@ fun MainPager(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when (val state = viewModel.mainState.collectAsState().value) {
-                is MainState.ShowTodoListState -> {
-                    ShowList(state = state, tabTitle = tabData[index])
-                }
-                is MainState.LoadingState -> {
-                    LoadingText()
-                }
-                is MainState.EmptyListState -> {
-                    EmptyTodoListText()
-                }
+                is MainState.LoadingState -> LoadingText()
+                is MainState.EmptyListState -> EmptyText(tabTitle = tabData[index])
+                is MainState.ShowTodoListState -> ShowList(state = state, tabTitle = tabData[index])
+
             }
+
         }
+    }
+}
+
+@Composable
+fun EmptyText(tabTitle: String) {
+    if (tabTitle == stringResource(id = R.string.todo)) {
+        EmptyTodoListText()
+    } else {
+        EmptyDoneListText()
     }
 }
 
@@ -192,7 +190,7 @@ fun LoadingText() {
 }
 
 @Composable
-fun ShowList(state: MainState.ShowTodoListState, tabTitle: String) {
+fun ShowList(state: MainState, tabTitle: String) {
     val todoList = state.todoList
     val doneList = state.doneList
     if (tabTitle == stringResource(id = R.string.todo)) {
@@ -204,18 +202,15 @@ fun ShowList(state: MainState.ShowTodoListState, tabTitle: String) {
 
 @Composable
 fun TodoList(todoList: List<TodoEntity>) {
-    if (todoList.isEmpty()) {
-        EmptyTodoListText()
-    } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(0.dp, 4.dp)
-        ) {
-            items(todoList) {
-                TodoItem(todo = it)
-            }
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(0.dp, 4.dp)
+    ) {
+        items(todoList) {
+            TodoItem(todo = it)
         }
     }
+
 }
 
 @Composable
@@ -329,18 +324,15 @@ fun EmptyTodoListText() {
 
 @Composable
 fun DoneList(doneList: List<TodoEntity>) {
-    if (doneList.isEmpty()) {
-        EmptyDoneListText()
-    } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(0.dp, 4.dp)
-        ) {
-            items(doneList) {
-                DoneItem(it)
-            }
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(0.dp, 4.dp)
+    ) {
+        items(doneList) {
+            DoneItem(it)
         }
     }
+
 }
 
 @Composable

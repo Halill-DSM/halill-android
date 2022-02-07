@@ -34,6 +34,9 @@ class WriteTodoViewModel @Inject constructor(
     private val _writeTodoState = MutableStateFlow<WriteTodoState>(WriteTodoState.NotDoneInputState)
     val writeTodoState: StateFlow<WriteTodoState> = _writeTodoState
 
+    var editTodoId = -1L
+    var editIsCompleted = false
+    
     fun setTitle(title: String) {
         viewModelScope.launch {
             _title.value = title
@@ -95,8 +98,7 @@ class WriteTodoViewModel @Inject constructor(
         _deadline.value = originalDeadline.changeMinute(minute)
     }
 
-    var editTodoId = -1L
-    var editIsCompleted = false
+
     suspend fun getTodoDataWhenEdit(id: Long) {
         val todoData = getTodoDetailUseCase.execute(id)
         _writeTodoState.value = WriteTodoState.EditTodoState(todoData)

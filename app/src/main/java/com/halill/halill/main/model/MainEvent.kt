@@ -1,6 +1,8 @@
 package com.halill.halill.main.model
 
-sealed class MainEvent {
+import com.halill.halill.base.MviEvent
+
+sealed class MainEvent : MviEvent {
     object StartLogin : MainEvent()
     object DoneDeleteTodo : MainEvent()
     data class StartTodoDetail(val id: Long) : MainEvent()

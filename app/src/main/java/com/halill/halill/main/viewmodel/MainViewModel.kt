@@ -102,10 +102,18 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private class MainReducer(initial: MainState): Reducer<MainState, MainUiEvent>(initial) {
+    private class MainReducer(initial: MainState) : Reducer<MainState, MainUiEvent>(initial) {
         override fun reduce(oldState: MainState, event: MainUiEvent) {
-            when(event) {
-
+            when (event) {
+                is MainUiEvent.EmptyList -> {
+                    setState(oldState.copy(todoList = emptyList(), doneList = emptyList()))
+                }
+                is MainUiEvent.ShowUser -> {
+                    setState(oldState.copy(user = event.user))
+                }
+                is MainUiEvent.ShowList -> {
+                    setState(oldState.copy(todoList = event.todoList, doneList = event.doneList))
+                }
             }
         }
 

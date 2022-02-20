@@ -5,7 +5,6 @@ import com.halill.domain.features.todo.usecase.DeleteTodoUseCase
 import com.halill.domain.features.todo.usecase.DoneTodoUseCase
 import com.halill.domain.features.todo.usecase.GetTodoDetailUseCase
 import com.halill.halill.base.BaseViewModel
-import com.halill.halill.base.Reducer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,10 +18,10 @@ class TodoDetailViewModel @Inject constructor(
 
     override val initialState: TodoDetailState
         get() = TodoDetailState.initial()
-    
+
     suspend fun getDetail(id: Long) {
         val todoDetail = getTodoDetailUseCase.execute(id)
-        _todoDetailState.value = TodoDetailState.MainState(todoDetail)
+        sendEvent(TodoDetailEvent.ShowTodoDetail(todoDetail))
     }
 
     fun deleteTodo(id: Long) {
@@ -39,10 +38,20 @@ class TodoDetailViewModel @Inject constructor(
     }
 
     override fun reduceEvent(oldState: TodoDetailState, event: TodoDetailEvent) {
-
+        when (event) {
+            is TodoDetailEvent.ShowTodoDetail -> {
+                val todoDetail = event.todo
+                setState(
+                    oldState.copy(
+                        title = todoDetail.title,
+                        content = todoDetail.content,
+                        deadline = todoDetail.deadline,
+                        isComplete = todoDetail.isCompleted
+                    )
+                )
+            }
+        }
     }
-
-
 
 
 }

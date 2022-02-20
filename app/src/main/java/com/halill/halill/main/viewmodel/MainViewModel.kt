@@ -18,7 +18,6 @@ import com.halill.halill.main.MainUiEvent
 import com.halill.halill.main.MainViewEffect
 import com.halill.halill.main.model.MainState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -39,8 +38,6 @@ class MainViewModel @Inject constructor(
 
     private val _mainViewEffect = MutableEventFlow<MainViewEffect>()
     val mainViewEffect: EventFlow<MainViewEffect> = _mainViewEffect.asEventFlow()
-
-    val showingPage = MutableStateFlow(0)
 
     fun checkLogin() {
         viewModelScope.launch {

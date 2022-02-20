@@ -53,6 +53,7 @@ lateinit var scaffoldState: ScaffoldState
 @Composable
 fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     scaffoldState = rememberScaffoldState()
+    val mainState = viewModel.mainState.collectAsState().value
     viewModel.run {
         checkLogin()
         loadUserInfo()
@@ -85,7 +86,7 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
                 ),
                 backgroundColor = Teal700
             ) {
-                val mainState = viewModel.mainState.collectAsState().value
+
                 val userName = mainState.user.name
                 Text(text = userName)
             }
@@ -93,7 +94,14 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
         Column {
             MainTab(pagerState = pagerState, tabData = tabData)
 
-            MainPager(pagerState = pagerState, tabData = tabData)
+            MainPager(
+                mainState = mainState,
+                pagerState = pagerState,
+                tabData = tabData,
+                onItemClick = { id -> viewModel.startDetailTodo(id) },
+                onDoneClick = { id -> viewModel.doneTodo(id) },
+                onDeleteClick = { id -> viewModel.deleteTodo(id) }
+            )
         }
     }
 
@@ -126,8 +134,7 @@ private fun handleMainEvent(navController: NavController, uiEvent: EventFlow<Mai
 @Composable
 fun MainTab(
     pagerState: PagerState,
-    tabData: List<String>,
-    viewModel: MainViewModel = hiltViewModel()
+    tabData: List<String>
 ) {
     val coroutineScope = rememberCoroutineScope()
     val selectedTabIndex = pagerState.currentPage
@@ -136,7 +143,6 @@ fun MainTab(
         backgroundColor = Color.White,
         contentColor = Teal900
     ) {
-        viewModel.showingPage.value = selectedTabIndex
         tabData.forEachIndexed { index, text ->
             Tab(selected = selectedTabIndex == index, onClick = {
                 coroutineScope.launch {
@@ -152,9 +158,12 @@ fun MainTab(
 @ExperimentalPagerApi
 @Composable
 fun MainPager(
+    mainState: MainState,
     pagerState: PagerState,
     tabData: List<String>,
-    viewModel: MainViewModel = hiltViewModel()
+    onItemClick: (Long) -> Unit,
+    onDoneClick: (Long) -> Unit,
+    onDeleteClick: (Long) -> Unit
 ) {
     HorizontalPager(state = pagerState) { index ->
         Column(
@@ -162,22 +171,24 @@ fun MainPager(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val state = viewModel.mainState.collectAsState().value
             when {
-                state.isLoading -> LoadingText()
-                checkBothListIsEmpty(
-                    state.doneList,
-                    state.todoList
-                ) -> EmptyText(tabTitle = tabData[index])
-                else -> ShowList(state = state, tabTitle = tabData[index])
+                mainState.isLoading -> LoadingText()
+                checkBothListIsEmpty(mainState) -> EmptyText(tabTitle = tabData[index])
+                else -> ShowList(
+                    state = mainState,
+                    tabTitle = tabData[index],
+                    onItemClick,
+                    onDoneClick,
+                    onDeleteClick
+                )
             }
 
         }
     }
 }
 
-private fun checkBothListIsEmpty(doneList: List<TodoEntity>, todoList: List<TodoEntity>): Boolean =
-    doneList.isEmpty() && todoList.isEmpty()
+private fun checkBothListIsEmpty(state: MainState): Boolean =
+    state.doneList.isEmpty() && state.todoList.isEmpty()
 
 @Composable
 fun EmptyText(tabTitle: String) {
@@ -195,34 +206,40 @@ fun LoadingText() {
 }
 
 @Composable
-fun ShowList(state: MainState, tabTitle: String) {
+fun ShowList(
+    state: MainState,
+    tabTitle: String,
+    onItemClick: (Long) -> Unit,
+    onDoneClick: (Long) -> Unit,
+    onDeleteClick: (Long) -> Unit
+) {
     val todoList = state.todoList
     val doneList = state.doneList
     if (tabTitle == stringResource(id = R.string.todo)) {
-        TodoList(todoList)
+        TodoList(todoList, onItemClick, onDoneClick)
     } else {
-        DoneList(doneList)
+        DoneList(doneList, onItemClick, onDeleteClick)
     }
 }
 
 @Composable
-fun TodoList(todoList: List<TodoEntity>) {
+fun TodoList(todoList: List<TodoEntity>, onItemClick: (Long) -> Unit, onDoneClick: (Long) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(0.dp, 4.dp)
     ) {
         items(todoList) {
-            TodoItem(todo = it)
+            TodoItem(todo = it, onItemClick = onItemClick, onDoneClick = onDoneClick)
         }
     }
 
 }
 
 @Composable
-fun TodoItem(todo: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
+fun TodoItem(todo: TodoEntity, onItemClick: (Long) -> Unit, onDoneClick: (Long) -> Unit) {
     Box(modifier = Modifier
         .clickable(enabled = true, role = Role.Tab) {
-            viewModel.startDetailTodo(todo.id)
+            onItemClick(todo.id)
         }) {
         Column(
             modifier = Modifier
@@ -242,7 +259,7 @@ fun TodoItem(todo: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
             .align(Alignment.TopEnd)
             .size(37.dp)
             .clickable(enabled = true, role = Role.Button) {
-                viewModel.doneTodo(todo.id)
+                onDoneClick(todo.id)
             })
 
     }
@@ -328,23 +345,27 @@ fun EmptyTodoListText() {
 
 
 @Composable
-fun DoneList(doneList: List<TodoEntity>) {
+fun DoneList(
+    doneList: List<TodoEntity>,
+    onItemClick: (Long) -> Unit,
+    onDeleteClick: (Long) -> Unit
+) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(0.dp, 4.dp)
     ) {
         items(doneList) {
-            DoneItem(it)
+            DoneItem(it, onItemClick, onDeleteClick)
         }
     }
 
 }
 
 @Composable
-fun DoneItem(done: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
+fun DoneItem(done: TodoEntity, onItemClick: (Long) -> Unit, onDeleteClick: (Long) -> Unit) {
     Box(modifier = Modifier
         .clickable(enabled = true, role = Role.Tab) {
-            viewModel.startDetailTodo(done.id)
+            onItemClick(done.id)
         }) {
         Column(
             modifier = Modifier
@@ -364,7 +385,7 @@ fun DoneItem(done: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
             .align(Alignment.TopEnd)
             .size(37.dp)
             .clickable(enabled = true, role = Role.Button) {
-                viewModel.deleteTodo(done.id)
+                onDeleteClick(done.id)
             })
     }
 }

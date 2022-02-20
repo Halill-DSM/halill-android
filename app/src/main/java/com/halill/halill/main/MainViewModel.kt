@@ -23,10 +23,10 @@ class MainViewModel @Inject constructor(
     private val getTodoListUseCase: GetTodoListUseCase,
     private val doneTodoUseCase: DoneTodoUseCase,
     private val deleteTodoUseCase: DeleteTodoUseCase
-) : BaseViewModel<MainState>() {
+) : BaseViewModel<MainState, MainEvent>() {
 
-    private val reducer = MainReducer(MainState.initial())
-    override val state = reducer.state
+    override val initialState: MainState
+        get() = MainState.initial()
 
     private val _mainViewEffect = MutableEventFlow<MainViewEffect>()
     val mainViewEffect: EventFlow<MainViewEffect> = _mainViewEffect.asEventFlow()
@@ -93,42 +93,37 @@ class MainViewModel @Inject constructor(
         emitViewEffect(MainViewEffect.StartLogin)
     }
 
-    private class MainReducer(initial: MainState) : Reducer<MainState, MainEvent>(initial) {
-        override fun reduce(oldState: MainState, event: MainEvent) {
-            when (event) {
-                is MainEvent.EmptyList -> {
-                    setState(
-                        oldState.copy(
-                            todoList = emptyList(),
-                            doneList = emptyList(),
-                            isLoading = false
-                        )
-                    )
-                }
-                is MainEvent.ShowUser -> {
-                    setState(oldState.copy(user = event.user, isLoading = false))
-                }
-                is MainEvent.ShowList -> {
-                    setState(
-                        oldState.copy(
-                            todoList = event.todoList,
-                            doneList = event.doneList,
-                            isLoading = false
-                        )
-                    )
-                }
-            }
-        }
-
-    }
-
-    private fun sendEvent(event: MainEvent) {
-        reducer.sendEvent(event)
-    }
-
     private fun emitViewEffect(effect: MainViewEffect) {
         viewModelScope.launch {
             _mainViewEffect.emit(effect)
         }
     }
+
+    override fun reduceEvent(oldState: MainState, event: MainEvent) {
+        when (event) {
+            is MainEvent.EmptyList -> {
+                setState(
+                    oldState.copy(
+                        todoList = emptyList(),
+                        doneList = emptyList(),
+                        isLoading = false
+                    )
+                )
+            }
+            is MainEvent.ShowUser -> {
+                setState(oldState.copy(user = event.user, isLoading = false))
+            }
+            is MainEvent.ShowList -> {
+                setState(
+                    oldState.copy(
+                        todoList = event.todoList,
+                        doneList = event.doneList,
+                        isLoading = false
+                    )
+                )
+            }
+        }
+    }
+
+
 }

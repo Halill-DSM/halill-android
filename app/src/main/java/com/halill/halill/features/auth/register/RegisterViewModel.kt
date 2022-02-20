@@ -12,10 +12,10 @@ import javax.inject.Inject
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val registerUseCase: RegisterUseCase
-) : BaseViewModel<RegisterState>() {
+) : BaseViewModel<RegisterState, RegisterEvent>() {
 
-    private val reducer = RegisterReducer(RegisterState.initial())
-    override val state = reducer.state
+    override val initialState: RegisterState
+        get() = RegisterState.initial()
 
     private val _registerViewEffect = MutableEventFlow<RegisterViewEffect>()
     val registerViewEffect: EventFlow<RegisterViewEffect> = _registerViewEffect.asEventFlow()
@@ -47,28 +47,20 @@ class RegisterViewModel @Inject constructor(
         }
     }
 
-    private class RegisterReducer(initial: RegisterState) :
-        Reducer<RegisterState, RegisterEvent>(initial) {
-        override fun reduce(oldState: RegisterState, event: RegisterEvent) {
-            when (event) {
-                is RegisterEvent.InputEmail -> {
-                    setState(oldState.copy(email = event.email))
-                }
-                is RegisterEvent.InputPassword -> {
-                    setState(oldState.copy(password = event.password))
-                }
-                is RegisterEvent.InputCheckPassword -> {
-                    setState(oldState.copy(checkPassword = event.checkPassword))
-                }
-                is RegisterEvent.InputName -> {
-                    setState(oldState.copy(name = event.name))
-                }
+    override fun reduceEvent(oldState: RegisterState, event: RegisterEvent) {
+        when (event) {
+            is RegisterEvent.InputEmail -> {
+                setState(oldState.copy(email = event.email))
+            }
+            is RegisterEvent.InputPassword -> {
+                setState(oldState.copy(password = event.password))
+            }
+            is RegisterEvent.InputCheckPassword -> {
+                setState(oldState.copy(checkPassword = event.checkPassword))
+            }
+            is RegisterEvent.InputName -> {
+                setState(oldState.copy(name = event.name))
             }
         }
-
-    }
-
-    private fun sendEvent(event: RegisterEvent) {
-        reducer.sendEvent(event)
     }
 }

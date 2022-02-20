@@ -7,7 +7,6 @@ import com.halill.domain.features.todo.usecase.EditTodoUseCase
 import com.halill.domain.features.todo.usecase.GetTodoDetailUseCase
 import com.halill.domain.features.todo.usecase.SaveTodoUseCase
 import com.halill.halill.base.BaseViewModel
-import com.halill.halill.base.Reducer
 import com.halill.halill.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -19,10 +18,10 @@ class WriteTodoViewModel @Inject constructor(
     private val saveTodoUseCase: SaveTodoUseCase,
     private val editTodoUseCase: EditTodoUseCase,
     private val getTodoDetailUseCase: GetTodoDetailUseCase
-) : BaseViewModel<WriteTodoState>() {
+) : BaseViewModel<WriteTodoState, WriteTodoEvent>() {
 
-    private val reducer = WriteTodoReducer(WriteTodoState.initial())
-    override val state = reducer.state
+    override val initialState: WriteTodoState
+        get() = WriteTodoState.initial()
 
     fun setTitle(title: String) {
         sendEvent(WriteTodoEvent.InputTitle(title))
@@ -109,55 +108,47 @@ class WriteTodoViewModel @Inject constructor(
         }
     }
 
-    private class WriteTodoReducer(initial: WriteTodoState) :
-        Reducer<WriteTodoState, WriteTodoEvent>(initial) {
-        override fun reduce(oldState: WriteTodoState, event: WriteTodoEvent) {
-            when (event) {
-                is WriteTodoEvent.InputTitle -> {
-                    setState(oldState.copy(title = event.title))
-                }
-                is WriteTodoEvent.InputContent -> {
-                    setState(oldState.copy(content = event.content))
-                }
-                is WriteTodoEvent.InputDeadlineYear -> {
-                    setState(oldState.copy(deadline = oldState.deadline.changeYear(event.year)))
-                }
-                is WriteTodoEvent.InputDeadlineMonth -> {
-                    setState(oldState.copy(deadline = oldState.deadline.changeMonth(event.month)))
-                }
-                is WriteTodoEvent.InputDeadlineDay -> {
-                    setState(oldState.copy(deadline = oldState.deadline.changeDay(event.day)))
-                }
-                is WriteTodoEvent.InputDeadlineHour -> {
-                    setState(oldState.copy(deadline = oldState.deadline.changeHour(event.hour)))
-                }
-                is WriteTodoEvent.InputDeadlineMinute -> {
-                    setState(oldState.copy(deadline = oldState.deadline.changeMinute(event.minute)))
-                }
-                is WriteTodoEvent.IsForEdit -> {
-                    setState(oldState.copy(isEdit = true, editTodoId = event.editTodoId))
-                }
-                is WriteTodoEvent.ShowSelectDateDialog -> {
-                    setState(oldState.copy(showDateSelectDialog = true))
-                }
-                is WriteTodoEvent.ShowSelectTimeDialog -> {
-                    setState(oldState.copy(showHourSelectDialog = true))
-                }
-                is WriteTodoEvent.DismissSelectDateDialog -> {
-                    setState(oldState.copy(showDateSelectDialog = false))
-                }
-                is WriteTodoEvent.DismissSelectTimeDialog -> {
-                    setState(oldState.copy(showHourSelectDialog = false))
-                }
-                is WriteTodoEvent.InputDeadline -> {
-                    setState(oldState.copy(deadline = event.deadline))
-                }
+    override fun reduceEvent(oldState: WriteTodoState, event: WriteTodoEvent) {
+        when (event) {
+            is WriteTodoEvent.InputTitle -> {
+                setState(oldState.copy(title = event.title))
+            }
+            is WriteTodoEvent.InputContent -> {
+                setState(oldState.copy(content = event.content))
+            }
+            is WriteTodoEvent.InputDeadlineYear -> {
+                setState(oldState.copy(deadline = oldState.deadline.changeYear(event.year)))
+            }
+            is WriteTodoEvent.InputDeadlineMonth -> {
+                setState(oldState.copy(deadline = oldState.deadline.changeMonth(event.month)))
+            }
+            is WriteTodoEvent.InputDeadlineDay -> {
+                setState(oldState.copy(deadline = oldState.deadline.changeDay(event.day)))
+            }
+            is WriteTodoEvent.InputDeadlineHour -> {
+                setState(oldState.copy(deadline = oldState.deadline.changeHour(event.hour)))
+            }
+            is WriteTodoEvent.InputDeadlineMinute -> {
+                setState(oldState.copy(deadline = oldState.deadline.changeMinute(event.minute)))
+            }
+            is WriteTodoEvent.IsForEdit -> {
+                setState(oldState.copy(isEdit = true, editTodoId = event.editTodoId))
+            }
+            is WriteTodoEvent.ShowSelectDateDialog -> {
+                setState(oldState.copy(showDateSelectDialog = true))
+            }
+            is WriteTodoEvent.ShowSelectTimeDialog -> {
+                setState(oldState.copy(showHourSelectDialog = true))
+            }
+            is WriteTodoEvent.DismissSelectDateDialog -> {
+                setState(oldState.copy(showDateSelectDialog = false))
+            }
+            is WriteTodoEvent.DismissSelectTimeDialog -> {
+                setState(oldState.copy(showHourSelectDialog = false))
+            }
+            is WriteTodoEvent.InputDeadline -> {
+                setState(oldState.copy(deadline = event.deadline))
             }
         }
-
-    }
-
-    private fun sendEvent(event: WriteTodoEvent) {
-        reducer.sendEvent(event)
     }
 }

@@ -1,4 +1,4 @@
-package com.halill.halill.main.model
+package com.halill.halill.main
 
 import com.halill.domain.features.auth.entity.UserEntity
 import com.halill.domain.features.todo.entity.TodoEntity

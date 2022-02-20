@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.halill.halill.main.viewmodel.MainViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -38,7 +37,6 @@ import com.halill.domain.features.todo.entity.TodoEntity
 import com.halill.halill.R
 import com.halill.halill.base.EventFlow
 import com.halill.halill.base.observeWithLifecycle
-import com.halill.halill.main.model.MainState
 import com.halill.halill.ui.theme.Teal500
 import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.ui.theme.Teal900

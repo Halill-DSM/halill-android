@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Login
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -29,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.halill.halill.main.viewmodel.MainViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -38,8 +38,6 @@ import com.halill.domain.features.todo.entity.TodoEntity
 import com.halill.halill.R
 import com.halill.halill.base.EventFlow
 import com.halill.halill.base.observeWithLifecycle
-import com.halill.halill.main.model.MainEvent
-import com.halill.halill.main.model.MainState
 import com.halill.halill.ui.theme.Teal500
 import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.ui.theme.Teal900
@@ -54,6 +52,7 @@ lateinit var scaffoldState: ScaffoldState
 @Composable
 fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     scaffoldState = rememberScaffoldState()
+    val mainState = viewModel.state.collectAsState().value
     viewModel.run {
         checkLogin()
         loadUserInfo()
@@ -86,44 +85,50 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
                 ),
                 backgroundColor = Teal700
             ) {
-                val userName =
-                    when (val mainState = viewModel.mainState.collectAsState().value) {
-                        is MainState.ShowTodoListState -> mainState.userEntity.name
-                        is MainState.EmptyListState -> mainState.userEntity.name
-                        is MainState.LoadingState -> {
-                            val loadingText = stringResource(id = R.string.loading_comment)
-                            loadingText
-                        }
-                    }
+                val userName = mainState.user.name
                 Text(text = userName)
+                Column(
+                    modifier = Modifier.clickable { viewModel.startLogin() }.padding(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(Icons.Filled.Login, "Logout Button")
+                    Text(text = stringResource(id = R.string.logout), fontSize = 12.sp)
+                }
             }
         }) {
         Column {
             MainTab(pagerState = pagerState, tabData = tabData)
 
-            MainPager(pagerState = pagerState, tabData = tabData)
+            MainPager(
+                mainState = mainState,
+                pagerState = pagerState,
+                tabData = tabData,
+                onItemClick = { id -> viewModel.startDetailTodo(id) },
+                onDoneClick = { id -> viewModel.doneTodo(id) },
+                onDeleteClick = { id -> viewModel.deleteTodo(id) }
+            )
         }
     }
 
-    val mainEvent = viewModel.mainEvent
-    handleMainEvent(navController = navController, event = mainEvent)
+    val mainEvent = viewModel.mainViewEffect
+    handleMainEvent(navController = navController, uiEvent = mainEvent)
 }
 
 @Composable
-private fun handleMainEvent(navController: NavController, event: EventFlow<MainEvent>) {
+private fun handleMainEvent(navController: NavController, uiEvent: EventFlow<MainViewEffect>) {
     val deleteComment = stringResource(id = R.string.delete_comment)
-    event.observeWithLifecycle { mainEvent ->
+    uiEvent.observeWithLifecycle { mainEvent ->
         when (mainEvent) {
-            is MainEvent.StartLogin -> {
+            is MainViewEffect.StartLogin -> {
                 navController.navigate("login") {
                     launchSingleTop = true
                 }
             }
-            is MainEvent.DoneDeleteTodo -> {
+            is MainViewEffect.DoneDeleteTodo -> {
                 scaffoldState.snackbarHostState.showSnackbar(deleteComment)
             }
 
-            is MainEvent.StartTodoDetail -> {
+            is MainViewEffect.StartTodoDetail -> {
                 navController.navigate("todoDetail/${mainEvent.id}")
             }
         }
@@ -134,8 +139,7 @@ private fun handleMainEvent(navController: NavController, event: EventFlow<MainE
 @Composable
 fun MainTab(
     pagerState: PagerState,
-    tabData: List<String>,
-    viewModel: MainViewModel = hiltViewModel()
+    tabData: List<String>
 ) {
     val coroutineScope = rememberCoroutineScope()
     val selectedTabIndex = pagerState.currentPage
@@ -144,7 +148,6 @@ fun MainTab(
         backgroundColor = Color.White,
         contentColor = Teal900
     ) {
-        viewModel.showingPage.value = selectedTabIndex
         tabData.forEachIndexed { index, text ->
             Tab(selected = selectedTabIndex == index, onClick = {
                 coroutineScope.launch {
@@ -160,9 +163,12 @@ fun MainTab(
 @ExperimentalPagerApi
 @Composable
 fun MainPager(
+    mainState: MainState,
     pagerState: PagerState,
     tabData: List<String>,
-    viewModel: MainViewModel = hiltViewModel()
+    onItemClick: (Long) -> Unit,
+    onDoneClick: (Long) -> Unit,
+    onDeleteClick: (Long) -> Unit
 ) {
     HorizontalPager(state = pagerState) { index ->
         Column(
@@ -170,19 +176,29 @@ fun MainPager(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            when (val state = viewModel.mainState.collectAsState().value) {
-                is MainState.ShowTodoListState -> {
-                    ShowList(state = state, tabTitle = tabData[index])
-                }
-                is MainState.LoadingState -> {
-                    LoadingText()
-                }
-                is MainState.EmptyListState -> {
-                    EmptyTodoListText()
-                }
+            when {
+                mainState.isLoading -> LoadingText()
+                checkBothListIsEmpty(mainState) -> BothEmptySoRequireTodoText()
+                else -> ShowList(
+                    state = mainState,
+                    tabTitle = tabData[index],
+                    onItemClick,
+                    onDoneClick,
+                    onDeleteClick
+                )
             }
+
         }
     }
+}
+
+private fun checkBothListIsEmpty(state: MainState): Boolean =
+    state.doneList.isEmpty() && state.todoList.isEmpty()
+
+@Composable
+fun BothEmptySoRequireTodoText() {
+    val requireTodo = stringResource(id = R.string.require_todo_comment)
+    Text(text = requireTodo)
 }
 
 @Composable
@@ -192,37 +208,48 @@ fun LoadingText() {
 }
 
 @Composable
-fun ShowList(state: MainState.ShowTodoListState, tabTitle: String) {
+fun ShowList(
+    state: MainState,
+    tabTitle: String,
+    onItemClick: (Long) -> Unit,
+    onDoneClick: (Long) -> Unit,
+    onDeleteClick: (Long) -> Unit
+) {
     val todoList = state.todoList
     val doneList = state.doneList
     if (tabTitle == stringResource(id = R.string.todo)) {
-        TodoList(todoList)
+        if (todoList.isEmpty()) {
+            EmptyTodoListText()
+        } else {
+            TodoList(todoList, onItemClick, onDoneClick)
+        }
     } else {
-        DoneList(doneList)
-    }
-}
-
-@Composable
-fun TodoList(todoList: List<TodoEntity>) {
-    if (todoList.isEmpty()) {
-        EmptyTodoListText()
-    } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(0.dp, 4.dp)
-        ) {
-            items(todoList) {
-                TodoItem(todo = it)
-            }
+        if (doneList.isEmpty()) {
+            EmptyDoneListText()
+        } else {
+            DoneList(doneList, onItemClick, onDeleteClick)
         }
     }
 }
 
 @Composable
-fun TodoItem(todo: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
+fun TodoList(todoList: List<TodoEntity>, onItemClick: (Long) -> Unit, onDoneClick: (Long) -> Unit) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(0.dp, 4.dp)
+    ) {
+        items(todoList) {
+            TodoItem(todo = it, onItemClick = onItemClick, onDoneClick = onDoneClick)
+        }
+    }
+
+}
+
+@Composable
+fun TodoItem(todo: TodoEntity, onItemClick: (Long) -> Unit, onDoneClick: (Long) -> Unit) {
     Box(modifier = Modifier
         .clickable(enabled = true, role = Role.Tab) {
-            viewModel.startDetailTodo(todo.id)
+            onItemClick(todo.id)
         }) {
         Column(
             modifier = Modifier
@@ -242,7 +269,7 @@ fun TodoItem(todo: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
             .align(Alignment.TopEnd)
             .size(37.dp)
             .clickable(enabled = true, role = Role.Button) {
-                viewModel.doneTodo(todo.id)
+                onDoneClick(todo.id)
             })
 
     }
@@ -328,26 +355,27 @@ fun EmptyTodoListText() {
 
 
 @Composable
-fun DoneList(doneList: List<TodoEntity>) {
-    if (doneList.isEmpty()) {
-        EmptyDoneListText()
-    } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(0.dp, 4.dp)
-        ) {
-            items(doneList) {
-                DoneItem(it)
-            }
+fun DoneList(
+    doneList: List<TodoEntity>,
+    onItemClick: (Long) -> Unit,
+    onDeleteClick: (Long) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(0.dp, 4.dp)
+    ) {
+        items(doneList) {
+            DoneItem(it, onItemClick, onDeleteClick)
         }
     }
+
 }
 
 @Composable
-fun DoneItem(done: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
+fun DoneItem(done: TodoEntity, onItemClick: (Long) -> Unit, onDeleteClick: (Long) -> Unit) {
     Box(modifier = Modifier
         .clickable(enabled = true, role = Role.Tab) {
-            viewModel.startDetailTodo(done.id)
+            onItemClick(done.id)
         }) {
         Column(
             modifier = Modifier
@@ -367,7 +395,7 @@ fun DoneItem(done: TodoEntity, viewModel: MainViewModel = hiltViewModel()) {
             .align(Alignment.TopEnd)
             .size(37.dp)
             .clickable(enabled = true, role = Role.Button) {
-                viewModel.deleteTodo(done.id)
+                onDeleteClick(done.id)
             })
     }
 }

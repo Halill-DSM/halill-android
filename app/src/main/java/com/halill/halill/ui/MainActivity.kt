@@ -1,4 +1,4 @@
-package com.halill.halill.main
+package com.halill.halill.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

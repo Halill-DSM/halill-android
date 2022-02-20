@@ -1,16 +1,15 @@
 package com.halill.halill.features.todo.write
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.halill.domain.features.todo.param.EditTodoParam
 import com.halill.domain.features.todo.param.WriteTodoParam
 import com.halill.domain.features.todo.usecase.EditTodoUseCase
 import com.halill.domain.features.todo.usecase.GetTodoDetailUseCase
 import com.halill.domain.features.todo.usecase.SaveTodoUseCase
+import com.halill.halill.base.BaseViewModel
+import com.halill.halill.base.Reducer
 import com.halill.halill.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -20,108 +19,145 @@ class WriteTodoViewModel @Inject constructor(
     private val saveTodoUseCase: SaveTodoUseCase,
     private val editTodoUseCase: EditTodoUseCase,
     private val getTodoDetailUseCase: GetTodoDetailUseCase
-) : ViewModel() {
+) : BaseViewModel<WriteTodoState>() {
 
-    private val _title = MutableStateFlow("")
-    val title: StateFlow<String> = _title
+    private val reducer = WriteTodoReducer(WriteTodoState.initial())
+    override val state = reducer.state
 
-    private val _content = MutableStateFlow("")
-    val content: StateFlow<String> = _content
-
-    private val _deadline = MutableStateFlow(LocalDateTime.now())
-    val deadline: StateFlow<LocalDateTime> = _deadline
-
-    private val _writeTodoState = MutableStateFlow<WriteTodoState>(WriteTodoState.NotDoneInputState)
-    val writeTodoState: StateFlow<WriteTodoState> = _writeTodoState
-
-    var editTodoId = -1L
-    var editIsCompleted = false
-    
     fun setTitle(title: String) {
-        viewModelScope.launch {
-            _title.value = title
-            checkDoneInput()
-        }
+        sendEvent(WriteTodoEvent.InputTitle(title))
     }
 
     fun setContent(content: String) {
-        viewModelScope.launch {
-            _content.value = content
-            checkDoneInput()
-        }
+        sendEvent(WriteTodoEvent.InputContent(content))
     }
 
     fun writeTodo() {
         viewModelScope.launch {
-            val parameter = WriteTodoParam(title.value, content.value, deadline.value, false)
+            val parameter =
+                WriteTodoParam(state.value.title, state.value.content, state.value.deadline, false)
             saveTodoUseCase.execute(parameter)
         }
 
     }
 
-    fun checkDoneInput() {
-        _writeTodoState.value =
-            if (title.value.isBlank() || content.value.isBlank()) WriteTodoState.NotDoneInputState
-            else WriteTodoState.DoneInputState
+    fun showSelectDateState() {
+        sendEvent(WriteTodoEvent.ShowSelectDateDialog)
     }
 
-    fun setSelectDateState() {
-        _writeTodoState.value = WriteTodoState.SelectDateState
+    fun showSelectTimeState() {
+        sendEvent(WriteTodoEvent.ShowSelectTimeDialog)
     }
 
-    fun setSelectTimeState() {
-        _writeTodoState.value = WriteTodoState.SelectTimeState
+    fun dismissSelectDateState() {
+        sendEvent(WriteTodoEvent.DismissSelectDateDialog)
+    }
+
+    fun dismissSelectTimeState() {
+        sendEvent(WriteTodoEvent.DismissSelectTimeDialog)
     }
 
     fun setDeadlineYear(year: Int) {
-        val originalDeadline = deadline.value
-        _deadline.value = originalDeadline.changeYear(year)
+        sendEvent(WriteTodoEvent.InputDeadlineYear(year))
     }
 
     fun setDeadlineMonth(month: Int) {
-        val originalDeadline = deadline.value
-        _deadline.value = originalDeadline.changeMonth(month)
+        sendEvent(WriteTodoEvent.InputDeadlineMonth(month))
     }
 
     fun setDeadlineDay(day: Int) {
-        val originalDeadline = deadline.value
-        _deadline.value = originalDeadline.changeDay(day)
+        sendEvent(WriteTodoEvent.InputDeadlineDay(day))
     }
 
     fun setDeadlineHour(hour: Int) {
-        val originalDeadline = deadline.value
-        _deadline.value = originalDeadline.changeHour(hour)
+        sendEvent(WriteTodoEvent.InputDeadlineHour(hour))
     }
 
     fun setDeadlineMinute(minute: Int) {
-        val originalDeadline = deadline.value
-        _deadline.value = originalDeadline.changeMinute(minute)
+        sendEvent(WriteTodoEvent.InputDeadlineMinute(minute))
     }
 
+    private fun setDeadline(deadline: LocalDateTime) {
+        sendEvent(WriteTodoEvent.InputDeadline(deadline))
+    }
+
+    private fun setIsForEdit(editTodoId: Long, isComplete: Boolean) {
+        sendEvent(WriteTodoEvent.IsForEdit(editTodoId, isComplete))
+    }
 
     suspend fun getTodoDataWhenEdit(id: Long) {
         val todoData = getTodoDetailUseCase.execute(id)
-        _writeTodoState.value = WriteTodoState.EditTodoState(todoData)
-        editTodoId = todoData.id
-        editIsCompleted = todoData.isCompleted
-        _title.value = todoData.title
-        _content.value = todoData.content
-        _deadline.value = todoData.deadline
+        setIsForEdit(id, todoData.isCompleted)
+        setTitle(todoData.title)
+        setContent(todoData.content)
+        setDeadline(todoData.deadline)
     }
 
     fun editTodo() {
         val todoData = WriteTodoParam(
-            title = title.value,
-            content = content.value,
-            deadline = deadline.value,
-            isCompleted = editIsCompleted
+            title = state.value.title,
+            content = state.value.content,
+            deadline = state.value.deadline,
+            isCompleted = state.value.editTodoIsComplete
         )
         val param = EditTodoParam(
-            todoId = editTodoId,
+            todoId = state.value.editTodoId,
             data = todoData
         )
         viewModelScope.launch {
             editTodoUseCase.execute(param)
         }
+    }
+
+    private class WriteTodoReducer(initial: WriteTodoState) :
+        Reducer<WriteTodoState, WriteTodoEvent>(initial) {
+        override fun reduce(oldState: WriteTodoState, event: WriteTodoEvent) {
+            when (event) {
+                is WriteTodoEvent.InputTitle -> {
+                    setState(oldState.copy(title = event.title))
+                }
+                is WriteTodoEvent.InputContent -> {
+                    setState(oldState.copy(content = event.content))
+                }
+                is WriteTodoEvent.InputDeadlineYear -> {
+                    setState(oldState.copy(deadline = oldState.deadline.changeYear(event.year)))
+                }
+                is WriteTodoEvent.InputDeadlineMonth -> {
+                    setState(oldState.copy(deadline = oldState.deadline.changeMonth(event.month)))
+                }
+                is WriteTodoEvent.InputDeadlineDay -> {
+                    setState(oldState.copy(deadline = oldState.deadline.changeDay(event.day)))
+                }
+                is WriteTodoEvent.InputDeadlineHour -> {
+                    setState(oldState.copy(deadline = oldState.deadline.changeHour(event.hour)))
+                }
+                is WriteTodoEvent.InputDeadlineMinute -> {
+                    setState(oldState.copy(deadline = oldState.deadline.changeMinute(event.minute)))
+                }
+                is WriteTodoEvent.IsForEdit -> {
+                    setState(oldState.copy(isEdit = true, editTodoId = event.editTodoId))
+                }
+                is WriteTodoEvent.ShowSelectDateDialog -> {
+                    setState(oldState.copy(showDateSelectDialog = true))
+                }
+                is WriteTodoEvent.ShowSelectTimeDialog -> {
+                    setState(oldState.copy(showHourSelectDialog = true))
+                }
+                is WriteTodoEvent.DismissSelectDateDialog -> {
+                    setState(oldState.copy(showDateSelectDialog = false))
+                }
+                is WriteTodoEvent.DismissSelectTimeDialog -> {
+                    setState(oldState.copy(showHourSelectDialog = false))
+                }
+                is WriteTodoEvent.InputDeadline -> {
+                    setState(oldState.copy(deadline = event.deadline))
+                }
+            }
+        }
+
+    }
+
+    private fun sendEvent(event: WriteTodoEvent) {
+        reducer.sendEvent(event)
     }
 }

@@ -1,4 +1,4 @@
-package com.halill.halill.features.todo
+package com.halill.halill.features.todo.write
 
 import android.content.Context
 import android.widget.NumberPicker
@@ -35,8 +35,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill.R
 import com.halill.halill.features.auth.login.LoginLayoutViews
-import com.halill.halill.features.todo.write.WriteTodoState
-import com.halill.halill.features.todo.write.WriteTodoViewModel
 import com.halill.halill.main.scaffoldState
 import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.ui.theme.Teal900
@@ -48,6 +46,7 @@ fun WriteTodo(
     todoId: Long,
     viewModel: WriteTodoViewModel = hiltViewModel()
 ) {
+    val state = viewModel.state.collectAsState().value
     if (todoId.isEdit()) {
         LaunchedEffect(key1 = Unit) {
             viewModel.getTodoDataWhenEdit(todoId)
@@ -84,16 +83,68 @@ fun WriteTodo(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TitleTextField()
-                ContentTextField()
-                DeadLineView()
-                WriteTodoButton(navController, isEdit = todoId.isEdit())
-                val writeTodoState = viewModel.writeTodoState.collectAsState().value
-                if (writeTodoState is WriteTodoState.SelectDateState) {
-                    SelectDateDialog()
+                TitleTextField(
+                    state,
+                    doOnTitleChange = { title ->
+                        viewModel.setTitle(title)
+                    }
+                )
+                ContentTextField(
+                    state,
+                    doOnContentChange = { content ->
+                        viewModel.setContent(content)
+                    }
+                )
+                DeadLineView(
+                    state,
+                    doOnDeadlineDateClick = {
+                        viewModel.showSelectDateState()
+                    },
+                    doOnDeadlineTimeClick = {
+                        viewModel.showSelectTimeState()
+                    }
+                )
+                WriteTodoButton(
+                    navController,
+                    state,
+                    doOnWriteTodoButtonClick = {
+                        viewModel.writeTodo()
+                    },
+                    doOnEditTodoButtonClick = {
+                        viewModel.editTodo()
+                    }
+                )
+
+                if (state.showDateSelectDialog) {
+                    SelectDateDialog(
+                        state = state,
+                        doOnSelectDateDialogDismiss = {
+                            viewModel.dismissSelectDateState()
+                        },
+                        doOnDatePick = { day ->
+                            viewModel.setDeadlineDay(day)
+                        },
+                        doOnMonthPick = { month ->
+                            viewModel.setDeadlineMonth(month)
+                        },
+                        doOnYearPick = { year ->
+                            viewModel.setDeadlineYear(year)
+                        }
+                    )
                     ClearFocus()
-                } else if (writeTodoState is WriteTodoState.SelectTimeState) {
-                    SelectTimeDialog()
+                } else if (state.showHourSelectDialog) {
+                    SelectTimeDialog(
+                        state = state,
+                        doOnHourPick = { hour ->
+                            viewModel.setDeadlineHour(hour)
+                        },
+                        doOnMinutePick = { minute ->
+                            viewModel.setDeadlineMinute(minute)
+                        },
+                        doOnTimeDialogDismiss = {
+                            viewModel.dismissSelectTimeState()
+                        }
+                    )
                     ClearFocus()
                 }
             }
@@ -105,19 +156,19 @@ private fun Long.isEdit(): Boolean =
     this != -1L
 
 @Composable
-fun TitleTextField(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    val title = viewModel.title.collectAsState()
+fun TitleTextField(state: WriteTodoState, doOnTitleChange: (String) -> Unit) {
+    val title = state.title
     val titleLabel = stringResource(id = R.string.write_title)
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
-        value = title.value,
+        value = title,
         label = { Text(text = titleLabel) },
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp),
         singleLine = true,
         onValueChange = {
-            viewModel.setTitle(it)
+            doOnTitleChange(it)
         },
         keyboardActions = KeyboardActions(
             onDone = {
@@ -128,18 +179,18 @@ fun TitleTextField(viewModel: WriteTodoViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun ContentTextField(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    val content = viewModel.content.collectAsState()
+fun ContentTextField(state: WriteTodoState, doOnContentChange: (String) -> Unit) {
+    val content = state.content
     val contentLabel = stringResource(id = R.string.write_content)
     OutlinedTextField(
-        value = content.value,
+        value = content,
         label = { Text(text = contentLabel) },
         modifier = Modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = 300.dp, minWidth = 100.dp)
             .padding(10.dp),
         onValueChange = {
-            viewModel.setContent(it)
+            doOnContentChange(it)
         },
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Default
@@ -148,24 +199,36 @@ fun ContentTextField(viewModel: WriteTodoViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun DeadLineView() {
+fun DeadLineView(
+    state: WriteTodoState,
+    doOnDeadlineDateClick: () -> Unit,
+    doOnDeadlineTimeClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp), horizontalArrangement = Arrangement.End
     ) {
-        val deadLineText = stringResource(id = R.string.dead_line)
-        Text(modifier = Modifier.weight(2f), text = deadLineText)
+        val deadlineText = stringResource(id = R.string.dead_line)
+        Text(modifier = Modifier.weight(2f), text = deadlineText)
         Column(horizontalAlignment = Alignment.End) {
-            DeadLineDateView()
-            DeadLineTimeView()
+            DeadlineDateView(
+                state = state,
+                doOnDeadlineDateClick = doOnDeadlineDateClick
+            )
+            DeadlineTimeView(
+                state,
+                doOnDeadlineTimeClick = doOnDeadlineTimeClick
+            )
         }
     }
 }
 
 @Composable
-fun DeadLineDateView(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    val deadLine = viewModel.deadline.collectAsState().value
+fun DeadlineDateView(
+    state: WriteTodoState, doOnDeadlineDateClick: () -> Unit
+) {
+    val deadLine = state.deadline
     val year = "${deadLine.year}년"
     val month = "${deadLine.monthValue}월"
     val date = "${deadLine.dayOfMonth}일"
@@ -174,7 +237,7 @@ fun DeadLineDateView(viewModel: WriteTodoViewModel = hiltViewModel()) {
         modifier = Modifier
             .padding(0.dp, 0.dp, 0.dp, 10.dp)
             .clickable(enabled = true, role = Role.Button) {
-                viewModel.setSelectDateState()
+                doOnDeadlineDateClick()
             },
         text = dateText,
         style = TextStyle(textDecoration = TextDecoration.Underline)
@@ -183,16 +246,19 @@ fun DeadLineDateView(viewModel: WriteTodoViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun DeadLineTimeView(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    val deadLine = viewModel.deadline.collectAsState().value
-    val hour = "${deadLine.hour}시"
-    val minute = "${deadLine.minute}분"
+fun DeadlineTimeView(
+    state: WriteTodoState,
+    doOnDeadlineTimeClick: () -> Unit
+) {
+    val deadline = state.deadline
+    val hour = "${deadline.hour}시"
+    val minute = "${deadline.minute}분"
     val timeText = "$hour $minute"
     Text(
         modifier = Modifier
             .padding(0.dp, 10.dp, 0.dp, 10.dp)
             .clickable(enabled = true, role = Role.Button) {
-                viewModel.setSelectTimeState()
+                doOnDeadlineTimeClick()
             },
         text = timeText,
         style = TextStyle(textDecoration = TextDecoration.Underline)
@@ -208,19 +274,19 @@ fun ClearFocus() {
 @Composable
 fun WriteTodoButton(
     navController: NavController,
-    viewModel: WriteTodoViewModel = hiltViewModel(),
-    isEdit: Boolean
+    state: WriteTodoState,
+    doOnWriteTodoButtonClick: () -> Unit,
+    doOnEditTodoButtonClick: () -> Unit
 ) {
-    val writeTodoState = viewModel.writeTodoState.collectAsState()
     val emptyComment = stringResource(id = R.string.login_empty_comment)
     val scope = rememberCoroutineScope()
     Button(
         onClick = {
-            if (writeTodoState.value is WriteTodoState.DoneInputState) {
-                if (isEdit) {
-                    viewModel.editTodo()
+            if (state.doneInput()) {
+                if (state.isEdit) {
+                    doOnEditTodoButtonClick()
                 } else {
-                    viewModel.writeTodo()
+                    doOnWriteTodoButtonClick()
                 }
                 navController.popBackStack()
             } else {
@@ -233,7 +299,7 @@ fun WriteTodoButton(
             }
         },
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = if (writeTodoState.value is WriteTodoState.DoneInputState) Teal900 else Color.Gray,
+            backgroundColor = if (state.doneInput()) Teal900 else Color.Gray,
             contentColor = Color.White
         ),
         modifier = Modifier
@@ -242,60 +308,88 @@ fun WriteTodoButton(
             .clip(RoundedCornerShape(30.dp))
     ) {
         val text =
-            if (isEdit) stringResource(id = R.string.edit_todo) else stringResource(id = R.string.write_todo)
+            if (state.isEdit) stringResource(id = R.string.edit_todo) else stringResource(id = R.string.write_todo)
         Text(text = text)
     }
 }
 
+private fun WriteTodoState.doneInput() =
+    title.isNotEmpty() && content.isNotEmpty()
+
 @Composable
-fun SelectDateDialog(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    Dialog(onDismissRequest = { viewModel.checkDoneInput() }) {
+fun SelectDateDialog(
+    state: WriteTodoState,
+    doOnSelectDateDialogDismiss: () -> Unit,
+    doOnDatePick: (Int) -> Unit,
+    doOnMonthPick: (Int) -> Unit,
+    doOnYearPick: (Int) -> Unit
+) {
+    Dialog({ doOnSelectDateDialogDismiss() }) {
         Surface(
             modifier = Modifier
                 .width(275.dp),
             color = Color.White,
             shape = RoundedCornerShape(15.dp)
         ) {
-            DateDialogContent()
+            DateDialogContent(
+                state = state,
+                doOnDatePick = doOnDatePick,
+                doOnMonthPick = doOnMonthPick,
+                doOnYearPick = doOnYearPick
+            )
         }
     }
 }
 
 @Composable
-fun DateDialogContent() {
+fun DateDialogContent(
+    state: WriteTodoState,
+    doOnDatePick: (Int) -> Unit,
+    doOnMonthPick: (Int) -> Unit,
+    doOnYearPick: (Int) -> Unit
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        YearNumberPicker()
+        YearNumberPicker(
+            state = state,
+            doOnYearPick = doOnYearPick
+        )
         val yearText = stringResource(id = R.string.year)
         Text(text = yearText)
 
-        MonthNumberPicker()
+        MonthNumberPicker(
+            state = state,
+            doOnMonthPick = doOnMonthPick
+        )
         val monthText = stringResource(id = R.string.month)
         Text(text = monthText)
 
-        DateNumberPicker()
+        DateNumberPicker(
+            state = state,
+            doOnDatePick = doOnDatePick
+        )
         val dayText = stringResource(id = R.string.day)
         Text(text = dayText)
     }
 }
 
 @Composable
-fun YearNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    val deadline = viewModel.deadline.collectAsState().value
+fun YearNumberPicker(doOnYearPick: (Int) -> Unit, state: WriteTodoState) {
+    val deadline = state.deadline
     AndroidView(
         modifier = Modifier.wrapContentSize(),
         factory = { context ->
-            yearNumberPicker(viewModel, context, deadline.year)
+            yearNumberPicker(doOnYearPick, context, deadline.year)
         }
     )
 }
 
-private fun yearNumberPicker(viewModel: WriteTodoViewModel, context: Context, year: Int) =
+private fun yearNumberPicker(doOnYearPick: (Int) -> Unit, context: Context, year: Int) =
     NumberPicker(context).apply {
         setOnValueChangedListener { picker, _, _ ->
-            viewModel.setDeadlineYear(picker.value)
+            doOnYearPick(picker.value)
         }
         maxValue = year + 1
         minValue = year - 1
@@ -303,20 +397,20 @@ private fun yearNumberPicker(viewModel: WriteTodoViewModel, context: Context, ye
     }
 
 @Composable
-fun MonthNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    val deadline = viewModel.deadline.collectAsState().value
+fun MonthNumberPicker(state: WriteTodoState, doOnMonthPick: (Int) -> Unit) {
+    val deadline = state.deadline
     AndroidView(
         modifier = Modifier.wrapContentSize(),
         factory = { context ->
-            monthNumberPicker(viewModel, context, deadline.monthValue)
+            monthNumberPicker(doOnMonthPick, context, deadline.monthValue)
         }
     )
 }
 
-private fun monthNumberPicker(viewModel: WriteTodoViewModel, context: Context, month: Int) =
+private fun monthNumberPicker(doOnMonthPick: (Int) -> Unit, context: Context, month: Int) =
     NumberPicker(context).apply {
         setOnValueChangedListener { picker, _, _ ->
-            viewModel.setDeadlineMonth(picker.value)
+            doOnMonthPick(picker.value)
         }
         maxValue = 12
         minValue = 1
@@ -324,20 +418,20 @@ private fun monthNumberPicker(viewModel: WriteTodoViewModel, context: Context, m
     }
 
 @Composable
-fun DateNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    val deadline = viewModel.deadline.collectAsState().value
+fun DateNumberPicker(state: WriteTodoState, doOnDatePick: (Int) -> Unit) {
+    val deadline = state.deadline
     AndroidView(
         modifier = Modifier.wrapContentSize(),
         factory = { context ->
-            dateNumberPicker(viewModel, context, deadline.dayOfMonth)
+            dateNumberPicker(doOnDatePick, context, deadline.dayOfMonth)
         }
     )
 }
 
-private fun dateNumberPicker(viewModel: WriteTodoViewModel, context: Context, day: Int) =
+private fun dateNumberPicker(doOnDatePick: (Int) -> Unit, context: Context, day: Int) =
     NumberPicker(context).apply {
         setOnValueChangedListener { picker, _, _ ->
-            viewModel.setDeadlineDay(picker.value)
+            doOnDatePick(picker.value)
         }
         maxValue = 31
         minValue = 1
@@ -345,50 +439,59 @@ private fun dateNumberPicker(viewModel: WriteTodoViewModel, context: Context, da
     }
 
 @Composable
-fun SelectTimeDialog(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    Dialog(onDismissRequest = { viewModel.checkDoneInput() }) {
+fun SelectTimeDialog(
+    state: WriteTodoState,
+    doOnHourPick: (Int) -> Unit,
+    doOnMinutePick: (Int) -> Unit,
+    doOnTimeDialogDismiss: () -> Unit
+) {
+    Dialog(onDismissRequest = { doOnTimeDialogDismiss() }) {
         Surface(
             modifier = Modifier
                 .width(220.dp),
             color = Color.White,
             shape = RoundedCornerShape(15.dp)
         ) {
-            TimeDialogContent()
+            TimeDialogContent(state, doOnMinutePick = doOnMinutePick, doOnHourPick = doOnHourPick)
         }
     }
 }
 
 @Composable
-fun TimeDialogContent() {
+fun TimeDialogContent(
+    state: WriteTodoState,
+    doOnMinutePick: (Int) -> Unit,
+    doOnHourPick: (Int) -> Unit
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        HourNumberPicker()
+        HourNumberPicker(state, doOnHourPick)
         val yearText = stringResource(id = R.string.hour)
         Text(text = yearText)
 
-        MinuteNumberPicker()
+        MinuteNumberPicker(state, doOnMinutePick)
         val monthText = stringResource(id = R.string.minute)
         Text(text = monthText)
     }
 }
 
 @Composable
-fun HourNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    val deadline = viewModel.deadline.collectAsState().value
+fun HourNumberPicker(state: WriteTodoState, doOnHourPick: (Int) -> Unit) {
+    val deadline = state.deadline
     AndroidView(
         modifier = Modifier.wrapContentSize(),
         factory = { context ->
-            hourNumberPicker(viewModel, context, deadline.hour)
+            hourNumberPicker(doOnHourPick, context, deadline.hour)
         }
     )
 }
 
-private fun hourNumberPicker(viewModel: WriteTodoViewModel, context: Context, hour: Int) =
+private fun hourNumberPicker(doOnHourPick: (Int) -> Unit, context: Context, hour: Int) =
     NumberPicker(context).apply {
         setOnValueChangedListener { picker, _, _ ->
-            viewModel.setDeadlineHour(picker.value)
+            doOnHourPick(picker.value)
         }
         maxValue = 23
         minValue = 0
@@ -396,20 +499,20 @@ private fun hourNumberPicker(viewModel: WriteTodoViewModel, context: Context, ho
     }
 
 @Composable
-fun MinuteNumberPicker(viewModel: WriteTodoViewModel = hiltViewModel()) {
-    val deadline = viewModel.deadline.collectAsState().value
+fun MinuteNumberPicker(state: WriteTodoState, doOnMinutePick: (Int) -> Unit) {
+    val deadline = state.deadline
     AndroidView(
         modifier = Modifier.wrapContentSize(),
         factory = { context ->
-            minuteNumberPicker(viewModel, context, deadline.minute)
+            minuteNumberPicker(doOnMinutePick, context, deadline.minute)
         }
     )
 }
 
-private fun minuteNumberPicker(viewModel: WriteTodoViewModel, context: Context, minute: Int) =
+private fun minuteNumberPicker(doOnMinutePick: (Int) -> Unit, context: Context, minute: Int) =
     NumberPicker(context).apply {
         setOnValueChangedListener { picker, _, _ ->
-            viewModel.setDeadlineMinute(picker.value)
+            doOnMinutePick(picker.value)
         }
         maxValue = 23
         minValue = 0

@@ -26,8 +26,6 @@ import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.features.auth.IdTextField
 import com.halill.halill.features.auth.PasswordTextField
 import com.halill.halill.features.auth.login.LoginLayoutViews
-import com.halill.halill.features.auth.register.model.RegisterEvent
-import com.halill.halill.features.auth.register.model.RegisterState
 import com.halill.halill.features.auth.register.viewmodel.RegisterViewModel
 import com.halill.halill.main.scaffoldState
 import com.halill.halill.ui.theme.Teal700

@@ -9,8 +9,8 @@ import com.halill.halill.base.EventFlow
 import com.halill.halill.base.MutableEventFlow
 import com.halill.halill.base.asEventFlow
 import com.halill.halill.features.auth.register.checkPassword
-import com.halill.halill.features.auth.register.model.RegisterEvent
-import com.halill.halill.features.auth.register.model.RegisterState
+import com.halill.halill.features.auth.register.RegisterEvent
+import com.halill.halill.features.auth.register.RegisterState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

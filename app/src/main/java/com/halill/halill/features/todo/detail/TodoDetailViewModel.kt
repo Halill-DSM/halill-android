@@ -43,6 +43,7 @@ class TodoDetailViewModel @Inject constructor(
                 val todoDetail = event.todo
                 setState(
                     oldState.copy(
+                        todoId = todoDetail.id,
                         title = todoDetail.title,
                         content = todoDetail.content,
                         deadline = todoDetail.deadline,

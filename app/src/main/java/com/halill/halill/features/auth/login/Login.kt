@@ -29,7 +29,6 @@ import com.halill.halill.R
 import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.features.auth.IdTextField
 import com.halill.halill.features.auth.PasswordTextField
-import com.halill.halill.features.auth.login.viewmodel.LoginViewModel
 import com.halill.halill.main.scaffoldState
 import com.halill.halill.ui.theme.Teal200
 import com.halill.halill.ui.theme.Teal900

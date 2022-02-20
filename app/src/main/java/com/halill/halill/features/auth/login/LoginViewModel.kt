@@ -1,4 +1,4 @@
-package com.halill.halill.features.auth.login.viewmodel
+package com.halill.halill.features.auth.login
 
 import androidx.lifecycle.viewModelScope
 import com.halill.domain.features.auth.parameter.LoginParameter
@@ -7,9 +7,6 @@ import com.halill.halill.base.BaseViewModel
 import com.halill.halill.base.MutableEventFlow
 import com.halill.halill.base.Reducer
 import com.halill.halill.base.asEventFlow
-import com.halill.halill.features.auth.login.LoginEvent
-import com.halill.halill.features.auth.login.LoginState
-import com.halill.halill.features.auth.login.LoginViewEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -42,11 +39,11 @@ class LoginViewModel @Inject constructor(
         state.value.email.isNotEmpty() && state.value.password.isNotEmpty()
 
     fun setEmail(email: String) {
-        sendEvent(LoginEvent.SetEmail(email))
+        sendEvent(LoginEvent.InputEmail(email))
     }
 
     fun setPassword(password: String) {
-        sendEvent(LoginEvent.SetPassword(password))
+        sendEvent(LoginEvent.InputPassword(password))
     }
 
     private fun startLoading() {
@@ -60,10 +57,10 @@ class LoginViewModel @Inject constructor(
     private class LoginReducer(initial: LoginState) : Reducer<LoginState, LoginEvent>(initial) {
         override fun reduce(oldState: LoginState, event: LoginEvent) {
             when (event) {
-                is LoginEvent.SetEmail -> {
+                is LoginEvent.InputEmail -> {
                     setState(oldState.copy(email = event.email))
                 }
-                is LoginEvent.SetPassword -> {
+                is LoginEvent.InputPassword -> {
                     setState(oldState.copy(password = event.password))
                 }
                 is LoginEvent.StartLoading -> {

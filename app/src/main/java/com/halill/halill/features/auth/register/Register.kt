@@ -6,7 +6,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -26,7 +25,6 @@ import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.features.auth.IdTextField
 import com.halill.halill.features.auth.PasswordTextField
 import com.halill.halill.features.auth.login.LoginLayoutViews
-import com.halill.halill.features.auth.register.viewmodel.RegisterViewModel
 import com.halill.halill.main.scaffoldState
 import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.ui.theme.Teal900
@@ -34,6 +32,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun Register(navController: NavController, viewModel: RegisterViewModel = hiltViewModel()) {
+    val state = viewModel.state.collectAsState().value
     Scaffold(scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
@@ -56,12 +55,31 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = hiltVi
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                RegisterEmailTextField()
-                val passwordText = viewModel.password.collectAsState()
-                RegisterPasswordTextField(password = passwordText)
-                RegisterCheckPasswordTextField(password = passwordText)
-                RegisterNameTextField()
-                RegisterButton()
+                RegisterEmailTextField(
+                    state,
+                    doOnEmailTextChange = { email -> viewModel.setEmail(email) }
+                )
+                RegisterPasswordTextField(
+                    state,
+                    doOnPasswordTextChange = { password -> viewModel.setPassword(password) }
+                )
+                RegisterCheckPasswordTextField(
+                    state,
+                    doOnCheckPasswordTextChange = { checkPassword ->
+                        viewModel.setCheckPassword(
+                            checkPassword
+                        )
+                    }
+                )
+                RegisterNameTextField(
+                    state,
+                    doOnNameTextChange = { name -> viewModel.setName(name) })
+                RegisterButton(
+                    state,
+                    doOnRegisterButtonClick = {
+                        viewModel.register()
+                    }
+                )
             }
         })
     val event = viewModel.registerViewEffect
@@ -74,7 +92,7 @@ private fun handleViewEffect(navController: NavController, event: EventFlow<Regi
     val successComment = stringResource(id = R.string.success_register_comment)
     val failRegisterComment = stringResource(id = R.string.fail_register_comment)
     event.observeWithLifecycle(action = {
-        when(it) {
+        when (it) {
             is RegisterViewEffect.FinishRegister -> {
                 scope.launch {
                     scaffoldState.snackbarHostState.showSnackbar(
@@ -97,64 +115,85 @@ private fun handleViewEffect(navController: NavController, event: EventFlow<Regi
 }
 
 @Composable
-fun RegisterEmailTextField(viewModel: RegisterViewModel = hiltViewModel()) {
-    val emailText = viewModel.email.collectAsState().value
+fun RegisterEmailTextField(
+    state: RegisterState,
+    doOnEmailTextChange: (String) -> Unit
+) {
+    val emailText = state.email
     val emailLabel = "이메일을 입력해주세요"
+
     Spacer(modifier = Modifier.height(25.dp))
+
     IdTextField(
         text = emailText,
         label = emailLabel,
         layoutId = "register_email_tf",
         doOnValueChange = {
-            viewModel.setEmail(it)
+            doOnEmailTextChange(it)
         },
         imeAction = ImeAction.Next
     )
 }
 
 @Composable
-fun RegisterPasswordTextField(viewModel: RegisterViewModel = hiltViewModel(), password: State<String>) {
+fun RegisterPasswordTextField(
+    state: RegisterState,
+    doOnPasswordTextChange: (String) -> Unit
+) {
+    val passwordText = state.password
     val passwordLabel = "비밀번호를 입력해주세요"
+
     Spacer(modifier = Modifier.height(25.dp))
+
     PasswordTextField(
-        text = password.value,
+        text = passwordText,
         label = passwordLabel,
         layoutId = "register_password_tf",
         doOnValueChange = {
-            viewModel.setPassword(it)
+            doOnPasswordTextChange(it)
         },
         imeAction = ImeAction.Next
     )
 }
 
 @Composable
-fun RegisterCheckPasswordTextField(viewModel: RegisterViewModel = hiltViewModel(), password: State<String>) {
-    val checkPasswordText = viewModel.checkPassword.collectAsState().value
+fun RegisterCheckPasswordTextField(
+    state: RegisterState,
+    doOnCheckPasswordTextChange: (String) -> Unit
+) {
+    val checkPasswordText = state.checkPassword
     val checkPasswordLabel = "비밀번호를 한번 더 입력해주세요"
+
     Spacer(modifier = Modifier.height(25.dp))
+
     PasswordTextField(
         text = checkPasswordText,
         label = checkPasswordLabel,
         layoutId = "register_check_password_tf",
         doOnValueChange = {
-            viewModel.setCheckPassword(it)
+            doOnCheckPasswordTextChange(it)
         },
-        isError = checkPasswordText.checkPassword(password.value),
+        isError = state.passwordIsSameWithCheck(),
         imeAction = ImeAction.Next
     )
 }
 
 @Composable
-fun RegisterNameTextField(viewModel: RegisterViewModel = hiltViewModel()) {
-    val nameText = viewModel.name.collectAsState().value
+fun RegisterNameTextField(
+    state: RegisterState,
+    doOnNameTextChange: (String) -> Unit
+) {
+    val nameText = state.name
     val nameLabel = "이름을 입력해주세요"
+
     Spacer(modifier = Modifier.height(25.dp))
+
     IdTextField(
         text = nameText,
         label = nameLabel,
         layoutId = "register_name_tf",
         doOnValueChange = {
-            viewModel.setName(it)
+            doOnNameTextChange(it)
         },
         keyboardType = KeyboardType.Text,
         imeAction = ImeAction.Done
@@ -162,15 +201,14 @@ fun RegisterNameTextField(viewModel: RegisterViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun RegisterButton(viewModel: RegisterViewModel = hiltViewModel()) {
+fun RegisterButton(state: RegisterState, doOnRegisterButtonClick: () -> Unit) {
     val scope = rememberCoroutineScope()
-    val registerState = viewModel.registerState.collectAsState()
     val emptyComment = stringResource(id = R.string.login_empty_comment)
     Spacer(modifier = Modifier.height(25.dp))
     Button(
         onClick = {
-            if (registerState.value is RegisterState.DoneInputState) {
-                viewModel.register()
+            if (state.doneInput()) {
+                doOnRegisterButtonClick()
             } else {
                 scope.launch {
                     scaffoldState.snackbarHostState.showSnackbar(
@@ -181,7 +219,7 @@ fun RegisterButton(viewModel: RegisterViewModel = hiltViewModel()) {
             }
         },
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = if (registerState.value is RegisterState.DoneInputState) Teal900 else Color.Gray,
+            backgroundColor = if (state.doneInput()) Teal900 else Color.Gray,
             contentColor = Color.White
         ),
         modifier = Modifier
@@ -193,5 +231,11 @@ fun RegisterButton(viewModel: RegisterViewModel = hiltViewModel()) {
     }
 }
 
-fun String.checkPassword(password: String): Boolean =
-    this.isNotEmpty() && this != password
+private fun RegisterState.doneInput(): Boolean =
+    isNotEmpty() && passwordIsSameWithCheck()
+
+private fun RegisterState.isNotEmpty(): Boolean =
+    email.isNotEmpty() && password.isNotEmpty() && checkPassword.isNotEmpty() && name.isNotEmpty()
+
+private fun RegisterState.passwordIsSameWithCheck(): Boolean =
+    password == checkPassword

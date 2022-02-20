@@ -103,13 +103,13 @@ class MainViewModel @Inject constructor(
         override fun reduce(oldState: MainState, event: MainUiEvent) {
             when (event) {
                 is MainUiEvent.EmptyList -> {
-                    setState(oldState.copy(todoList = emptyList(), doneList = emptyList()))
+                    setState(oldState.copy(todoList = emptyList(), doneList = emptyList(), isLoading = false))
                 }
                 is MainUiEvent.ShowUser -> {
-                    setState(oldState.copy(user = event.user))
+                    setState(oldState.copy(user = event.user, isLoading = false))
                 }
                 is MainUiEvent.ShowList -> {
-                    setState(oldState.copy(todoList = event.todoList, doneList = event.doneList))
+                    setState(oldState.copy(todoList = event.todoList, doneList = event.doneList, isLoading = false))
                 }
             }
         }

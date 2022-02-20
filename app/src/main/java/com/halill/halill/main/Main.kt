@@ -173,7 +173,7 @@ fun MainPager(
         ) {
             when {
                 mainState.isLoading -> LoadingText()
-                checkBothListIsEmpty(mainState) -> EmptyText(tabTitle = tabData[index])
+                checkBothListIsEmpty(mainState) -> BothEmptySoRequireTodoText()
                 else -> ShowList(
                     state = mainState,
                     tabTitle = tabData[index],
@@ -191,12 +191,9 @@ private fun checkBothListIsEmpty(state: MainState): Boolean =
     state.doneList.isEmpty() && state.todoList.isEmpty()
 
 @Composable
-fun EmptyText(tabTitle: String) {
-    if (tabTitle == stringResource(id = R.string.todo)) {
-        EmptyTodoListText()
-    } else {
-        EmptyDoneListText()
-    }
+fun BothEmptySoRequireTodoText() {
+    val requireTodo = stringResource(id = R.string.require_todo_comment)
+    Text(text = requireTodo)
 }
 
 @Composable
@@ -216,9 +213,17 @@ fun ShowList(
     val todoList = state.todoList
     val doneList = state.doneList
     if (tabTitle == stringResource(id = R.string.todo)) {
-        TodoList(todoList, onItemClick, onDoneClick)
+        if(todoList.isEmpty()) {
+            EmptyTodoListText()
+        } else {
+            TodoList(todoList, onItemClick, onDoneClick)
+        }
     } else {
-        DoneList(doneList, onItemClick, onDeleteClick)
+        if(doneList.isEmpty()) {
+            EmptyDoneListText()
+        } else {
+            DoneList(doneList, onItemClick, onDeleteClick)
+        }
     }
 }
 

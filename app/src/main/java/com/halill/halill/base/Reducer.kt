@@ -13,7 +13,7 @@ abstract class Reducer<S : MviState, E : MviEvent>(initial: S) {
     }
 
     fun setState(newState: S) {
-        _state.value = newState
+        _state.tryEmit(newState)
     }
 
     abstract fun reduce(oldState: S, event: E)

@@ -10,10 +10,7 @@ import com.halill.domain.features.todo.entity.UserTodoListEntity
 import com.halill.domain.features.todo.usecase.DeleteTodoUseCase
 import com.halill.domain.features.todo.usecase.DoneTodoUseCase
 import com.halill.domain.features.todo.usecase.GetTodoListUseCase
-import com.halill.halill.base.EventFlow
-import com.halill.halill.base.MutableEventFlow
-import com.halill.halill.base.Reducer
-import com.halill.halill.base.asEventFlow
+import com.halill.halill.base.*
 import com.halill.halill.main.MainEvent
 import com.halill.halill.main.MainViewEffect
 import com.halill.halill.main.model.MainState
@@ -31,10 +28,10 @@ class MainViewModel @Inject constructor(
     private val getTodoListUseCase: GetTodoListUseCase,
     private val doneTodoUseCase: DoneTodoUseCase,
     private val deleteTodoUseCase: DeleteTodoUseCase
-) : ViewModel() {
+) : BaseViewModel<MainState>() {
 
     private val reducer = MainReducer(MainState.initial())
-    val mainState: StateFlow<MainState> get() = reducer.state
+    override val state = reducer.state
 
     private val _mainViewEffect = MutableEventFlow<MainViewEffect>()
     val mainViewEffect: EventFlow<MainViewEffect> = _mainViewEffect.asEventFlow()

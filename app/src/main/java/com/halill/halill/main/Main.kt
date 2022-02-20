@@ -53,7 +53,7 @@ lateinit var scaffoldState: ScaffoldState
 @Composable
 fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     scaffoldState = rememberScaffoldState()
-    val mainState = viewModel.mainState.collectAsState().value
+    val mainState = viewModel.state.collectAsState().value
     viewModel.run {
         checkLogin()
         loadUserInfo()

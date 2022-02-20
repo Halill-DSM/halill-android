@@ -64,18 +64,18 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = hiltVi
                 RegisterButton()
             }
         })
-    val event = viewModel.registerEvent
-    EventHandle(navController = navController, event = event)
+    val event = viewModel.registerViewEffect
+    handleViewEffect(navController = navController, event = event)
 }
 
 @Composable
-private fun EventHandle(navController: NavController, event: EventFlow<RegisterEvent>) {
+private fun handleViewEffect(navController: NavController, event: EventFlow<RegisterViewEffect>) {
     val scope = rememberCoroutineScope()
     val successComment = stringResource(id = R.string.success_register_comment)
     val failRegisterComment = stringResource(id = R.string.fail_register_comment)
     event.observeWithLifecycle(action = {
         when(it) {
-            is RegisterEvent.FinishRegister -> {
+            is RegisterViewEffect.FinishRegister -> {
                 scope.launch {
                     scaffoldState.snackbarHostState.showSnackbar(
                         successComment,
@@ -84,7 +84,7 @@ private fun EventHandle(navController: NavController, event: EventFlow<RegisterE
                 }
                 navController.popBackStack()
             }
-            is RegisterEvent.FailRegister -> {
+            is RegisterViewEffect.FailRegister -> {
                 scope.launch {
                     scaffoldState.snackbarHostState.showSnackbar(
                         failRegisterComment,

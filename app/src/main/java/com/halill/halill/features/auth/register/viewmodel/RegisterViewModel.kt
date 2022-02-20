@@ -11,6 +11,7 @@ import com.halill.halill.base.asEventFlow
 import com.halill.halill.features.auth.register.checkPassword
 import com.halill.halill.features.auth.register.RegisterEvent
 import com.halill.halill.features.auth.register.RegisterState
+import com.halill.halill.features.auth.register.RegisterViewEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,8 +27,8 @@ class RegisterViewModel @Inject constructor(
     private val _registerState = MutableStateFlow<RegisterState>(RegisterState.NotDoneInputState)
     val registerState: StateFlow<RegisterState> = _registerState
 
-    private val _registerEvent = MutableEventFlow<RegisterEvent>()
-    val registerEvent: EventFlow<RegisterEvent> = _registerEvent.asEventFlow()
+    private val _registerViewEffect = MutableEventFlow<RegisterViewEffect>()
+    val registerViewEffect: EventFlow<RegisterViewEffect> = _registerViewEffect.asEventFlow()
 
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email
@@ -89,9 +90,9 @@ class RegisterViewModel @Inject constructor(
             )
             try {
                 registerUseCase.execute(parameter)
-                _registerEvent.emit(RegisterEvent.FinishRegister)
+                _registerViewEffect.emit(RegisterViewEffect.FinishRegister)
             } catch (e:Exception) {
-                _registerEvent.emit(RegisterEvent.FailRegister)
+                _registerViewEffect.emit(RegisterViewEffect.FailRegister)
             }
         }
     }

@@ -1,6 +1,5 @@
 package com.halill.halill.features.todo.detail
 
-import android.widget.ImageButton
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -15,7 +14,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -40,18 +38,16 @@ fun TodoDetail(
     LaunchedEffect(Unit) {
         viewModel.getDetail(id)
     }
-    val state = viewModel.todoDetailState.collectAsState().value
+    val state = viewModel.state.collectAsState().value
     Scaffold(scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
                 title = {
-                    if (state is TodoDetailState.MainState) {
-                        var title = state.todo.title
-                        if (state.todo.isCompleted) {
-                            title += stringResource(id = R.string.done_comment)
-                        }
-                        Text(text = title)
+                    var title = state.title
+                    if (state.isComplete) {
+                        title += stringResource(id = R.string.done_comment)
                     }
+                    Text(text = title)
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -62,28 +58,25 @@ fun TodoDetail(
                 },
                 actions = {
                     val scope = rememberCoroutineScope()
-
-                    if (state is TodoDetailState.MainState) {
+                    IconButton(onClick = {
+                        navController.navigate("writeTodo?todoId=${state.todoId}")
+                    }) {
+                        EditButton()
+                    }
+                    if (state.isComplete) {
                         IconButton(onClick = {
-                            navController.navigate("writeTodo?todoId=${state.todo.id}")
+                            scope.launch {
+                                viewModel.deleteTodo(id)
+                            }
+                            navController.popBackStack()
                         }) {
-                            EditButton()
+                            DeleteButton()
                         }
-                        if (state.todo.isCompleted) {
-                            IconButton(onClick = {
-                                scope.launch {
-                                    viewModel.deleteTodo(id)
-                                }
-                                navController.popBackStack()
-                            }) {
-                                DeleteButton()
-                            }
-                        } else {
-                            IconButton(onClick = {
-                                viewModel.doneTodo(state.todo.id)
-                            }) {
-                                DoneButton()
-                            }
+                    } else {
+                        IconButton(onClick = {
+                            viewModel.doneTodo(state.todoId)
+                        }) {
+                            DoneButton()
                         }
                     }
 
@@ -101,17 +94,15 @@ fun TodoDetail(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (state is TodoDetailState.MainState) {
-                    Text(
-                        text = state.todo.content,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                            .padding(4.dp)
-                    )
-                    DeadlineText(deadline = state.todo.deadline)
-                    Text(text = state.todo.deadline.toRemainTimeText())
-                }
+                Text(
+                    text = state.content,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(4.dp)
+                )
+                DeadlineText(deadline = state.deadline)
+                Text(text = state.deadline.toRemainTimeText())
 
             }
         })

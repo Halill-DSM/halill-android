@@ -27,7 +27,7 @@ import com.halill.halill.ui.theme.Gray200
 
 @Composable
 fun IdTextField(
-    text: State<String>,
+    text: String,
     label: String,
     layoutId: Any = LoginLayoutViews.IdTextField,
     doOnValueChange: (text: String) -> Unit,
@@ -35,7 +35,7 @@ fun IdTextField(
     imeAction: ImeAction
 ) {
     val focusManager = LocalFocusManager.current
-    TextField(value = text.value,
+    TextField(value = text,
         onValueChange = {
             doOnValueChange(it)
         },
@@ -62,7 +62,7 @@ fun IdTextField(
 
 @Composable
 fun PasswordTextField(
-    text: State<String>,
+    text: String,
     layoutId: Any = LoginLayoutViews.PasswordField,
     label: String,
     doOnValueChange: (text: String) -> Unit,
@@ -77,7 +77,7 @@ fun PasswordTextField(
         modifier = loginTextFieldModifier
             .layoutId(layoutId)
     ) {
-        TextField(value = text.value,
+        TextField(value = text,
             onValueChange = {
                 doOnValueChange(it)
             },

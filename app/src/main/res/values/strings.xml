@@ -6,6 +6,7 @@
     <string name="delete">삭제</string>
     <string name="delete_comment">삭제되었습니다</string>
     <string name="login">로그인</string>
+    <string name="logout">로그아웃</string>
     <string name="ask_register">아직 아이디가 없으신가요?</string>
     <string name="register">회원가입</string>
     <string name="login_empty_comment">모든 정보를 입력해주세요</string>
@@ -28,4 +29,5 @@
     <string name="empty_todo_list">할일이 없습니다</string>
     <string name="empty_done_list">완료한 할일이 없습니다</string>
     <string name="done_comment">(완료됨)</string>
+    <string name="require_todo_comment">할일을 작성해보세요!</string>
 </resources>

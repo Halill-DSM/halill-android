@@ -1,4 +1,4 @@
-package com.halill.halill.features.todo
+package com.halill.halill.features.todo.write
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -1,4 +1,4 @@
-package com.halill.halill.features.todo
+package com.halill.halill.features.todo.write
 
 import com.halill.domain.features.todo.entity.TodoEntity
 

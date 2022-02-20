@@ -38,7 +38,10 @@ import com.halill.halill.features.auth.login.LoginLayoutViews
 import com.halill.halill.main.scaffoldState
 import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.ui.theme.Teal900
+import com.halill.halill.util.lastDateOfMonth
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Composable
 fun WriteTodo(
@@ -423,19 +426,19 @@ fun DateNumberPicker(state: WriteTodoState, doOnDatePick: (Int) -> Unit) {
     AndroidView(
         modifier = Modifier.wrapContentSize(),
         factory = { context ->
-            dateNumberPicker(doOnDatePick, context, deadline.dayOfMonth)
+            dateNumberPicker(doOnDatePick, context, deadline)
         }
     )
 }
 
-private fun dateNumberPicker(doOnDatePick: (Int) -> Unit, context: Context, day: Int) =
+private fun dateNumberPicker(doOnDatePick: (Int) -> Unit, context: Context, deadline: LocalDateTime) =
     NumberPicker(context).apply {
         setOnValueChangedListener { picker, _, _ ->
             doOnDatePick(picker.value)
         }
-        maxValue = 31
+        maxValue = deadline.lastDateOfMonth()
         minValue = 1
-        value = day
+        value = deadline.dayOfMonth
     }
 
 @Composable

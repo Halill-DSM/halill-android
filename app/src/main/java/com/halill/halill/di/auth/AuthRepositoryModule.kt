@@ -34,8 +34,8 @@ object AuthRepositoryModule {
     @Singleton
     @Provides
     fun provideRegisterRepository(
-        remoteAuthDataSource: RemoteAuthDataSource
-    ): RegisterRepository = RegisterRepositoryImpl(remoteAuthDataSource)
+        localAuthDataSource: LocalAuthDataSource
+    ): RegisterRepository = RegisterRepositoryImpl(localAuthDataSource)
 
     @Singleton
     @Provides

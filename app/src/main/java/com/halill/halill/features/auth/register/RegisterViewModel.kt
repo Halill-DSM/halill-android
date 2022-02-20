@@ -7,7 +7,6 @@ import com.halill.domain.features.auth.usecase.RegisterUseCase
 import com.halill.halill.base.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,18 +42,15 @@ class RegisterViewModel @Inject constructor(
                 userEntity = UserEntity(name = state.value.name, email = state.value.email),
                 password = state.value.password
             )
-            try {
-                registerUseCase.execute(parameter)
-                _registerViewEffect.emit(RegisterViewEffect.FinishRegister)
-            } catch (e:Exception) {
-                _registerViewEffect.emit(RegisterViewEffect.FailRegister)
-            }
+            registerUseCase.execute(parameter)
+            _registerViewEffect.emit(RegisterViewEffect.FinishRegister)
         }
     }
 
-    private class RegisterReducer(initial: RegisterState): Reducer<RegisterState, RegisterEvent>(initial) {
+    private class RegisterReducer(initial: RegisterState) :
+        Reducer<RegisterState, RegisterEvent>(initial) {
         override fun reduce(oldState: RegisterState, event: RegisterEvent) {
-            when(event) {
+            when (event) {
                 is RegisterEvent.InputEmail -> {
                     setState(oldState.copy(email = event.email))
                 }

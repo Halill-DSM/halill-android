@@ -173,7 +173,7 @@ fun RegisterCheckPasswordTextField(
         doOnValueChange = {
             doOnCheckPasswordTextChange(it)
         },
-        isError = state.passwordIsSameWithCheck(),
+        isError = checkPasswordText.isNotEmpty() && !state.passwordIsSameWithCheck(),
         imeAction = ImeAction.Next
     )
 }

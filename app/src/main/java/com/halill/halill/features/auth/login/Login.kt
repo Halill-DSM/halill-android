@@ -29,8 +29,6 @@ import com.halill.halill.R
 import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.features.auth.IdTextField
 import com.halill.halill.features.auth.PasswordTextField
-import com.halill.halill.features.auth.login.model.LoginEvent
-import com.halill.halill.features.auth.login.model.LoginState
 import com.halill.halill.features.auth.login.viewmodel.LoginViewModel
 import com.halill.halill.main.scaffoldState
 import com.halill.halill.ui.theme.Teal200
@@ -65,7 +63,7 @@ private fun EventHandle(navController: NavController, viewModel: LoginViewModel 
 
     val wrongComment = stringResource(id = R.string.wrong_id_comment)
     val internetErrorComment = stringResource(id = R.string.internet_error_comment)
-    viewModel.loginEvent.observeWithLifecycle(action = {
+    viewModel.loginViewEffect.observeWithLifecycle(action = {
         when (it) {
             is LoginEvent.WrongId -> scaffoldState.snackbarHostState.showSnackbar(
                 wrongComment,

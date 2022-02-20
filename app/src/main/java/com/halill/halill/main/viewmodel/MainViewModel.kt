@@ -14,7 +14,7 @@ import com.halill.halill.base.EventFlow
 import com.halill.halill.base.MutableEventFlow
 import com.halill.halill.base.Reducer
 import com.halill.halill.base.asEventFlow
-import com.halill.halill.main.MainUiEvent
+import com.halill.halill.main.MainEvent
 import com.halill.halill.main.MainViewEffect
 import com.halill.halill.main.model.MainState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -57,7 +57,7 @@ class MainViewModel @Inject constructor(
     fun loadUserInfo() {
         viewModelScope.launch {
             getUserInfoUseCase.execute(Unit).collect {
-                sendEvent(MainUiEvent.ShowUser(it))
+                sendEvent(MainEvent.ShowUser(it))
                 loadTodoList()
             }
         }
@@ -67,9 +67,9 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             getTodoListUseCase.execute(Unit).collect { entity ->
                 if (checkBothListIsNotEmpty(entity)) {
-                    sendEvent(MainUiEvent.ShowList(entity.doneList, entity.todoList))
+                    sendEvent(MainEvent.ShowList(entity.doneList, entity.todoList))
                 } else {
-                    sendEvent(MainUiEvent.EmptyList)
+                    sendEvent(MainEvent.EmptyList)
                 }
             }
         }
@@ -99,16 +99,16 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private class MainReducer(initial: MainState) : Reducer<MainState, MainUiEvent>(initial) {
-        override fun reduce(oldState: MainState, event: MainUiEvent) {
+    private class MainReducer(initial: MainState) : Reducer<MainState, MainEvent>(initial) {
+        override fun reduce(oldState: MainState, event: MainEvent) {
             when (event) {
-                is MainUiEvent.EmptyList -> {
+                is MainEvent.EmptyList -> {
                     setState(oldState.copy(todoList = emptyList(), doneList = emptyList(), isLoading = false))
                 }
-                is MainUiEvent.ShowUser -> {
+                is MainEvent.ShowUser -> {
                     setState(oldState.copy(user = event.user, isLoading = false))
                 }
-                is MainUiEvent.ShowList -> {
+                is MainEvent.ShowList -> {
                     setState(oldState.copy(todoList = event.todoList, doneList = event.doneList, isLoading = false))
                 }
             }
@@ -116,7 +116,7 @@ class MainViewModel @Inject constructor(
 
     }
 
-    private fun sendEvent(event: MainUiEvent) {
+    private fun sendEvent(event: MainEvent) {
         reducer.sendEvent(event)
     }
 

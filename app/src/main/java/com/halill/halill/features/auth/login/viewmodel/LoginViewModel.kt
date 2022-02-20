@@ -7,11 +7,12 @@ import com.halill.domain.features.auth.exception.WrongIdException
 import com.halill.domain.features.auth.parameter.LoginParameter
 import com.halill.domain.features.auth.usecase.LoginUseCase
 import com.halill.halill.base.MutableEventFlow
+import com.halill.halill.base.Reducer
 import com.halill.halill.base.asEventFlow
-import com.halill.halill.features.auth.login.model.LoginEvent
-import com.halill.halill.features.auth.login.model.LoginState
+import com.halill.halill.features.auth.login.LoginEvent
+import com.halill.halill.features.auth.login.LoginState
+import com.halill.halill.features.auth.login.LoginViewEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,51 +21,73 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase
 ) : ViewModel() {
-    private val _email = MutableStateFlow("")
-    val email: StateFlow<String> = _email
 
-    private val _password = MutableStateFlow("")
-    val password: StateFlow<String> = _password
+    private val reducer = LoginReducer(LoginState.initial())
+    val loginState: StateFlow<LoginState> = reducer.state
 
-    private val _loginState = MutableStateFlow<LoginState>(LoginState.NotDoneInputState)
-    val loginState: StateFlow<LoginState> = _loginState
-
-    private val _loginEvent = MutableEventFlow<LoginEvent>()
-    val loginEvent = _loginEvent.asEventFlow()
+    private val _loginViewEffect = MutableEventFlow<LoginViewEffect>()
+    val loginViewEffect = _loginViewEffect.asEventFlow()
 
     fun login() {
         viewModelScope.launch {
-            _loginState.emit(LoginState.LoadingState)
-            if (email.value.isNotEmpty() && password.value.isNotEmpty())
+            if (doneInput()) {
+                startLoading()
                 try {
-                    val parameter = LoginParameter(email.value, password.value)
+                    val parameter =
+                        LoginParameter(loginState.value.email, loginState.value.password)
                     loginUseCase.execute(parameter)
-                    _loginEvent.emit(LoginEvent.FinishLogin)
+                    _loginViewEffect.emit(LoginViewEffect.FinishLogin)
                 } catch (e: WrongIdException) {
-                    _loginEvent.emit(LoginEvent.WrongId)
+                    _loginViewEffect.emit(LoginViewEffect.WrongId)
                 } catch (e: InternetErrorException) {
-                    _loginEvent.emit(LoginEvent.InternetError)
+                    _loginViewEffect.emit(LoginViewEffect.InternetError)
                 } finally {
-                    _loginState.emit(LoginState.NotDoneInputState)
+                    doneLoading()
                 }
+            }
         }
     }
 
+    private fun doneInput(): Boolean =
+        loginState.value.email.isNotEmpty() && loginState.value.password.isNotEmpty()
+
     fun setEmail(email: String) {
-        _email.value = email
-        checkDoneInput()
+        sendEvent(LoginEvent.SetEmail(email))
     }
 
     fun setPassword(password: String) {
-        _password.value = password
-        checkDoneInput()
+        sendEvent(LoginEvent.SetPassword(password))
     }
 
-    private fun checkDoneInput() {
-        _loginState.value =
-            if (email.value.isEmpty() || password.value.isEmpty()) LoginState.NotDoneInputState else LoginState.DoneInputState(
-                email.value,
-                password.value
-            )
+    private fun startLoading() {
+        sendEvent(LoginEvent.StartLoading)
+    }
+
+    private fun doneLoading() {
+        sendEvent(LoginEvent.DoneLoading)
+    }
+
+    private class LoginReducer(initial: LoginState) : Reducer<LoginState, LoginEvent>(initial) {
+        override fun reduce(oldState: LoginState, event: LoginEvent) {
+            when (event) {
+                is LoginEvent.SetEmail -> {
+                    setState(oldState.copy(email = event.email))
+                }
+                is LoginEvent.SetPassword -> {
+                    setState(oldState.copy(password = event.password))
+                }
+                is LoginEvent.StartLoading -> {
+                    setState(oldState.copy(isLoading = true))
+                }
+                is LoginEvent.DoneLoading -> {
+                    setState(oldState.copy(isLoading = false))
+                }
+            }
+        }
+
+    }
+
+    private fun sendEvent(event: LoginEvent) {
+        reducer.sendEvent(event)
     }
 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Login
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -84,9 +85,15 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
                 ),
                 backgroundColor = Teal700
             ) {
-
                 val userName = mainState.user.name
                 Text(text = userName)
+                Column(
+                    modifier = Modifier.clickable { viewModel.startLogin() }.padding(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(Icons.Filled.Login, "Logout Button")
+                    Text(text = stringResource(id = R.string.logout), fontSize = 12.sp)
+                }
             }
         }) {
         Column {
@@ -211,13 +218,13 @@ fun ShowList(
     val todoList = state.todoList
     val doneList = state.doneList
     if (tabTitle == stringResource(id = R.string.todo)) {
-        if(todoList.isEmpty()) {
+        if (todoList.isEmpty()) {
             EmptyTodoListText()
         } else {
             TodoList(todoList, onItemClick, onDoneClick)
         }
     } else {
-        if(doneList.isEmpty()) {
+        if (doneList.isEmpty()) {
             EmptyDoneListText()
         } else {
             DoneList(doneList, onItemClick, onDeleteClick)

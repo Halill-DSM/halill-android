@@ -86,22 +86,36 @@ class MainViewModel @Inject constructor(
     }
 
     fun startDetailTodo(id: Long) {
-        viewModelScope.launch {
-            emitViewEffect(MainViewEffect.StartTodoDetail(id))
-        }
+        emitViewEffect(MainViewEffect.StartTodoDetail(id))
+    }
+
+    fun startLogin() {
+        emitViewEffect(MainViewEffect.StartLogin)
     }
 
     private class MainReducer(initial: MainState) : Reducer<MainState, MainEvent>(initial) {
         override fun reduce(oldState: MainState, event: MainEvent) {
             when (event) {
                 is MainEvent.EmptyList -> {
-                    setState(oldState.copy(todoList = emptyList(), doneList = emptyList(), isLoading = false))
+                    setState(
+                        oldState.copy(
+                            todoList = emptyList(),
+                            doneList = emptyList(),
+                            isLoading = false
+                        )
+                    )
                 }
                 is MainEvent.ShowUser -> {
                     setState(oldState.copy(user = event.user, isLoading = false))
                 }
                 is MainEvent.ShowList -> {
-                    setState(oldState.copy(todoList = event.todoList, doneList = event.doneList, isLoading = false))
+                    setState(
+                        oldState.copy(
+                            todoList = event.todoList,
+                            doneList = event.doneList,
+                            isLoading = false
+                        )
+                    )
                 }
             }
         }

@@ -55,28 +55,25 @@ fun Login(
             }
         }
     }
-    EventHandle(navController = navController)
+    handleViewEffect(navController = navController)
 }
 
 @Composable
-private fun EventHandle(navController: NavController, viewModel: LoginViewModel = hiltViewModel()) {
-
+private fun handleViewEffect(navController: NavController, viewModel: LoginViewModel = hiltViewModel()) {
     val wrongComment = stringResource(id = R.string.wrong_id_comment)
     val internetErrorComment = stringResource(id = R.string.internet_error_comment)
     viewModel.loginViewEffect.observeWithLifecycle(action = {
         when (it) {
-            is LoginEvent.WrongId -> scaffoldState.snackbarHostState.showSnackbar(
+            is LoginViewEffect.WrongId
+            -> scaffoldState.snackbarHostState.showSnackbar(
                 wrongComment,
                 duration = SnackbarDuration.Short
             )
-
-
-            is LoginEvent.InternetError -> scaffoldState.snackbarHostState.showSnackbar(
+            is LoginViewEffect.InternetError -> scaffoldState.snackbarHostState.showSnackbar(
                 internetErrorComment,
                 duration = SnackbarDuration.Short
             )
-
-            is LoginEvent.FinishLogin -> navController.popBackStack()
+            is LoginViewEffect.FinishLogin -> navController.popBackStack()
         }
     })
     BackPressHandle()
@@ -144,6 +141,7 @@ fun LoginIluImage() {
 
 @Composable
 fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel = hiltViewModel()) {
+    val state = loginViewModel.state.collectAsState().value
     ConstraintLayout(
         loginLayoutConstraint(),
         modifier = Modifier
@@ -153,27 +151,28 @@ fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel = h
             .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
             .background(color = Color.White)
     ) {
-        val emailText = loginViewModel.email.collectAsState()
         val emailLabel = "이메일"
         IdTextField(
-            text = emailText,
+            text = state.email,
             label = emailLabel,
             doOnValueChange = {
                 loginViewModel.setEmail(it)
             },
             imeAction = ImeAction.Next
         )
-        val passwordText = loginViewModel.password.collectAsState()
         val passwordLabel = "비밀번호"
         PasswordTextField(
-            text = passwordText,
+            text = state.password,
             label = passwordLabel,
             doOnValueChange = {
                 loginViewModel.setPassword(it)
             },
             imeAction = ImeAction.Done
         )
-        LoginButton()
+        LoginButton(
+            loginState = state,
+            onLoginButtonClick = { loginViewModel.login() }
+        )
         AskRegisterText()
         StartRegisterButton(navController)
     }
@@ -215,18 +214,16 @@ private fun loginLayoutConstraint(): ConstraintSet =
     }
 
 @Composable
-fun LoginButton(loginViewModel: LoginViewModel = hiltViewModel()) {
+fun LoginButton(loginState: LoginState, onLoginButtonClick: () -> Unit) {
     val scope = rememberCoroutineScope()
-
-    val loginState = loginViewModel.loginState.collectAsState()
 
     val focusManager = LocalFocusManager.current
     val emptyComment = stringResource(id = R.string.login_empty_comment)
     Button(
         onClick = {
             focusManager.clearFocus()
-            if (loginState.value is LoginState.DoneInputState) {
-                loginViewModel.login()
+            if (doneInput(loginState)) {
+                onLoginButtonClick()
             } else {
                 scope.launch {
                     scaffoldState.snackbarHostState.showSnackbar(
@@ -237,7 +234,7 @@ fun LoginButton(loginViewModel: LoginViewModel = hiltViewModel()) {
             }
         },
         colors = buttonColors(
-            backgroundColor = if (loginState.value is LoginState.DoneInputState) Teal900 else Color.Gray,
+            backgroundColor = if (doneInput(loginState)) Teal900 else Color.Gray,
             contentColor = Color.White
         ),
         modifier = Modifier
@@ -248,6 +245,9 @@ fun LoginButton(loginViewModel: LoginViewModel = hiltViewModel()) {
     }
 
 }
+
+private fun doneInput(state: LoginState) =
+    state.email.isNotEmpty() && state.password.isNotEmpty()
 
 @Composable
 fun AskRegisterText() {

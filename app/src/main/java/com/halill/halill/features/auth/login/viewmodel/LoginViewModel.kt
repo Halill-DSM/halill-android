@@ -1,11 +1,9 @@
 package com.halill.halill.features.auth.login.viewmodel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.halill.domain.exception.InternetErrorException
-import com.halill.domain.features.auth.exception.WrongIdException
 import com.halill.domain.features.auth.parameter.LoginParameter
 import com.halill.domain.features.auth.usecase.LoginUseCase
+import com.halill.halill.base.BaseViewModel
 import com.halill.halill.base.MutableEventFlow
 import com.halill.halill.base.Reducer
 import com.halill.halill.base.asEventFlow
@@ -13,17 +11,16 @@ import com.halill.halill.features.auth.login.LoginEvent
 import com.halill.halill.features.auth.login.LoginState
 import com.halill.halill.features.auth.login.LoginViewEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase
-) : ViewModel() {
+) : BaseViewModel<LoginState>() {
 
     private val reducer = LoginReducer(LoginState.initial())
-    val loginState: StateFlow<LoginState> = reducer.state
+    override val state = reducer.state
 
     private val _loginViewEffect = MutableEventFlow<LoginViewEffect>()
     val loginViewEffect = _loginViewEffect.asEventFlow()
@@ -32,24 +29,17 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             if (doneInput()) {
                 startLoading()
-                try {
-                    val parameter =
-                        LoginParameter(loginState.value.email, loginState.value.password)
-                    loginUseCase.execute(parameter)
-                    _loginViewEffect.emit(LoginViewEffect.FinishLogin)
-                } catch (e: WrongIdException) {
-                    _loginViewEffect.emit(LoginViewEffect.WrongId)
-                } catch (e: InternetErrorException) {
-                    _loginViewEffect.emit(LoginViewEffect.InternetError)
-                } finally {
-                    doneLoading()
-                }
+                val parameter =
+                    LoginParameter(email = state.value.email, password = state.value.password)
+                loginUseCase.execute(parameter)
+                _loginViewEffect.emit(LoginViewEffect.FinishLogin)
+                doneLoading()
             }
         }
     }
 
     private fun doneInput(): Boolean =
-        loginState.value.email.isNotEmpty() && loginState.value.password.isNotEmpty()
+        state.value.email.isNotEmpty() && state.value.password.isNotEmpty()
 
     fun setEmail(email: String) {
         sendEvent(LoginEvent.SetEmail(email))

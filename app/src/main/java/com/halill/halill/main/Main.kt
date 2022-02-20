@@ -38,7 +38,6 @@ import com.halill.domain.features.todo.entity.TodoEntity
 import com.halill.halill.R
 import com.halill.halill.base.EventFlow
 import com.halill.halill.base.observeWithLifecycle
-import com.halill.halill.main.model.MainEvent
 import com.halill.halill.main.model.MainState
 import com.halill.halill.ui.theme.Teal500
 import com.halill.halill.ui.theme.Teal700
@@ -87,7 +86,7 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
                 backgroundColor = Teal700
             ) {
                 val mainState = viewModel.mainState.collectAsState().value
-                val userName = mainState.user?.name ?: stringResource(id = R.string.loading_comment)
+                val userName = mainState.user.name
                 Text(text = userName)
             }
         }) {
@@ -98,25 +97,25 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
         }
     }
 
-    val mainEvent = viewModel.mainEvent
-    handleMainEvent(navController = navController, event = mainEvent)
+    val mainEvent = viewModel.mainViewEffect
+    handleMainEvent(navController = navController, uiEvent = mainEvent)
 }
 
 @Composable
-private fun handleMainEvent(navController: NavController, event: EventFlow<MainEvent>) {
+private fun handleMainEvent(navController: NavController, uiEvent: EventFlow<MainViewEffect>) {
     val deleteComment = stringResource(id = R.string.delete_comment)
-    event.observeWithLifecycle { mainEvent ->
+    uiEvent.observeWithLifecycle { mainEvent ->
         when (mainEvent) {
-            is MainEvent.StartLogin -> {
+            is MainViewEffect.StartLogin -> {
                 navController.navigate("login") {
                     launchSingleTop = true
                 }
             }
-            is MainEvent.DoneDeleteTodo -> {
+            is MainViewEffect.DoneDeleteTodo -> {
                 scaffoldState.snackbarHostState.showSnackbar(deleteComment)
             }
 
-            is MainEvent.StartTodoDetail -> {
+            is MainViewEffect.StartTodoDetail -> {
                 navController.navigate("todoDetail/${mainEvent.id}")
             }
         }
@@ -163,16 +162,22 @@ fun MainPager(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            when (val state = viewModel.mainState.collectAsState().value) {
-                is MainState.LoadingState -> LoadingText()
-                is MainState.EmptyListState -> EmptyText(tabTitle = tabData[index])
-                is MainState.ShowTodoListState -> ShowList(state = state, tabTitle = tabData[index])
-
+            val state = viewModel.mainState.collectAsState().value
+            when {
+                state.isLoading -> LoadingText()
+                checkBothListIsEmpty(
+                    state.doneList,
+                    state.todoList
+                ) -> EmptyText(tabTitle = tabData[index])
+                else -> ShowList(state = state, tabTitle = tabData[index])
             }
 
         }
     }
 }
+
+private fun checkBothListIsEmpty(doneList: List<TodoEntity>, todoList: List<TodoEntity>): Boolean =
+    doneList.isEmpty() && todoList.isEmpty()
 
 @Composable
 fun EmptyText(tabTitle: String) {

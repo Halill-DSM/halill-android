@@ -4,16 +4,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.halill.domain.exception.NotLoginException
 import com.halill.domain.exception.UnAuthorizedException
-import com.halill.domain.features.auth.entity.UserEntity
 import com.halill.domain.features.auth.usecase.CheckLoginUseCase
 import com.halill.domain.features.auth.usecase.GetUserInfoUseCase
+import com.halill.domain.features.todo.entity.UserTodoListEntity
 import com.halill.domain.features.todo.usecase.DeleteTodoUseCase
 import com.halill.domain.features.todo.usecase.DoneTodoUseCase
 import com.halill.domain.features.todo.usecase.GetTodoListUseCase
 import com.halill.halill.base.EventFlow
 import com.halill.halill.base.MutableEventFlow
+import com.halill.halill.base.Reducer
 import com.halill.halill.base.asEventFlow
-import com.halill.halill.main.model.MainEvent
+import com.halill.halill.main.MainUiEvent
+import com.halill.halill.main.MainViewEffect
 import com.halill.halill.main.model.MainState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,11 +33,12 @@ class MainViewModel @Inject constructor(
     private val doneTodoUseCase: DoneTodoUseCase,
     private val deleteTodoUseCase: DeleteTodoUseCase
 ) : ViewModel() {
-    private val _mainState = MutableStateFlow<MainState>(MainState.LoadingState)
-    val mainState: StateFlow<MainState> get() = _mainState
 
-    private val _mainEvent = MutableEventFlow<MainEvent>()
-    val mainEvent: EventFlow<MainEvent> = _mainEvent.asEventFlow()
+    private val reducer = MainReducer(MainState.initial())
+    val mainState: StateFlow<MainState> get() = reducer.state
+
+    private val _mainViewEffect = MutableEventFlow<MainViewEffect>()
+    val mainViewEffect: EventFlow<MainViewEffect> = _mainViewEffect.asEventFlow()
 
     val showingPage = MutableStateFlow(0)
 
@@ -44,9 +47,9 @@ class MainViewModel @Inject constructor(
             try {
                 checkLoginUseCase.execute(Unit)
             } catch (e: NotLoginException) {
-                _mainEvent.emit(MainEvent.StartLogin)
+                emitViewEffect(MainViewEffect.StartLogin)
             } catch (e: UnAuthorizedException) {
-                _mainEvent.emit(MainEvent.StartLogin)
+                emitViewEffect(MainViewEffect.StartLogin)
             } catch (e: Exception) {
 
             }
@@ -57,23 +60,26 @@ class MainViewModel @Inject constructor(
     fun loadUserInfo() {
         viewModelScope.launch {
             getUserInfoUseCase.execute(Unit).collect {
-                loadTodoList(it)
+                sendEvent(MainUiEvent.ShowUser(it))
+                loadTodoList()
             }
         }
     }
 
-    private fun loadTodoList(user: UserEntity) {
+    private fun loadTodoList() {
         viewModelScope.launch {
-            getTodoListUseCase.execute(Unit).collect { todoList ->
-                if (todoList.doneList.isNotEmpty() || todoList.todoList.isNotEmpty()) {
-                    _mainState.value =
-                        MainState.ShowTodoListState(user, todoList.todoList, todoList.doneList)
+            getTodoListUseCase.execute(Unit).collect { entity ->
+                if (checkBothListIsNotEmpty(entity)) {
+                    sendEvent(MainUiEvent.ShowList(entity.doneList, entity.todoList))
                 } else {
-                    _mainState.value = MainState.EmptyListState(user)
+                    sendEvent(MainUiEvent.EmptyList)
                 }
             }
         }
     }
+
+    private fun checkBothListIsNotEmpty(entity: UserTodoListEntity): Boolean =
+        entity.doneList.isNotEmpty() || entity.todoList.isNotEmpty()
 
     fun doneTodo(todoId: Long) {
         viewModelScope.launch {
@@ -85,14 +91,33 @@ class MainViewModel @Inject constructor(
     fun deleteTodo(todoId: Long) {
         viewModelScope.launch {
             deleteTodoUseCase.execute(todoId)
-            _mainEvent.emit(MainEvent.DoneDeleteTodo)
+            emitViewEffect(MainViewEffect.DoneDeleteTodo)
             loadUserInfo()
         }
     }
 
     fun startDetailTodo(id: Long) {
         viewModelScope.launch {
-            _mainEvent.emit(MainEvent.StartTodoDetail(id))
+            emitViewEffect(MainViewEffect.StartTodoDetail(id))
+        }
+    }
+
+    private class MainReducer(initial: MainState): Reducer<MainState, MainUiEvent>(initial) {
+        override fun reduce(oldState: MainState, event: MainUiEvent) {
+            when(event) {
+
+            }
+        }
+
+    }
+
+    private fun sendEvent(event: MainUiEvent) {
+        reducer.sendEvent(event)
+    }
+
+    private fun emitViewEffect(effect: MainViewEffect) {
+        viewModelScope.launch {
+            _mainViewEffect.emit(effect)
         }
     }
 }

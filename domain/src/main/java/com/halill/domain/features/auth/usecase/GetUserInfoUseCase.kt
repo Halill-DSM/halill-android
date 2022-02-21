@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetUserInfoUseCase @Inject constructor(
     private val userInfoRepository: GetUserInfoRepository
 ) : UseCase<Unit, Flow<UserEntity>>() {
-    
+
     override suspend fun execute(data: Unit): Flow<UserEntity> =
         userInfoRepository.getUserInfo()
 }

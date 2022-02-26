@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -34,13 +33,11 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill.R
-import com.halill.halill.features.auth.login.LoginLayoutViews
 import com.halill.halill.main.scaffoldState
 import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.ui.theme.Teal900
 import com.halill.halill.util.lastDateOfMonth
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Composable
@@ -306,7 +303,6 @@ fun WriteTodoButton(
             contentColor = Color.White
         ),
         modifier = Modifier
-            .layoutId(LoginLayoutViews.LoginButton)
             .width(200.dp)
             .clip(RoundedCornerShape(30.dp))
     ) {

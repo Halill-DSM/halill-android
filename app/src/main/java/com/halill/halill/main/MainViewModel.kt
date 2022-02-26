@@ -75,9 +75,6 @@ class MainViewModel @Inject constructor(
                     )
                 )
             }
-            is MainEvent.ShowUser -> {
-                setState(oldState.copy(user = event.user, isLoading = false))
-            }
             is MainEvent.ShowList -> {
                 setState(
                     oldState.copy(

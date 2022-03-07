@@ -1,4 +1,4 @@
-package com.halill.halill.features.todo.detail
+package com.halill.halill.features.detail
 
 import androidx.lifecycle.viewModelScope
 import com.halill.domain.features.todo.usecase.DeleteTodoUseCase

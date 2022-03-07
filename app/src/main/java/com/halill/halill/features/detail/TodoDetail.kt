@@ -1,4 +1,4 @@
-package com.halill.halill.features.todo.detail
+package com.halill.halill.features.detail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*

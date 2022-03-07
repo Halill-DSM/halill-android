@@ -1,4 +1,4 @@
-package com.halill.halill.features.todo.write
+package com.halill.halill.features.write
 
 import com.halill.halill.base.MviState
 import java.time.LocalDateTime

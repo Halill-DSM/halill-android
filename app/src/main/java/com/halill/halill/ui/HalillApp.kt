@@ -12,8 +12,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.halill.halill.features.todo.detail.TodoDetail
-import com.halill.halill.features.todo.write.WriteTodo
+import com.halill.halill.features.detail.TodoDetail
+import com.halill.halill.features.write.WriteTodo
 import com.halill.halill.main.Main
 import com.halill.halill.ui.theme.HalIll_AndroidTheme
 import com.halill.halill.ui.theme.Teal900

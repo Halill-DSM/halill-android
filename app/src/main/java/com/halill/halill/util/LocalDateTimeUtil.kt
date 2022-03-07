@@ -1,5 +1,6 @@
 package com.halill.halill.util
 
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
@@ -28,6 +29,11 @@ fun LocalDateTime.toRemainTimeText(): String {
     var text = if (minuteDifferent <= 0) "지난시간: " else "남은시간: "
     text += timeDifferent.toRemainShowText()
     return text
+}
+
+fun LocalDateTime.lastDateOfMonth(): Int {
+    val deadlineDate = LocalDate.of(year, monthValue, dayOfMonth)
+    return deadlineDate.withDayOfMonth(deadlineDate.lengthOfMonth()).dayOfMonth
 }
 
 fun DifferentTime.toRemainShowText(): String = when {

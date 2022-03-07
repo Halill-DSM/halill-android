@@ -1,10 +1,6 @@
 package com.halill.halill.main
 
 import androidx.lifecycle.viewModelScope
-import com.halill.domain.exception.NotLoginException
-import com.halill.domain.exception.UnAuthorizedException
-import com.halill.domain.features.auth.usecase.CheckLoginUseCase
-import com.halill.domain.features.auth.usecase.GetUserInfoUseCase
 import com.halill.domain.features.todo.entity.UserTodoListEntity
 import com.halill.domain.features.todo.usecase.DeleteTodoUseCase
 import com.halill.domain.features.todo.usecase.DoneTodoUseCase
@@ -13,13 +9,10 @@ import com.halill.halill.base.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val checkLoginUseCase: CheckLoginUseCase,
-    private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getTodoListUseCase: GetTodoListUseCase,
     private val doneTodoUseCase: DoneTodoUseCase,
     private val deleteTodoUseCase: DeleteTodoUseCase
@@ -31,31 +24,7 @@ class MainViewModel @Inject constructor(
     private val _mainViewEffect = MutableEventFlow<MainViewEffect>()
     val mainViewEffect: EventFlow<MainViewEffect> = _mainViewEffect.asEventFlow()
 
-    fun checkLogin() {
-        viewModelScope.launch {
-            try {
-                checkLoginUseCase.execute(Unit)
-            } catch (e: NotLoginException) {
-                emitViewEffect(MainViewEffect.StartLogin)
-            } catch (e: UnAuthorizedException) {
-                emitViewEffect(MainViewEffect.StartLogin)
-            } catch (e: Exception) {
-
-            }
-        }
-
-    }
-
-    fun loadUserInfo() {
-        viewModelScope.launch {
-            getUserInfoUseCase.execute(Unit).collect {
-                sendEvent(MainEvent.ShowUser(it))
-                loadTodoList()
-            }
-        }
-    }
-
-    private fun loadTodoList() {
+    fun loadTodoList() {
         viewModelScope.launch {
             getTodoListUseCase.execute(Unit).collect { entity ->
                 if (checkBothListIsNotEmpty(entity)) {
@@ -73,7 +42,7 @@ class MainViewModel @Inject constructor(
     fun doneTodo(todoId: Long) {
         viewModelScope.launch {
             doneTodoUseCase.execute(todoId)
-            loadUserInfo()
+            loadTodoList()
         }
     }
 
@@ -81,16 +50,12 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             deleteTodoUseCase.execute(todoId)
             emitViewEffect(MainViewEffect.DoneDeleteTodo)
-            loadUserInfo()
+            loadTodoList()
         }
     }
 
     fun startDetailTodo(id: Long) {
         emitViewEffect(MainViewEffect.StartTodoDetail(id))
-    }
-
-    fun startLogin() {
-        emitViewEffect(MainViewEffect.StartLogin)
     }
 
     private fun emitViewEffect(effect: MainViewEffect) {
@@ -109,9 +74,6 @@ class MainViewModel @Inject constructor(
                         isLoading = false
                     )
                 )
-            }
-            is MainEvent.ShowUser -> {
-                setState(oldState.copy(user = event.user, isLoading = false))
             }
             is MainEvent.ShowList -> {
                 setState(

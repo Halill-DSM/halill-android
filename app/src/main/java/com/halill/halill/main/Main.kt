@@ -7,11 +7,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Login
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -54,8 +52,7 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
     scaffoldState = rememberScaffoldState()
     val mainState = viewModel.state.collectAsState().value
     viewModel.run {
-        checkLogin()
-        loadUserInfo()
+        loadTodoList()
     }
     val tabData = listOf(
         stringResource(id = R.string.todo),
@@ -77,25 +74,8 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
                 )
             }
         },
-        isFloatingActionButtonDocked = true,
-        bottomBar = {
-            BottomAppBar(
-                cutoutShape = MaterialTheme.shapes.small.copy(
-                    CornerSize(percent = 50)
-                ),
-                backgroundColor = Teal700
-            ) {
-                val userName = mainState.user.name
-                Text(text = userName)
-                Column(
-                    modifier = Modifier.clickable { viewModel.startLogin() }.padding(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(Icons.Filled.Login, "Logout Button")
-                    Text(text = stringResource(id = R.string.logout), fontSize = 12.sp)
-                }
-            }
-        }) {
+        isFloatingActionButtonDocked = true
+        ) {
         Column {
             MainTab(pagerState = pagerState, tabData = tabData)
 
@@ -119,11 +99,6 @@ private fun handleMainEvent(navController: NavController, uiEvent: EventFlow<Mai
     val deleteComment = stringResource(id = R.string.delete_comment)
     uiEvent.observeWithLifecycle { mainEvent ->
         when (mainEvent) {
-            is MainViewEffect.StartLogin -> {
-                navController.navigate("login") {
-                    launchSingleTop = true
-                }
-            }
             is MainViewEffect.DoneDeleteTodo -> {
                 scaffoldState.snackbarHostState.showSnackbar(deleteComment)
             }

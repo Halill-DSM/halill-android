@@ -7,12 +7,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,15 +28,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.accompanist.pager.ExperimentalPagerApi
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
@@ -52,20 +50,23 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
+
 lateinit var scaffoldState: ScaffoldState
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     scaffoldState = rememberScaffoldState()
-    viewModel.run {
-        loadTodoList()
-    }
+    viewModel.loadTodoList()
+
     val navHostController = rememberNavController()
     Scaffold(
         scaffoldState = scaffoldState,
         floatingActionButton = {
-            FloatingActionButton(onClick = { navController.navigate("writeTodo") }) {
+            FloatingActionButton(
+                onClick = { navController.navigate("writeTodo") },
+                Modifier.padding(0.dp)
+            ) {
                 Icon(
                     painter = rememberVectorPainter(image = Icons.Filled.Add),
                     contentDescription = "write todo"
@@ -80,17 +81,17 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
             startDestination = BottomNavigationItem.List.route,
             Modifier.padding(innerPadding)
         ) {
-            composable(BottomNavigationItem.List.route) { List() }
+            composable(BottomNavigationItem.List.route) { List(viewModel) }
             composable(BottomNavigationItem.Calendar.route) { Calendar() }
         }
     }
 
     val mainEvent = viewModel.mainViewEffect
-    handleMainEvent(navController = navController, uiEvent = mainEvent)
+    handleMainViewEffect(navController = navController, uiEvent = mainEvent)
 }
 
 @Composable
-private fun handleMainEvent(navController: NavController, uiEvent: EventFlow<MainViewEffect>) {
+private fun handleMainViewEffect(navController: NavController, uiEvent: EventFlow<MainViewEffect>) {
     val deleteComment = stringResource(id = R.string.delete_comment)
     uiEvent.observeWithLifecycle { mainEvent ->
         when (mainEvent) {
@@ -106,37 +107,59 @@ private fun handleMainEvent(navController: NavController, uiEvent: EventFlow<Mai
 }
 
 @Composable
-fun BottomNavBar(navController: NavHostController) =
-    BottomNavigation {
-        val items = listOf(BottomNavigationItem.List, BottomNavigationItem.Calendar)
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination
-
-        items.forEach { screen ->
-            BottomNavigationItem(
-                icon = {
-                    Icon(
-                        painter = painterResource(id = screen.iconResId),
-                        contentDescription = screen.title
-                    )
-                },
-                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                onClick = {
-                    navController.navigate(screen.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
+fun BottomNavBar(
+    navController: NavHostController
+) =
+    BottomAppBar(
+        cutoutShape = MaterialTheme.shapes.small.copy(
+            CornerSize(percent = 50)
+        ),
+        backgroundColor = Teal700
+    ) {
+        IconButton(
+            modifier = Modifier.weight(1f),
+            onClick = {
+                navigateBottomNavigation(
+                    BottomNavigationItem.List.route,
+                    navController
+                )
+            }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_checklist_24),
+                contentDescription = null
             )
         }
+
+        IconButton(
+            modifier = Modifier.weight(1f),
+            onClick = {
+                navigateBottomNavigation(
+                    BottomNavigationItem.Calendar.route,
+                    navController
+                )
+            }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_calendar_today_24),
+                contentDescription = null
+            )
+        }
+
+        Box(modifier = Modifier.weight(1f),)
     }
+
+private fun navigateBottomNavigation(route: String, navController: NavHostController) {
+    navController.navigate(route) {
+        popUpTo(navController.graph.findStartDestination().id) {
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
+    }
+}
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun List(viewModel: MainViewModel = hiltViewModel()) {
+fun List(viewModel: MainViewModel) {
     val mainState = viewModel.state.collectAsState().value
     val tabData = listOf(
         stringResource(id = R.string.todo),
@@ -148,16 +171,18 @@ fun List(viewModel: MainViewModel = hiltViewModel()) {
         initialOffscreenLimit = tabData.size,
         infiniteLoop = false
     )
-    MainTab(pagerState = pagerState, tabData = tabData)
+    Column {
+        MainTab(pagerState = pagerState, tabData = tabData)
 
-    MainPager(
-        mainState = mainState,
-        pagerState = pagerState,
-        tabData = tabData,
-        onItemClick = { id -> viewModel.startDetailTodo(id) },
-        onDoneClick = { id -> viewModel.doneTodo(id) },
-        onDeleteClick = { id -> viewModel.deleteTodo(id) }
-    )
+        MainPager(
+            mainState = mainState,
+            pagerState = pagerState,
+            tabData = tabData,
+            onItemClick = { id -> viewModel.startDetailTodo(id) },
+            onDoneClick = { id -> viewModel.doneTodo(id) },
+            onDeleteClick = { id -> viewModel.deleteTodo(id) }
+        )
+    }
 }
 
 @Composable

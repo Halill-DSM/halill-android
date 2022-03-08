@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +30,13 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
@@ -50,22 +58,12 @@ lateinit var scaffoldState: ScaffoldState
 @Composable
 fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     scaffoldState = rememberScaffoldState()
-    val mainState = viewModel.state.collectAsState().value
     viewModel.run {
         loadTodoList()
     }
-    val tabData = listOf(
-        stringResource(id = R.string.todo),
-        stringResource(id = R.string.done)
-    )
-
-    val pagerState = rememberPagerState(
-        pageCount = tabData.size,
-        initialOffscreenLimit = tabData.size,
-        infiniteLoop = false
-    )
-
-    Scaffold(scaffoldState = scaffoldState,
+    val navHostController = rememberNavController()
+    Scaffold(
+        scaffoldState = scaffoldState,
         floatingActionButton = {
             FloatingActionButton(onClick = { navController.navigate("writeTodo") }) {
                 Icon(
@@ -74,19 +72,16 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
                 )
             }
         },
-        isFloatingActionButtonDocked = true
+        isFloatingActionButtonDocked = true,
+        bottomBar = { BottomNavBar(navController = navHostController) }
+    ) { innerPadding ->
+        NavHost(
+            navController = navHostController,
+            startDestination = BottomNavigationItem.List.route,
+            Modifier.padding(innerPadding)
         ) {
-        Column {
-            MainTab(pagerState = pagerState, tabData = tabData)
-
-            MainPager(
-                mainState = mainState,
-                pagerState = pagerState,
-                tabData = tabData,
-                onItemClick = { id -> viewModel.startDetailTodo(id) },
-                onDoneClick = { id -> viewModel.doneTodo(id) },
-                onDeleteClick = { id -> viewModel.deleteTodo(id) }
-            )
+            composable(BottomNavigationItem.List.route) { List() }
+            composable(BottomNavigationItem.Calendar.route) { Calendar() }
         }
     }
 
@@ -108,6 +103,66 @@ private fun handleMainEvent(navController: NavController, uiEvent: EventFlow<Mai
             }
         }
     }
+}
+
+@Composable
+fun BottomNavBar(navController: NavHostController) =
+    BottomNavigation {
+        val items = listOf(BottomNavigationItem.List, BottomNavigationItem.Calendar)
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackStackEntry?.destination
+
+        items.forEach { screen ->
+            BottomNavigationItem(
+                icon = {
+                    Icon(
+                        painter = painterResource(id = screen.iconResId),
+                        contentDescription = screen.title
+                    )
+                },
+                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                onClick = {
+                    navController.navigate(screen.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
+        }
+    }
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun List(viewModel: MainViewModel = hiltViewModel()) {
+    val mainState = viewModel.state.collectAsState().value
+    val tabData = listOf(
+        stringResource(id = R.string.todo),
+        stringResource(id = R.string.done)
+    )
+
+    val pagerState = rememberPagerState(
+        pageCount = tabData.size,
+        initialOffscreenLimit = tabData.size,
+        infiniteLoop = false
+    )
+    MainTab(pagerState = pagerState, tabData = tabData)
+
+    MainPager(
+        mainState = mainState,
+        pagerState = pagerState,
+        tabData = tabData,
+        onItemClick = { id -> viewModel.startDetailTodo(id) },
+        onDoneClick = { id -> viewModel.doneTodo(id) },
+        onDeleteClick = { id -> viewModel.deleteTodo(id) }
+    )
+}
+
+@Composable
+fun Calendar() {
+
 }
 
 @ExperimentalPagerApi

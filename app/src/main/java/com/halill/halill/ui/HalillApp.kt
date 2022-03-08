@@ -41,6 +41,7 @@ fun HalIllApp() {
     }
     NavHost(navController = navController, startDestination = "main") {
         composable("main") { Main(navController) }
+
         composable(
             route = "writeTodo?todoId={todoId}",
             arguments = listOf(navArgument("todoId") {
@@ -50,6 +51,7 @@ fun HalIllApp() {
         ) {
             WriteTodo(navController, it.arguments!!.getLong("todoId"))
         }
+
         composable(
             route = "todoDetail/{todoId}",
             arguments = listOf(navArgument("todoId") { type = NavType.LongType })
@@ -57,6 +59,7 @@ fun HalIllApp() {
             val todoId = it.arguments!!.getLong("todoId")
             TodoDetail(navController, todoId)
         }
+
     }
 }
 

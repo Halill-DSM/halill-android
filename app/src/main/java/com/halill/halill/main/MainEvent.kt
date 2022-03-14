@@ -9,4 +9,5 @@ sealed class MainEvent : MviEvent {
         val doneList: List<TodoEntity>,
         val todoList: List<TodoEntity>
     ) : MainEvent()
+    object SwitchTodoOrDone : MainEvent()
 }

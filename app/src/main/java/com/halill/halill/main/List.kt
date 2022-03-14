@@ -9,6 +9,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -37,7 +40,10 @@ import java.time.temporal.ChronoUnit
 fun List(viewModel: MainViewModel) {
     val mainState = viewModel.state.collectAsState().value
 
-    Column {
+    Column(horizontalAlignment = Alignment.End) {
+        SwitchContentDoneOrTodoText(mainState = mainState) {
+            viewModel.switchTodoOrDone()
+        }
 
         MainPager(
             mainState = mainState,
@@ -46,6 +52,26 @@ fun List(viewModel: MainViewModel) {
             onDeleteClick = { id -> viewModel.deleteTodo(id) }
         )
     }
+}
+
+@Composable
+fun SwitchContentDoneOrTodoText(mainState: MainState, doOnClick: () -> Unit) {
+    val text = if (mainState.showDoneList) "할일보기" else "완료한 할일 보기"
+    val icon = if (mainState.showDoneList) Icons.Filled.RadioButtonUnchecked else Icons.Filled.Check
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .width(150.dp)
+            .clickable { doOnClick() }) {
+        Image(icon, contentDescription = "swipe")
+        Text(
+            text = text, fontSize = 15.sp,
+            modifier = Modifier
+                .padding(10.dp),
+        )
+    }
+
 }
 
 @ExperimentalPagerApi
@@ -201,7 +227,7 @@ fun DoneItem(done: TodoEntity, onItemClick: (Long) -> Unit, onDeleteClick: (Long
                 .align(Alignment.CenterStart)
                 .padding(PaddingValues(4.dp, 0.dp))
         ) {
-            TitleText(title = done.title)
+            DoneTitleText(title = done.title)
             ContentText(content = done.content)
             DeadlineText(deadline = done.deadline, done = true)
             Divider(
@@ -251,6 +277,18 @@ fun TitleText(title: String) {
     Text(
         modifier = Modifier.padding(0.dp, 0.dp, 35.dp, 0.dp),
         text = title,
+        fontSize = 18.sp,
+        fontWeight = FontWeight.Bold,
+        overflow = TextOverflow.Ellipsis
+    )
+}
+
+@Composable
+fun DoneTitleText(title: String) {
+    val text = title + stringResource(id = R.string.done_comment)
+    Text(
+        modifier = Modifier.padding(0.dp, 0.dp, 35.dp, 0.dp),
+        text = text,
         fontSize = 18.sp,
         fontWeight = FontWeight.Bold,
         overflow = TextOverflow.Ellipsis
@@ -323,4 +361,3 @@ fun EmptyDoneListText() {
     val emptyComment = stringResource(id = R.string.empty_done_list)
     Text(text = emptyComment)
 }
-

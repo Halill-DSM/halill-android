@@ -64,6 +64,12 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun switchTodoOrDone() {
+        viewModelScope.launch {
+            sendEvent(MainEvent.SwitchTodoOrDone)
+        }
+    }
+
     override fun reduceEvent(oldState: MainState, event: MainEvent) {
         when (event) {
             is MainEvent.EmptyList -> {
@@ -81,6 +87,13 @@ class MainViewModel @Inject constructor(
                         todoList = event.todoList,
                         doneList = event.doneList,
                         isLoading = false
+                    )
+                )
+            }
+            is MainEvent.SwitchTodoOrDone -> {
+                setState(
+                    oldState.copy(
+                        showDoneList = !oldState.showDoneList
                     )
                 )
             }

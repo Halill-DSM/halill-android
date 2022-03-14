@@ -1,16 +1,14 @@
 package com.halill.halill.features.detail
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,11 +41,7 @@ fun TodoDetail(
         topBar = {
             TopAppBar(
                 title = {
-                    var title = state.title
-                    if (state.isComplete) {
-                        title += stringResource(id = R.string.done_comment)
-                    }
-                    Text(text = title)
+                    DetailTitleText(state)
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -109,6 +103,15 @@ fun TodoDetail(
 }
 
 @Composable
+fun DetailTitleText(state: TodoDetailState) {
+    var title = state.title
+    if (state.isComplete) {
+        title += stringResource(id = R.string.done_comment)
+    }
+    Text(text = title)
+}
+
+@Composable
 fun EditButton() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -120,4 +123,19 @@ fun EditButton() {
         val doneText = stringResource(id = R.string.edit)
         Text(text = doneText, color = Color.Gray, fontSize = 12.sp)
     }
+}
+
+@Composable
+fun Screen() {
+    val data = remember {
+        mutableStateOf("")
+    }
+    View(text = data.value) {
+        //doOnClick
+    }
+}
+
+@Composable
+fun View(text: String, doOnViewClick: () -> Unit) {
+    Text(text = text, Modifier.clickable { doOnViewClick() })
 }

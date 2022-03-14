@@ -1,7 +1,6 @@
 package com.halill.halill.features.detail
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -123,19 +122,4 @@ fun EditButton() {
         val doneText = stringResource(id = R.string.edit)
         Text(text = doneText, color = Color.Gray, fontSize = 12.sp)
     }
-}
-
-@Composable
-fun Screen() {
-    val data = remember {
-        mutableStateOf("")
-    }
-    View(text = data.value) {
-        //doOnClick
-    }
-}
-
-@Composable
-fun View(text: String, doOnViewClick: () -> Unit) {
-    Text(text = text, Modifier.clickable { doOnViewClick() })
 }

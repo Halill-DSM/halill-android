@@ -23,6 +23,7 @@ import com.halill.halill.R
 import com.halill.halill.base.EventFlow
 import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.ui.theme.Teal700
+import java.lang.Exception
 
 
 lateinit var scaffoldState: ScaffoldState
@@ -117,6 +118,9 @@ fun BottomNavBar(
         BottomNavigationItem(
             modifier = Modifier.weight(1f),
             onClick = {
+                if (bottomTabSelectedItem is BottomNavigationItem.Calendar) {
+                    return@BottomNavigationItem
+                }
                 navigateBottomNavigation(
                     BottomNavigationItem.Calendar.route,
                     navController
@@ -135,6 +139,9 @@ fun BottomNavBar(
         BottomNavigationItem(
             modifier = Modifier.weight(1f),
             onClick = {
+                if (bottomTabSelectedItem is BottomNavigationItem.MyPage) {
+                    return@BottomNavigationItem
+                }
                 navigateBottomNavigation(
                     BottomNavigationItem.MyPage.route,
                     navController
@@ -156,11 +163,16 @@ fun BottomNavBar(
 
 
 private fun navigateBottomNavigation(route: String, navController: NavHostController) {
-    navController.navigate(route) {
-        popUpTo(navController.graph.findStartDestination().id) {
-            saveState = true
+    try {
+        navController.navigate(route) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
         }
-        launchSingleTop = true
-        restoreState = true
+    } catch (e: Exception) {
+        
     }
+
 }

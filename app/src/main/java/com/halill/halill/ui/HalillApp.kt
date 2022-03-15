@@ -12,6 +12,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.halill.halill.features.auth.login.Login
+import com.halill.halill.features.auth.register.Register
 import com.halill.halill.features.detail.TodoDetail
 import com.halill.halill.features.write.WriteTodo
 import com.halill.halill.main.Main
@@ -60,6 +62,17 @@ fun HalIllApp() {
             TodoDetail(navController, todoId)
         }
 
+        composable(
+            route = "login"
+        ) {
+            Login(navController)
+        }
+
+        composable(
+            route = "register"
+        ) {
+            Register(navController)
+        }
     }
 }
 

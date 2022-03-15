@@ -173,7 +173,7 @@ fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel = h
         )
         LoginButton(
             loginState = state,
-            onLoginButtonClick = { loginViewModel.login() }
+            onLoginButtonClick = {  }
         )
         AskRegisterText()
         StartRegisterButton(navController)

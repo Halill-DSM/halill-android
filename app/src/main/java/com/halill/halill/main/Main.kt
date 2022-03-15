@@ -57,6 +57,7 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
         ) {
             composable(BottomNavigationItem.List.route) { List(viewModel) }
             composable(BottomNavigationItem.Calendar.route) { Calendar() }
+            composable(BottomNavigationItem.MyPage.route) { MyPage() }
         }
     }
 
@@ -114,6 +115,20 @@ fun BottomNavBar(
             }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_calendar_today_24),
+                contentDescription = null
+            )
+        }
+
+        IconButton(
+            modifier = Modifier.weight(1f),
+            onClick = {
+                navigateBottomNavigation(
+                    BottomNavigationItem.MyPage.route,
+                    navController
+                )
+            }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_person_24),
                 contentDescription = null
             )
         }

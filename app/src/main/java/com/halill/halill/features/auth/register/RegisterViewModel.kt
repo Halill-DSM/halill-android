@@ -1,8 +1,8 @@
 package com.halill.halill.features.auth.register
 
 import androidx.lifecycle.viewModelScope
-import com.halill.domain.features.auth.entity.UserEntity
-import com.halill.domain.features.auth.parameter.RegisterParameter
+import com.halill.domain.exception.RegisterFailedException
+import com.halill.domain.features.auth.param.RegisterParam
 import com.halill.domain.features.auth.usecase.RegisterUseCase
 import com.halill.halill.base.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,13 +37,19 @@ class RegisterViewModel @Inject constructor(
     }
 
     fun register() {
+        val state = state.value
+        val parameter = RegisterParam(
+            name = state.name,
+            email = state.email,
+            password = state.password
+        )
         viewModelScope.launch {
-            val parameter = RegisterParameter(
-                userEntity = UserEntity(name = state.value.name, email = state.value.email),
-                password = state.value.password
-            )
-            registerUseCase.execute(parameter)
-            _registerViewEffect.emit(RegisterViewEffect.FinishRegister)
+            try {
+                registerUseCase.execute(parameter)
+                _registerViewEffect.emit(RegisterViewEffect.FinishRegister)
+            } catch (e: RegisterFailedException) {
+
+            }
         }
     }
 

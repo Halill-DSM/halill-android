@@ -34,7 +34,6 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
     viewModel.loadTodoList()
 
     val navHostController = rememberNavController()
-
     Scaffold(
         scaffoldState = scaffoldState,
         floatingActionButton = {

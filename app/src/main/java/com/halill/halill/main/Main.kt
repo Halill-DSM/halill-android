@@ -5,7 +5,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
@@ -34,6 +34,7 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
     viewModel.loadTodoList()
 
     val navHostController = rememberNavController()
+
     Scaffold(
         scaffoldState = scaffoldState,
         floatingActionButton = {
@@ -84,57 +85,75 @@ private fun handleMainViewEffect(navController: NavController, uiEvent: EventFlo
 @Composable
 fun BottomNavBar(
     navController: NavHostController
-) =
+) {
+    var bottomTabSelectedItem: BottomNavigationItem by remember {
+        mutableStateOf(BottomNavigationItem.List)
+    }
+
     BottomAppBar(
         cutoutShape = MaterialTheme.shapes.small.copy(
             CornerSize(percent = 50)
         ),
         backgroundColor = Teal700
     ) {
-        IconButton(
+        BottomNavigationItem(
             modifier = Modifier.weight(1f),
             onClick = {
                 navigateBottomNavigation(
                     BottomNavigationItem.List.route,
                     navController
                 )
-            }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_checklist_24),
-                contentDescription = null
-            )
-        }
+                bottomTabSelectedItem = BottomNavigationItem.List
+            },
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_checklist_24),
+                    contentDescription = null
+                )
+            },
+            selected = bottomTabSelectedItem is BottomNavigationItem.List
+        )
 
-        IconButton(
+        BottomNavigationItem(
             modifier = Modifier.weight(1f),
             onClick = {
                 navigateBottomNavigation(
                     BottomNavigationItem.Calendar.route,
                     navController
                 )
-            }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_calendar_today_24),
-                contentDescription = null
-            )
-        }
+                bottomTabSelectedItem = BottomNavigationItem.Calendar
+            },
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_calendar_today_24),
+                    contentDescription = null
+                )
+            },
+            selected = bottomTabSelectedItem is BottomNavigationItem.Calendar
+        )
 
-        IconButton(
+        BottomNavigationItem(
             modifier = Modifier.weight(1f),
             onClick = {
                 navigateBottomNavigation(
                     BottomNavigationItem.MyPage.route,
                     navController
                 )
-            }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_person_24),
-                contentDescription = null
-            )
-        }
+                bottomTabSelectedItem = BottomNavigationItem.MyPage
+            },
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_person_24),
+                    contentDescription = null
+                )
+            },
+            selected = bottomTabSelectedItem is BottomNavigationItem.MyPage
+        )
 
         Box(modifier = Modifier.weight(1f))
     }
+}
+
 
 private fun navigateBottomNavigation(route: String, navController: NavHostController) {
     navController.navigate(route) {

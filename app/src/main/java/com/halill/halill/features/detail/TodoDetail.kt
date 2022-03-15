@@ -7,10 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,11 +40,7 @@ fun TodoDetail(
         topBar = {
             TopAppBar(
                 title = {
-                    var title = state.title
-                    if (state.isComplete) {
-                        title += stringResource(id = R.string.done_comment)
-                    }
-                    Text(text = title)
+                    DetailTitleText(state)
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -106,6 +99,15 @@ fun TodoDetail(
 
             }
         })
+}
+
+@Composable
+fun DetailTitleText(state: TodoDetailState) {
+    var title = state.title
+    if (state.isComplete) {
+        title += stringResource(id = R.string.done_comment)
+    }
+    Text(text = title)
 }
 
 @Composable

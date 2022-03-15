@@ -27,7 +27,7 @@ class MainViewModel @Inject constructor(
     fun loadTodoList() {
         viewModelScope.launch {
             getTodoListUseCase.execute(Unit).collect { entity ->
-                if (checkBothListIsNotEmpty(entity)) {
+                if (isBothListNotEmpty(entity)) {
                     sendEvent(MainEvent.ShowList(entity.doneList, entity.todoList))
                 } else {
                     sendEvent(MainEvent.EmptyList)
@@ -36,7 +36,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun checkBothListIsNotEmpty(entity: UserTodoListEntity): Boolean =
+    private fun isBothListNotEmpty(entity: UserTodoListEntity): Boolean =
         entity.doneList.isNotEmpty() || entity.todoList.isNotEmpty()
 
     fun doneTodo(todoId: Long) {
@@ -64,6 +64,12 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun switchTodoOrDone() {
+        viewModelScope.launch {
+            sendEvent(MainEvent.SwitchTodoOrDone)
+        }
+    }
+
     override fun reduceEvent(oldState: MainState, event: MainEvent) {
         when (event) {
             is MainEvent.EmptyList -> {
@@ -81,6 +87,13 @@ class MainViewModel @Inject constructor(
                         todoList = event.todoList,
                         doneList = event.doneList,
                         isLoading = false
+                    )
+                )
+            }
+            is MainEvent.SwitchTodoOrDone -> {
+                setState(
+                    oldState.copy(
+                        showDoneList = !oldState.showDoneList
                     )
                 )
             }

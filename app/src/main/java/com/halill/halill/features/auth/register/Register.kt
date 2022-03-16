@@ -72,7 +72,7 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = hiltVi
                     }
                 )
                 RegisterNameTextField(
-                    state,
+                    state.name,
                     doOnNameTextChange = { name -> viewModel.setName(name) })
                 RegisterButton(
                     state,
@@ -180,10 +180,9 @@ fun RegisterCheckPasswordTextField(
 
 @Composable
 fun RegisterNameTextField(
-    state: RegisterState,
+    nameText: String,
     doOnNameTextChange: (String) -> Unit
 ) {
-    val nameText = state.name
     val nameLabel = "이름을 입력해주세요"
 
     Spacer(modifier = Modifier.height(25.dp))

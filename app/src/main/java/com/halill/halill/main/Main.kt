@@ -172,7 +172,7 @@ private fun navigateBottomNavigation(route: String, navController: NavHostContro
             restoreState = true
         }
     } catch (e: Exception) {
-        
+
     }
 
 }

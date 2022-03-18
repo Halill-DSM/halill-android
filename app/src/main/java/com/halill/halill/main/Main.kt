@@ -9,7 +9,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -26,7 +25,7 @@ import java.lang.Exception
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
+fun Main(navController: NavController) {
     val scaffoldState = rememberScaffoldState()
 
     val navHostController = rememberNavController()
@@ -37,8 +36,7 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
         scaffoldState = scaffoldState,
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate("writeTodo") },
-                Modifier.padding(0.dp)
+                onClick = { navController.navigate("writeTodo") }
             ) {
                 Icon(
                     painter = floatingIcon,

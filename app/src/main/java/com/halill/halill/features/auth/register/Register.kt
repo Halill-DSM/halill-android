@@ -25,7 +25,6 @@ import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.features.auth.IdTextField
 import com.halill.halill.features.auth.PasswordTextField
 import com.halill.halill.features.auth.login.LoginLayoutViews
-import com.halill.halill.main.scaffoldState
 import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.ui.theme.Teal900
 import kotlinx.coroutines.launch
@@ -33,6 +32,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun Register(navController: NavController, viewModel: RegisterViewModel = hiltViewModel()) {
     val state = viewModel.state.collectAsState().value
+    val scaffoldState = rememberScaffoldState()
+
     Scaffold(scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
@@ -75,7 +76,8 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = hiltVi
                     state.name,
                     doOnNameTextChange = { name -> viewModel.setName(name) })
                 RegisterButton(
-                    state,
+                    scaffoldState = scaffoldState,
+                    state = state,
                     doOnRegisterButtonClick = {
                         viewModel.register()
                     }
@@ -83,11 +85,15 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = hiltVi
             }
         })
     val event = viewModel.registerViewEffect
-    handleViewEffect(navController = navController, event = event)
+    handleViewEffect(scaffoldState = scaffoldState, navController = navController, event = event)
 }
 
 @Composable
-private fun handleViewEffect(navController: NavController, event: EventFlow<RegisterViewEffect>) {
+private fun handleViewEffect(
+    scaffoldState: ScaffoldState,
+    navController: NavController,
+    event: EventFlow<RegisterViewEffect>
+) {
     val scope = rememberCoroutineScope()
     val successComment = stringResource(id = R.string.success_register_comment)
     val failRegisterComment = stringResource(id = R.string.fail_register_comment)
@@ -200,7 +206,11 @@ fun RegisterNameTextField(
 }
 
 @Composable
-fun RegisterButton(state: RegisterState, doOnRegisterButtonClick: () -> Unit) {
+fun RegisterButton(
+    scaffoldState: ScaffoldState,
+    state: RegisterState,
+    doOnRegisterButtonClick: () -> Unit
+) {
     val scope = rememberCoroutineScope()
     val emptyComment = stringResource(id = R.string.login_empty_comment)
     Spacer(modifier = Modifier.height(25.dp))

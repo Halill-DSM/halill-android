@@ -25,13 +25,10 @@ import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.ui.theme.Teal700
 import java.lang.Exception
 
-
-lateinit var scaffoldState: ScaffoldState
-
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
-    scaffoldState = rememberScaffoldState()
+    val scaffoldState = rememberScaffoldState()
     viewModel.loadTodoList()
 
     val navHostController = rememberNavController()
@@ -64,11 +61,11 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
     }
 
     val mainEvent = viewModel.mainViewEffect
-    handleMainViewEffect(navController = navController, uiEvent = mainEvent)
+    handleMainViewEffect(scaffoldState = scaffoldState, navController = navController, uiEvent = mainEvent)
 }
 
 @Composable
-private fun handleMainViewEffect(navController: NavController, uiEvent: EventFlow<MainViewEffect>) {
+private fun handleMainViewEffect(scaffoldState: ScaffoldState, navController: NavController, uiEvent: EventFlow<MainViewEffect>) {
     val deleteComment = stringResource(id = R.string.delete_comment)
     uiEvent.observeWithLifecycle { mainEvent ->
         when (mainEvent) {

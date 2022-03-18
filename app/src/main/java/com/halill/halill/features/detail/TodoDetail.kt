@@ -18,10 +18,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill.R
-import com.halill.halill.main.DeadlineText
-import com.halill.halill.main.DeleteButton
-import com.halill.halill.main.DoneButton
-import com.halill.halill.main.scaffoldState
+import com.halill.halill.features.list.DeadlineText
+import com.halill.halill.features.list.DeleteButton
+import com.halill.halill.features.list.DoneButton
 import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.util.toRemainTimeText
 import kotlinx.coroutines.launch
@@ -35,6 +34,7 @@ fun TodoDetail(
     LaunchedEffect(Unit) {
         viewModel.getDetail(id)
     }
+    val scaffoldState = rememberScaffoldState()
     val state = viewModel.state.collectAsState().value
     Scaffold(scaffoldState = scaffoldState,
         topBar = {

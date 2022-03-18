@@ -1,4 +1,4 @@
-package com.halill.halill.main
+package com.halill.halill.features.list
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,8 +12,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,9 +27,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.halill.domain.features.todo.entity.TodoEntity
 import com.halill.halill.R
+import com.halill.halill.base.EventFlow
+import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.ui.theme.Teal500
 import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.util.toShowDeadlineText
@@ -38,25 +42,50 @@ import java.time.temporal.ChronoUnit
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun List(viewModel: MainViewModel) {
-    val mainState = viewModel.state.collectAsState().value
+fun ListPage(navController: NavController, viewModel: ListViewModel = hiltViewModel()) {
+    val state = viewModel.state.collectAsState().value
+
+    viewModel.loadTodoList()
 
     Column(horizontalAlignment = Alignment.End) {
-        SwitchContentDoneOrTodoText(mainState = mainState) {
+        SwitchContentDoneOrTodoText(mainState = state) {
             viewModel.switchTodoOrDone()
         }
 
         MainPager(
-            mainState = mainState,
+            mainState = state,
             onItemClick = { id -> viewModel.startDetailTodo(id) },
             onDoneClick = { id -> viewModel.doneTodo(id) },
             onDeleteClick = { id -> viewModel.deleteTodo(id) }
         )
     }
+
+    handleViewEffect(navController = navController, uiEvent = viewModel.listViewEffect)
 }
 
 @Composable
-fun SwitchContentDoneOrTodoText(mainState: MainState, doOnClick: () -> Unit) {
+private fun handleViewEffect(
+    navController: NavController,
+    uiEvent: EventFlow<ListViewEffect>
+) {
+    val scaffoldState = rememberScaffoldState()
+    val deleteComment = stringResource(id = R.string.delete_comment)
+    uiEvent.observeWithLifecycle { mainEvent ->
+        when (mainEvent) {
+            is ListViewEffect.DoneDeleteTodo
+            -> {
+                scaffoldState.snackbarHostState.showSnackbar(deleteComment)
+            }
+
+            is ListViewEffect.StartTodoDetail -> {
+                navController.navigate("todoDetail/${mainEvent.id}")
+            }
+        }
+    }
+}
+
+@Composable
+fun SwitchContentDoneOrTodoText(mainState: ListState, doOnClick: () -> Unit) {
     val text = if (mainState.showDoneList) "할일보기" else "완료한 할일 보기"
     val icon = if (mainState.showDoneList) Icons.Filled.RadioButtonUnchecked else Icons.Filled.Check
     Row(
@@ -78,7 +107,7 @@ fun SwitchContentDoneOrTodoText(mainState: MainState, doOnClick: () -> Unit) {
 @ExperimentalPagerApi
 @Composable
 fun MainPager(
-    mainState: MainState,
+    mainState: ListState,
     onItemClick: (Long) -> Unit,
     onDoneClick: (Long) -> Unit,
     onDeleteClick: (Long) -> Unit
@@ -102,12 +131,12 @@ fun MainPager(
     }
 }
 
-private fun checkBothListIsEmpty(state: MainState): Boolean =
+private fun checkBothListIsEmpty(state: ListState): Boolean =
     state.doneList.isEmpty() && state.todoList.isEmpty()
 
 @Composable
 fun ShowList(
-    state: MainState,
+    state: ListState,
     onItemClick: (Long) -> Unit,
     onDoneClick: (Long) -> Unit,
     onDeleteClick: (Long) -> Unit

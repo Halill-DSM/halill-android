@@ -20,8 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.halill.halill.R
-import com.halill.halill.base.EventFlow
-import com.halill.halill.base.observeWithLifecycle
+import com.halill.halill.features.list.ListPage
 import com.halill.halill.ui.theme.Teal700
 import java.lang.Exception
 
@@ -29,9 +28,10 @@ import java.lang.Exception
 @Composable
 fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     val scaffoldState = rememberScaffoldState()
-    viewModel.loadTodoList()
 
     val navHostController = rememberNavController()
+
+    val floatingIcon = rememberVectorPainter(image = Icons.Filled.Add)
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -41,7 +41,7 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
                 Modifier.padding(0.dp)
             ) {
                 Icon(
-                    painter = rememberVectorPainter(image = Icons.Filled.Add),
+                    painter = floatingIcon,
                     contentDescription = "write todo"
                 )
             }
@@ -54,28 +54,9 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
             startDestination = BottomNavigationItem.List.route,
             Modifier.padding(innerPadding)
         ) {
-            composable(BottomNavigationItem.List.route) { List(viewModel) }
+            composable(BottomNavigationItem.List.route) { ListPage(navController = navController) }
             composable(BottomNavigationItem.Calendar.route) { Calendar() }
             composable(BottomNavigationItem.MyPage.route) { MyPage() }
-        }
-    }
-
-    val mainEvent = viewModel.mainViewEffect
-    handleMainViewEffect(scaffoldState = scaffoldState, navController = navController, uiEvent = mainEvent)
-}
-
-@Composable
-private fun handleMainViewEffect(scaffoldState: ScaffoldState, navController: NavController, uiEvent: EventFlow<MainViewEffect>) {
-    val deleteComment = stringResource(id = R.string.delete_comment)
-    uiEvent.observeWithLifecycle { mainEvent ->
-        when (mainEvent) {
-            is MainViewEffect.DoneDeleteTodo -> {
-                scaffoldState.snackbarHostState.showSnackbar(deleteComment)
-            }
-
-            is MainViewEffect.StartTodoDetail -> {
-                navController.navigate("todoDetail/${mainEvent.id}")
-            }
         }
     }
 }

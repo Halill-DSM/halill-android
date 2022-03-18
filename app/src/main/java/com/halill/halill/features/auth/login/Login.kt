@@ -29,7 +29,6 @@ import com.halill.halill.R
 import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.features.auth.IdTextField
 import com.halill.halill.features.auth.PasswordTextField
-import com.halill.halill.main.scaffoldState
 import com.halill.halill.ui.theme.Teal200
 import com.halill.halill.ui.theme.Teal900
 import kotlinx.coroutines.launch
@@ -40,6 +39,7 @@ fun Login(
     darkTheme: Boolean = isSystemInDarkTheme()
 ) {
     val backgroundColor = if (darkTheme) Color.Black else Teal200
+    val scaffoldState = rememberScaffoldState()
     Scaffold(scaffoldState = scaffoldState) {
         BoxWithConstraints(
             modifier = Modifier
@@ -54,11 +54,12 @@ fun Login(
             }
         }
     }
-    handleViewEffect(navController = navController)
+    handleViewEffect(scaffoldState = scaffoldState, navController = navController)
 }
 
 @Composable
 private fun handleViewEffect(
+    scaffoldState: ScaffoldState,
     navController: NavController,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
@@ -173,7 +174,7 @@ fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel = h
         )
         LoginButton(
             loginState = state,
-            onLoginButtonClick = {  }
+            onLoginButtonClick = { }
         )
         AskRegisterText()
         StartRegisterButton(navController)
@@ -218,9 +219,11 @@ private fun loginLayoutConstraint(): ConstraintSet =
 @Composable
 fun LoginButton(loginState: LoginState, onLoginButtonClick: () -> Unit) {
     val scope = rememberCoroutineScope()
+    val scaffoldState = rememberScaffoldState()
 
     val focusManager = LocalFocusManager.current
     val emptyComment = stringResource(id = R.string.login_empty_comment)
+
     Button(
         onClick = {
             focusManager.clearFocus()

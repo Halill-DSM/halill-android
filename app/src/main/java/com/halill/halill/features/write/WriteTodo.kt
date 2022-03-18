@@ -33,7 +33,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill.R
-import com.halill.halill.main.scaffoldState
 import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.ui.theme.Teal900
 import com.halill.halill.util.lastDateOfMonth
@@ -52,6 +51,7 @@ fun WriteTodo(
             viewModel.getTodoDataWhenEdit(todoId)
         }
     }
+    val scaffoldState = rememberScaffoldState()
     Scaffold(scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
@@ -105,8 +105,9 @@ fun WriteTodo(
                     }
                 )
                 WriteTodoButton(
-                    navController,
-                    state,
+                    scaffoldState = scaffoldState,
+                    navController = navController,
+                    state = state,
                     doOnWriteTodoButtonClick = {
                         viewModel.writeTodo()
                     },
@@ -273,6 +274,7 @@ fun ClearFocus() {
 
 @Composable
 fun WriteTodoButton(
+    scaffoldState: ScaffoldState,
     navController: NavController,
     state: WriteTodoState,
     doOnWriteTodoButtonClick: () -> Unit,
@@ -427,7 +429,11 @@ fun DateNumberPicker(state: WriteTodoState, doOnDatePick: (Int) -> Unit) {
     )
 }
 
-private fun dateNumberPicker(doOnDatePick: (Int) -> Unit, context: Context, deadline: LocalDateTime) =
+private fun dateNumberPicker(
+    doOnDatePick: (Int) -> Unit,
+    context: Context,
+    deadline: LocalDateTime
+) =
     NumberPicker(context).apply {
         setOnValueChangedListener { picker, _, _ ->
             doOnDatePick(picker.value)

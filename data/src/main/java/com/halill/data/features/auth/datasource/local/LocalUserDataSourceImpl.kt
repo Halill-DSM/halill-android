@@ -26,6 +26,6 @@ class LocalUserDataSourceImpl @Inject constructor(
     override suspend fun deleteUser() {
         val user = auth.currentUser!!
         user.delete()
-        localStorage.saveIsLoginState()
+        localStorage.saveIsNotLoginState()
     }
 }

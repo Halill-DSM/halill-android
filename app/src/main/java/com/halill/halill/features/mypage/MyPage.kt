@@ -1,12 +1,12 @@
 package com.halill.halill.features.mypage
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -84,14 +84,14 @@ fun NameText(name: String) {
 
 @Composable
 fun LogoutButton(doOnClick: () -> Unit) {
-    Icon(
+    Image(
         painter = painterResource(id = R.drawable.ic_logout),
         contentDescription = "Logout",
         modifier = Modifier
-            .size(34.dp)
-            .padding(0.dp, 10.dp, 10.dp, 0.dp)
+            .size(44.dp)
             .clickable {
                 doOnClick()
             }
+            .padding(10.dp)
     )
 }

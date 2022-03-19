@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -80,10 +79,6 @@ fun Register(
                         )
                     }
                 )
-
-                RegisterNameTextField(
-                    state.name,
-                    doOnNameTextChange = { name -> viewModel.setName(name) })
 
                 val emptyComment = stringResource(id = R.string.login_empty_comment)
                 RegisterButton(
@@ -199,27 +194,6 @@ fun RegisterCheckPasswordTextField(
         },
         isError = checkPasswordText.isNotEmpty() && !state.passwordIsSameWithCheck(),
         imeAction = ImeAction.Next
-    )
-}
-
-@Composable
-fun RegisterNameTextField(
-    nameText: String,
-    doOnNameTextChange: (String) -> Unit
-) {
-    val nameLabel = "이름을 입력해주세요"
-
-    Spacer(modifier = Modifier.height(25.dp))
-
-    IdTextField(
-        text = nameText,
-        label = nameLabel,
-        layoutId = "register_name_tf",
-        doOnValueChange = {
-            doOnNameTextChange(it)
-        },
-        keyboardType = KeyboardType.Text,
-        imeAction = ImeAction.Done
     )
 }
 

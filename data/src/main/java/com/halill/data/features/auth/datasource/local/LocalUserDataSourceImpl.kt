@@ -16,7 +16,7 @@ class LocalUserDataSourceImpl @Inject constructor(
         val currentUser = auth.currentUser
         return localStorage.isLoginState().map {
             if (currentUser != null && it) {
-                UserEntity(currentUser.displayName!!, currentUser.email!!)
+                UserEntity(currentUser.displayName ?: "", currentUser.email!!)
             } else {
                 throw NotLoginException()
             }

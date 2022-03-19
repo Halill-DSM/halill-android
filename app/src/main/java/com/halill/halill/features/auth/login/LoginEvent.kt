@@ -8,4 +8,5 @@ sealed class LoginEvent: MviEvent {
     object NotDoneInput : LoginEvent()
     object StartLoading : LoginEvent()
     object DoneLoading : LoginEvent()
+    object InitState : LoginEvent()
 }

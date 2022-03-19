@@ -208,7 +208,10 @@ fun LoginLayout(
             }
         )
         AskRegisterText()
-        StartRegisterButton(navController)
+        StartRegisterButton(doOnClick = {
+            navController.navigate("register")
+            loginViewModel.setStateInitial()
+        })
     }
 }
 
@@ -289,9 +292,9 @@ private fun AskRegisterText() {
 }
 
 @Composable
-fun StartRegisterButton(navController: NavController) {
+fun StartRegisterButton(doOnClick: () -> Unit) {
     TextButton(
-        onClick = { navController.navigate("register") },
+        onClick = { doOnClick() },
         Modifier
             .layoutId(LoginLayoutViews.RegisterButton)
             .wrapContentSize(),

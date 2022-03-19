@@ -37,6 +37,10 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun setStateInitial() {
+        sendEvent(LoginEvent.InitState)
+    }
+
     fun setEmail(email: String) {
         sendEvent(LoginEvent.InputEmail(email))
     }
@@ -74,6 +78,9 @@ class LoginViewModel @Inject constructor(
             }
             is LoginEvent.NotDoneInput -> {
                 setState(oldState.copy(doneInput = false))
+            }
+            is LoginEvent.InitState -> {
+                setState(LoginState.initial())
             }
         }
     }

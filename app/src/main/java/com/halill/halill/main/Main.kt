@@ -9,8 +9,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -21,7 +19,6 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.halill.halill.R
 import com.halill.halill.features.list.ListPage
 import com.halill.halill.ui.theme.Teal700
-import java.lang.Exception
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -62,17 +59,16 @@ fun Main(navController: NavController) {
 @Composable
 fun BottomNavBar(
     navController: NavHostController
-) {
-    var bottomTabSelectedItem: BottomNavigationItem by remember {
-        mutableStateOf(BottomNavigationItem.List)
-    }
-
+) =
     BottomAppBar(
         cutoutShape = MaterialTheme.shapes.small.copy(
             CornerSize(percent = 50)
         ),
         backgroundColor = Teal700
     ) {
+        val bottomTabSelectedItem = remember {
+            mutableStateOf<BottomNavigationItem>(BottomNavigationItem.List)
+        }
         BottomNavigationItem(
             modifier = Modifier.weight(1f),
             onClick = {
@@ -80,7 +76,7 @@ fun BottomNavBar(
                     BottomNavigationItem.List.route,
                     navController
                 )
-                bottomTabSelectedItem = BottomNavigationItem.List
+                bottomTabSelectedItem.value = BottomNavigationItem.List
             },
             icon = {
                 Icon(
@@ -88,20 +84,17 @@ fun BottomNavBar(
                     contentDescription = null
                 )
             },
-            selected = bottomTabSelectedItem is BottomNavigationItem.List
+            selected = bottomTabSelectedItem.value is BottomNavigationItem.List
         )
 
         BottomNavigationItem(
             modifier = Modifier.weight(1f),
             onClick = {
-                if (bottomTabSelectedItem is BottomNavigationItem.Calendar) {
-                    return@BottomNavigationItem
-                }
                 navigateBottomNavigation(
                     BottomNavigationItem.Calendar.route,
                     navController
                 )
-                bottomTabSelectedItem = BottomNavigationItem.Calendar
+                bottomTabSelectedItem.value = BottomNavigationItem.Calendar
             },
             icon = {
                 Icon(
@@ -109,20 +102,17 @@ fun BottomNavBar(
                     contentDescription = null
                 )
             },
-            selected = bottomTabSelectedItem is BottomNavigationItem.Calendar
+            selected = bottomTabSelectedItem.value is BottomNavigationItem.Calendar
         )
 
         BottomNavigationItem(
             modifier = Modifier.weight(1f),
             onClick = {
-                if (bottomTabSelectedItem is BottomNavigationItem.MyPage) {
-                    return@BottomNavigationItem
-                }
                 navigateBottomNavigation(
                     BottomNavigationItem.MyPage.route,
                     navController
                 )
-                bottomTabSelectedItem = BottomNavigationItem.MyPage
+                bottomTabSelectedItem.value = BottomNavigationItem.MyPage
             },
             icon = {
                 Icon(
@@ -130,25 +120,19 @@ fun BottomNavBar(
                     contentDescription = null
                 )
             },
-            selected = bottomTabSelectedItem is BottomNavigationItem.MyPage
+            selected = bottomTabSelectedItem.value is BottomNavigationItem.MyPage
         )
 
         Box(modifier = Modifier.weight(1f))
     }
-}
 
 
 private fun navigateBottomNavigation(route: String, navController: NavHostController) {
-    try {
-        navController.navigate(route) {
-            popUpTo(navController.graph.findStartDestination().id) {
-                saveState = true
-            }
-            launchSingleTop = true
-            restoreState = true
+    navController.navigate(route) {
+        popUpTo(navController.graph.findStartDestination().id) {
+            saveState = true
         }
-    } catch (e: Exception) {
-
+        launchSingleTop = true
+        restoreState = true
     }
-
 }

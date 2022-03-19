@@ -1,11 +1,8 @@
 package com.halill.halill.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,7 +14,6 @@ import com.halill.halill.features.auth.register.Register
 import com.halill.halill.features.detail.TodoDetail
 import com.halill.halill.features.write.WriteTodo
 import com.halill.halill.main.Main
-import com.halill.halill.ui.theme.HalIll_AndroidTheme
 import com.halill.halill.ui.theme.Teal900
 
 @Composable
@@ -72,17 +68,6 @@ fun HalIllApp() {
             route = "register"
         ) {
             Register(navController)
-        }
-    }
-}
-
-
-@Preview
-@Composable
-fun PreViewMain() {
-    HalIll_AndroidTheme {
-        Surface(color = MaterialTheme.colors.background) {
-            HalIllApp()
         }
     }
 }

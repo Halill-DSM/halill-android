@@ -42,14 +42,4 @@ class RemoteRegisterDataSourceImpl @Inject constructor(
                 }
             awaitClose()
         }
-
-    private fun setUserName(userName: String) {
-        val user = auth.currentUser
-
-        val profileUpdates = userProfileChangeRequest {
-            displayName = userName
-        }
-
-        user!!.updateProfile(profileUpdates)
-    }
 }

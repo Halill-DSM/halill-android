@@ -1,6 +1,8 @@
 package com.halill.domain.features.auth.repository
 
+import com.halill.domain.features.auth.param.LoginParam
+
 interface LoginRepository {
 
-    fun login()
+    fun login(loginParam: LoginParam)
 }

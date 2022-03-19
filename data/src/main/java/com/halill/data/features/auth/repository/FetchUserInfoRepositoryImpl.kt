@@ -5,7 +5,7 @@ import com.halill.domain.features.auth.repository.FetchUserInfoRepository
 import javax.inject.Inject
 
 class FetchUserInfoRepositoryImpl @Inject constructor(
-    
+
 ) : FetchUserInfoRepository {
 
     override suspend fun fetchUserInfo(): UserEntity {

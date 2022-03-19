@@ -8,4 +8,6 @@ interface LocalUserDataSource {
     suspend fun fetchUser(): Flow<UserEntity>
 
     suspend fun deleteUser()
+
+    fun saveUserName(name: String)
 }

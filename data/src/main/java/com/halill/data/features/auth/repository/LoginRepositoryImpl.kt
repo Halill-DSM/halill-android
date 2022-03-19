@@ -9,7 +9,7 @@ class LoginRepositoryImpl @Inject constructor(
     private val remoteLoginDataSource: RemoteLoginDataSource
 ) : LoginRepository{
 
-    override fun login(loginParam: LoginParam) {
+    override suspend fun login(loginParam: LoginParam) {
         remoteLoginDataSource.login(loginParam)
     }
 }

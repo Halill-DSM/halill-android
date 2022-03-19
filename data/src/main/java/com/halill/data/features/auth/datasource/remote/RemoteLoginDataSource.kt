@@ -4,5 +4,5 @@ import com.halill.domain.features.auth.param.LoginParam
 
 interface RemoteLoginDataSource {
 
-    fun login(loginParam: LoginParam)
+    suspend fun login(loginParam: LoginParam)
 }

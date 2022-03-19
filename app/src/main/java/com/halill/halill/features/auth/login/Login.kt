@@ -50,7 +50,7 @@ fun Login(
                 LoginTitle()
                 LoginComment()
                 LoginIluImage()
-                LoginLayout(navController)
+                LoginLayout(scaffoldState, navController)
             }
         }
     }
@@ -143,7 +143,11 @@ fun LoginIluImage() {
 }
 
 @Composable
-fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel = hiltViewModel()) {
+fun LoginLayout(
+    scaffoldState: ScaffoldState,
+    navController: NavController,
+    loginViewModel: LoginViewModel = hiltViewModel()
+) {
     val state = loginViewModel.state.collectAsState().value
     ConstraintLayout(
         loginLayoutConstraint(),
@@ -173,8 +177,9 @@ fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel = h
             imeAction = ImeAction.Done
         )
         LoginButton(
+            scaffoldState = scaffoldState,
             loginState = state,
-            onLoginButtonClick = { }
+            onLoginButtonClick = { loginViewModel.login() }
         )
         AskRegisterText()
         StartRegisterButton(navController)
@@ -217,9 +222,12 @@ private fun loginLayoutConstraint(): ConstraintSet =
     }
 
 @Composable
-fun LoginButton(loginState: LoginState, onLoginButtonClick: () -> Unit) {
+fun LoginButton(
+    scaffoldState: ScaffoldState,
+    loginState: LoginState,
+    onLoginButtonClick: () -> Unit
+) {
     val scope = rememberCoroutineScope()
-    val scaffoldState = rememberScaffoldState()
 
     val focusManager = LocalFocusManager.current
     val emptyComment = stringResource(id = R.string.login_empty_comment)

@@ -1,6 +1,8 @@
 package com.halill.halill.features.auth.login
 
 import androidx.lifecycle.viewModelScope
+import com.halill.domain.features.auth.param.LoginParam
+import com.halill.domain.features.auth.usecase.LoginUseCase
 import com.halill.halill.base.BaseViewModel
 import com.halill.halill.base.MutableEventFlow
 import com.halill.halill.base.asEventFlow
@@ -10,6 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
+    private val loginUseCase: LoginUseCase
 ) : BaseViewModel<LoginState, LoginEvent>() {
 
     override val initialState: LoginState
@@ -18,18 +21,25 @@ class LoginViewModel @Inject constructor(
     private val _loginViewEffect = MutableEventFlow<LoginViewEffect>()
     val loginViewEffect = _loginViewEffect.asEventFlow()
 
-//    fun login() {
-//        viewModelScope.launch {
-//            if (doneInput()) {
-//                startLoading()
-//                val parameter =
-//                    LoginParameter(email = state.value.email, password = state.value.password)
-//                loginUseCase.execute(parameter)
-//                _loginViewEffect.emit(LoginViewEffect.FinishLogin)
-//                doneLoading()
-//            }
-//        }
-//    }
+    fun login() {
+        viewModelScope.launch {
+            if (doneInput()) {
+                startLoading()
+                val parameter =
+                    LoginParam(email = state.value.email, password = state.value.password)
+
+                kotlin.runCatching {
+                    loginUseCase.execute(parameter)
+                }.onSuccess {
+                    _loginViewEffect.emit(LoginViewEffect.FinishLogin)
+                }.onFailure {
+                    _loginViewEffect.emit(LoginViewEffect.WrongId)
+                }.also {
+                    doneLoading()
+                }
+            }
+        }
+    }
 
     private fun doneInput(): Boolean =
         state.value.email.isNotEmpty() && state.value.password.isNotEmpty()

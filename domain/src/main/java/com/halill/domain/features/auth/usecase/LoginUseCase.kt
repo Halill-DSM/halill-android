@@ -10,6 +10,6 @@ class LoginUseCase @Inject constructor(
 ): UseCase<LoginParam, Unit>() {
 
     override suspend fun execute(data: LoginParam) {
-        loginRepository.login()
+        loginRepository.login(data)
     }
 }

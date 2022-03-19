@@ -6,7 +6,7 @@ import com.halill.domain.features.auth.entity.UserEntity
 import com.halill.domain.features.auth.usecase.FetchUserInfoUseCase
 import com.halill.halill.base.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,17 +17,15 @@ class MainViewModel @Inject constructor(
     override val initialState: MainState
         get() = MainState.initial()
 
-    private val _mainViewEffect = MutableEventFlow<MainViewEffect>()
-    val mainViewEffect: EventFlow<MainViewEffect> = _mainViewEffect.asEventFlow()
-
-    fun fetchUserInfo() {
-        viewModelScope.launch {
-            try {
-                val user = fetchUserInfoUseCase.execute(Unit)
-                setUser(user)
-            } catch (e: NotLoginException) {
-                _mainViewEffect.emit(MainViewEffect.StartLogin)
+    suspend fun fetchUserInfo() {
+        try {
+            val user = fetchUserInfoUseCase.execute(Unit)
+            user.collect {
+                setUser(it)
             }
+            sendEvent(MainEvent.DoneLogin)
+        } catch (e: NotLoginException) {
+            sendEvent(MainEvent.NeedLogin)
         }
     }
 
@@ -38,11 +36,26 @@ class MainViewModel @Inject constructor(
     override fun reduceEvent(oldState: MainState, event: MainEvent) {
         when (event) {
             is MainEvent.SetUser -> {
-                setState(oldState.copy(
-                    userName = event.name,
-                    userEmail = event.email,
-                    isLoading = false
-                ))
+                setState(
+                    oldState.copy(
+                        userEntity = UserEntity(event.name, event.email),
+                        isLoading = false
+                    )
+                )
+            }
+            is MainEvent.DoneLogin -> {
+                setState(
+                    oldState.copy(
+                        needLogin = false
+                    )
+                )
+            }
+            is MainEvent.NeedLogin -> {
+                setState(
+                    oldState.copy(
+                        needLogin = true
+                    )
+                )
             }
         }
     }

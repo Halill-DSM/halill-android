@@ -18,8 +18,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.halill.halill.R
-import com.halill.halill.base.EventFlow
-import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.features.list.ListPage
 import com.halill.halill.ui.theme.Teal700
 
@@ -27,12 +25,16 @@ import com.halill.halill.ui.theme.Teal700
 @Composable
 fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     val scaffoldState = rememberScaffoldState()
-
     val navHostController = rememberNavController()
 
     val floatingIcon = rememberVectorPainter(image = Icons.Filled.Add)
 
-    viewModel.fetchUserInfo()
+    val state = viewModel.state.collectAsState().value
+    LaunchedEffect(key1 = state) {
+        viewModel.fetchUserInfo()
+    }
+
+    StartLogin(navController = navController, needLogin = state.needLogin)
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -56,23 +58,16 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
         ) {
             composable(BottomNavigationItem.List.route) { ListPage(navController = navController) }
             composable(BottomNavigationItem.Calendar.route) { Calendar() }
-            composable(BottomNavigationItem.MyPage.route) { MyPage() }
+            composable(BottomNavigationItem.MyPage.route) { MyPage(state.userEntity) }
         }
     }
-
-    handleViewEffect(navController = navController, uiEvent = viewModel.mainViewEffect)
 }
 
 @Composable
-private fun handleViewEffect(
-    navController: NavController,
-    uiEvent: EventFlow<MainViewEffect>
-) {
-    uiEvent.observeWithLifecycle { mainEvent ->
-        when (mainEvent) {
-            is MainViewEffect.StartLogin -> {
-                navController.navigate("login")
-            }
+fun StartLogin(navController: NavController, needLogin: Boolean) {
+    if (needLogin) {
+        navController.navigate("login") {
+            launchSingleTop = true
         }
     }
 }

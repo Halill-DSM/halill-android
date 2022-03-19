@@ -1,20 +1,25 @@
 package com.halill.data.features.auth.datasource.local
 
 import com.google.firebase.auth.FirebaseAuth
+import com.halill.data.local.datastorage.LocalStorage
 import com.halill.domain.exception.NotLoginException
 import com.halill.domain.features.auth.entity.UserEntity
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 class LocalUserDataSourceImpl @Inject constructor(
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+    private val localStorage: LocalStorage
 ) : LocalUserDataSource {
 
-    override fun fetchUser(): UserEntity {
+    override suspend fun fetchUser(): Flow<UserEntity> {
         val currentUser = auth.currentUser
-        if (currentUser != null) {
-            return UserEntity(currentUser.displayName!!, currentUser.email!!)
-        } else {
-            throw NotLoginException()
+        return localStorage.isLoginState().map {
+            if (currentUser != null && it) {
+                UserEntity(currentUser.displayName!!, currentUser.email!!)
+            } else {
+                throw NotLoginException()
+            }
         }
     }
 }

@@ -21,23 +21,20 @@ class LoginViewModel @Inject constructor(
     private val _loginViewEffect = MutableEventFlow<LoginViewEffect>()
     val loginViewEffect = _loginViewEffect.asEventFlow()
 
-    fun login() {
-        viewModelScope.launch {
-            if (doneInput()) {
-                startLoading()
-                val parameter =
-                    LoginParam(email = state.value.email, password = state.value.password)
+    suspend fun login() {
+        if (doneInput()) {
+            startLoading()
+            val parameter =
+                LoginParam(email = state.value.email, password = state.value.password)
 
-                kotlin.runCatching {
-                    loginUseCase.execute(parameter)
-                }.onSuccess {
-                    _loginViewEffect.emit(LoginViewEffect.FinishLogin)
-                }.onFailure {
-                    it
-                    _loginViewEffect.emit(LoginViewEffect.WrongId)
-                }.also {
-                    doneLoading()
-                }
+            kotlin.runCatching {
+                loginUseCase.execute(parameter)
+            }.onSuccess {
+                _loginViewEffect.emit(LoginViewEffect.FinishLogin)
+            }.onFailure {
+                _loginViewEffect.emit(LoginViewEffect.WrongId)
+            }.also {
+                doneLoading()
             }
         }
     }
@@ -61,10 +58,8 @@ class LoginViewModel @Inject constructor(
         sendEvent(LoginEvent.DoneLoading)
     }
 
-    fun notDoneInput() {
-        viewModelScope.launch {
-            _loginViewEffect.emit(LoginViewEffect.NotDoneInput)
-        }
+    suspend fun notDoneInput() {
+        _loginViewEffect.emit(LoginViewEffect.NotDoneInput)
         sendEvent(LoginEvent.NotDoneInput)
     }
 

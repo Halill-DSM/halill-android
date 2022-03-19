@@ -26,19 +26,27 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill.R
+import com.halill.halill.base.EventFlow
 import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.features.auth.IdTextField
 import com.halill.halill.features.auth.PasswordTextField
 import com.halill.halill.ui.theme.Teal200
 import com.halill.halill.ui.theme.Teal900
+import kotlinx.coroutines.launch
 
 @Composable
 fun Login(
     scaffoldState: ScaffoldState,
     navController: NavController,
-    darkTheme: Boolean = isSystemInDarkTheme()
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
     val backgroundColor = if (darkTheme) Color.Black else Teal200
+    handleViewEffect(
+        scaffoldState = scaffoldState,
+        navController = navController,
+        effect = viewModel.loginViewEffect
+    )
     Scaffold(scaffoldState = scaffoldState) {
         BoxWithConstraints(
             modifier = Modifier
@@ -49,23 +57,23 @@ fun Login(
                 LoginTitle()
                 LoginComment()
                 LoginIluImage()
-                LoginLayout(navController)
+                LoginLayout(navController, viewModel)
             }
         }
     }
-    handleViewEffect(scaffoldState = scaffoldState, navController = navController)
 }
 
 @Composable
 private fun handleViewEffect(
     scaffoldState: ScaffoldState,
     navController: NavController,
-    viewModel: LoginViewModel = hiltViewModel()
+    effect: EventFlow<LoginViewEffect>
 ) {
     val wrongComment = stringResource(id = R.string.wrong_id_comment)
     val internetErrorComment = stringResource(id = R.string.internet_error_comment)
     val emptyComment = stringResource(id = R.string.login_empty_comment)
-    viewModel.loginViewEffect.observeWithLifecycle(action = {
+
+    effect.observeWithLifecycle(action = {
         when (it) {
             is LoginViewEffect.WrongId
             -> scaffoldState.snackbarHostState.showSnackbar(
@@ -150,7 +158,7 @@ fun LoginIluImage() {
 @Composable
 fun LoginLayout(
     navController: NavController,
-    loginViewModel: LoginViewModel = hiltViewModel()
+    loginViewModel: LoginViewModel
 ) {
     val state = loginViewModel.state.collectAsState().value
     ConstraintLayout(
@@ -162,6 +170,8 @@ fun LoginLayout(
             .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
             .background(color = Color.White)
     ) {
+        val coroutineScope = rememberCoroutineScope()
+
         val emailLabel = "이메일"
         IdTextField(
             text = state.email,
@@ -171,6 +181,7 @@ fun LoginLayout(
             },
             imeAction = ImeAction.Next
         )
+
         val passwordLabel = "비밀번호"
         PasswordTextField(
             text = state.password,
@@ -180,14 +191,20 @@ fun LoginLayout(
             },
             imeAction = ImeAction.Done
         )
+
+
         LoginButton(
             loginState = state,
             onLoginButtonClick = { isDoneInput ->
                 if (isDoneInput) {
-                    loginViewModel.login()
+                    coroutineScope.launch {
+                        loginViewModel.login()
+                    }
                 } else {
                     if (!state.notDoneInput) {
-                        loginViewModel.notDoneInput()
+                        coroutineScope.launch {
+                            loginViewModel.notDoneInput()
+                        }
                     }
                 }
             }
@@ -252,9 +269,11 @@ fun LoginButton(
             .layoutId(LoginLayoutViews.LoginButtonId)
             .clip(RoundedCornerShape(30.dp))
     ) {
-        Text(text = stringResource(id = R.string.login))
+        val text =
+            if (loginState.isLoading) stringResource(id = R.string.loading_comment)
+            else stringResource(id = R.string.login)
+        Text(text = text)
     }
-
 }
 
 private fun doneInput(state: LoginState) =

@@ -7,6 +7,7 @@ import com.halill.data.features.auth.datasource.remote.RemoteLoginDataSource
 import com.halill.data.features.auth.datasource.remote.RemoteLoginDataSourceImpl
 import com.halill.data.features.auth.datasource.remote.RemoteRegisterDataSource
 import com.halill.data.features.auth.datasource.remote.RemoteRegisterDataSourceImpl
+import com.halill.data.local.datastorage.LocalStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,8 +27,9 @@ object AuthDataSourceModule {
     @Singleton
     @Provides
     fun provideLocalUserDataSource(
-        auth: FirebaseAuth
-    ): LocalUserDataSource = LocalUserDataSourceImpl(auth)
+        auth: FirebaseAuth,
+        localStorage: LocalStorage
+    ): LocalUserDataSource = LocalUserDataSourceImpl(auth = auth, localStorage = localStorage)
 
     @Singleton
     @Provides

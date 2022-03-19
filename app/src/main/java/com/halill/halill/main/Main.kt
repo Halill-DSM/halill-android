@@ -65,7 +65,7 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
         ) {
             composable(BottomNavigationItem.List.route) { ListPage(navController = navController) }
             composable(BottomNavigationItem.Calendar.route) { Calendar() }
-            composable(BottomNavigationItem.MyPage.route) { MyPage(state.userEntity) }
+            composable(BottomNavigationItem.MyPage.route) { MyPage(navController, state.userEntity) }
         }
     }
 }

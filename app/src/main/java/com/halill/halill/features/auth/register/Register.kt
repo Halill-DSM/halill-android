@@ -30,9 +30,12 @@ import com.halill.halill.ui.theme.Teal900
 import kotlinx.coroutines.launch
 
 @Composable
-fun Register(navController: NavController, viewModel: RegisterViewModel = hiltViewModel()) {
+fun Register(
+    scaffoldState: ScaffoldState,
+    navController: NavController,
+    viewModel: RegisterViewModel = hiltViewModel()
+) {
     val state = viewModel.state.collectAsState().value
-    val scaffoldState = rememberScaffoldState()
 
     Scaffold(scaffoldState = scaffoldState,
         topBar = {

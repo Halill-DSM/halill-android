@@ -34,11 +34,11 @@ import com.halill.halill.ui.theme.Teal900
 
 @Composable
 fun Login(
+    scaffoldState: ScaffoldState,
     navController: NavController,
     darkTheme: Boolean = isSystemInDarkTheme()
 ) {
     val backgroundColor = if (darkTheme) Color.Black else Teal200
-    val scaffoldState = rememberScaffoldState()
     Scaffold(scaffoldState = scaffoldState) {
         BoxWithConstraints(
             modifier = Modifier

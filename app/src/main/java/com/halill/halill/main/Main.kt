@@ -6,6 +6,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
@@ -85,8 +86,8 @@ fun BottomNavBar(
         ),
         backgroundColor = Teal700
     ) {
-        val bottomTabSelectedItem = remember {
-            mutableStateOf<BottomNavigationItem>(BottomNavigationItem.List)
+        val bottomTabSelectedItem = rememberSaveable {
+            mutableStateOf<String>(BottomNavigationItem.List.route)
         }
         BottomNavigationItem(
             modifier = Modifier.weight(1f),
@@ -95,7 +96,7 @@ fun BottomNavBar(
                     BottomNavigationItem.List.route,
                     navController
                 )
-                bottomTabSelectedItem.value = BottomNavigationItem.List
+                bottomTabSelectedItem.value = BottomNavigationItem.List.route
             },
             icon = {
                 Icon(
@@ -103,7 +104,7 @@ fun BottomNavBar(
                     contentDescription = null
                 )
             },
-            selected = bottomTabSelectedItem.value is BottomNavigationItem.List
+            selected = bottomTabSelectedItem.value == BottomNavigationItem.List.route
         )
 
         BottomNavigationItem(
@@ -113,7 +114,7 @@ fun BottomNavBar(
                     BottomNavigationItem.Calendar.route,
                     navController
                 )
-                bottomTabSelectedItem.value = BottomNavigationItem.Calendar
+                bottomTabSelectedItem.value = BottomNavigationItem.Calendar.route
             },
             icon = {
                 Icon(
@@ -121,7 +122,7 @@ fun BottomNavBar(
                     contentDescription = null
                 )
             },
-            selected = bottomTabSelectedItem.value is BottomNavigationItem.Calendar
+            selected = bottomTabSelectedItem.value == BottomNavigationItem.Calendar.route
         )
 
         BottomNavigationItem(
@@ -131,7 +132,7 @@ fun BottomNavBar(
                     BottomNavigationItem.MyPage.route,
                     navController
                 )
-                bottomTabSelectedItem.value = BottomNavigationItem.MyPage
+                bottomTabSelectedItem.value = BottomNavigationItem.MyPage.route
             },
             icon = {
                 Icon(
@@ -139,7 +140,7 @@ fun BottomNavBar(
                     contentDescription = null
                 )
             },
-            selected = bottomTabSelectedItem.value is BottomNavigationItem.MyPage
+            selected = bottomTabSelectedItem.value == BottomNavigationItem.MyPage.route
         )
 
         Box(modifier = Modifier.weight(1f))

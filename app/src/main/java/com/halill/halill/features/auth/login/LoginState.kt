@@ -5,10 +5,11 @@ import com.halill.halill.base.MviState
 data class LoginState(
     val email: String,
     val password: String,
-    val isLoading: Boolean
+    val isLoading: Boolean,
+    val notDoneInput: Boolean
 ) : MviState {
     companion object {
         fun initial() =
-            LoginState("", "", false)
+            LoginState(email = "", password = "", isLoading = false,  notDoneInput = false)
     }
 }

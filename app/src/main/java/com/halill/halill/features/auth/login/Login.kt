@@ -31,7 +31,6 @@ import com.halill.halill.features.auth.IdTextField
 import com.halill.halill.features.auth.PasswordTextField
 import com.halill.halill.ui.theme.Teal200
 import com.halill.halill.ui.theme.Teal900
-import kotlinx.coroutines.launch
 
 @Composable
 fun Login(
@@ -50,7 +49,7 @@ fun Login(
                 LoginTitle()
                 LoginComment()
                 LoginIluImage()
-                LoginLayout(scaffoldState, navController)
+                LoginLayout(navController)
             }
         }
     }
@@ -65,6 +64,7 @@ private fun handleViewEffect(
 ) {
     val wrongComment = stringResource(id = R.string.wrong_id_comment)
     val internetErrorComment = stringResource(id = R.string.internet_error_comment)
+    val emptyComment = stringResource(id = R.string.login_empty_comment)
     viewModel.loginViewEffect.observeWithLifecycle(action = {
         when (it) {
             is LoginViewEffect.WrongId
@@ -76,6 +76,11 @@ private fun handleViewEffect(
                 internetErrorComment,
                 duration = SnackbarDuration.Short
             )
+            is LoginViewEffect.NotDoneInput ->
+                scaffoldState.snackbarHostState.showSnackbar(
+                    emptyComment,
+                    duration = SnackbarDuration.Short
+                )
             is LoginViewEffect.FinishLogin -> navController.popBackStack()
         }
     })
@@ -144,7 +149,6 @@ fun LoginIluImage() {
 
 @Composable
 fun LoginLayout(
-    scaffoldState: ScaffoldState,
     navController: NavController,
     loginViewModel: LoginViewModel = hiltViewModel()
 ) {
@@ -177,9 +181,16 @@ fun LoginLayout(
             imeAction = ImeAction.Done
         )
         LoginButton(
-            scaffoldState = scaffoldState,
             loginState = state,
-            onLoginButtonClick = { loginViewModel.login() }
+            onLoginButtonClick = { isDoneInput ->
+                if (isDoneInput) {
+                    loginViewModel.login()
+                } else {
+                    if (!state.notDoneInput) {
+                        loginViewModel.notDoneInput()
+                    }
+                }
+            }
         )
         AskRegisterText()
         StartRegisterButton(navController)
@@ -190,7 +201,7 @@ private fun loginLayoutConstraint(): ConstraintSet =
     ConstraintSet {
         val idTextField = createRefFor(LoginLayoutViews.IdTextField)
         val passwordTextField = createRefFor(LoginLayoutViews.PasswordField)
-        val loginButton = createRefFor(LoginLayoutViews.LoginButton)
+        val loginButton = createRefFor(LoginLayoutViews.LoginButtonId)
         val askRegisterText = createRefFor(LoginLayoutViews.AskRegisterText)
         val registerButton = createRefFor(LoginLayoutViews.RegisterButton)
         constrain(idTextField) {
@@ -223,35 +234,22 @@ private fun loginLayoutConstraint(): ConstraintSet =
 
 @Composable
 fun LoginButton(
-    scaffoldState: ScaffoldState,
     loginState: LoginState,
-    onLoginButtonClick: () -> Unit
+    onLoginButtonClick: (Boolean) -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-
     val focusManager = LocalFocusManager.current
-    val emptyComment = stringResource(id = R.string.login_empty_comment)
 
     Button(
         onClick = {
             focusManager.clearFocus()
-            if (doneInput(loginState)) {
-                onLoginButtonClick()
-            } else {
-                scope.launch {
-                    scaffoldState.snackbarHostState.showSnackbar(
-                        emptyComment,
-                        duration = SnackbarDuration.Short
-                    )
-                }
-            }
+            onLoginButtonClick(doneInput(loginState))
         },
         colors = buttonColors(
             backgroundColor = Teal900,
             contentColor = Color.White
         ),
         modifier = Modifier
-            .layoutId(LoginLayoutViews.LoginButton)
+            .layoutId(LoginLayoutViews.LoginButtonId)
             .clip(RoundedCornerShape(30.dp))
     ) {
         Text(text = stringResource(id = R.string.login))
@@ -260,10 +258,10 @@ fun LoginButton(
 }
 
 private fun doneInput(state: LoginState) =
-    state.email.isNotEmpty() && state.password.isNotEmpty()
+    state.email.isNotEmpty() && state.password.isNotEmpty() && !state.notDoneInput
 
 @Composable
-fun AskRegisterText() {
+private fun AskRegisterText() {
     Text(
         text = stringResource(id = R.string.ask_register),
         Modifier

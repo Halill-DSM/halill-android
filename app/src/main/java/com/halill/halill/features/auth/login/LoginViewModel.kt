@@ -60,19 +60,29 @@ class LoginViewModel @Inject constructor(
         sendEvent(LoginEvent.DoneLoading)
     }
 
+    fun notDoneInput() {
+        viewModelScope.launch {
+            _loginViewEffect.emit(LoginViewEffect.NotDoneInput)
+        }
+        sendEvent(LoginEvent.NotDoneInput)
+    }
+
     override fun reduceEvent(oldState: LoginState, event: LoginEvent) {
         when (event) {
             is LoginEvent.InputEmail -> {
-                setState(oldState.copy(email = event.email))
+                setState(oldState.copy(email = event.email, notDoneInput = false))
             }
             is LoginEvent.InputPassword -> {
-                setState(oldState.copy(password = event.password))
+                setState(oldState.copy(password = event.password, notDoneInput = false))
             }
             is LoginEvent.StartLoading -> {
                 setState(oldState.copy(isLoading = true))
             }
             is LoginEvent.DoneLoading -> {
                 setState(oldState.copy(isLoading = false))
+            }
+            is LoginEvent.NotDoneInput -> {
+                setState(oldState.copy(notDoneInput = true))
             }
         }
     }

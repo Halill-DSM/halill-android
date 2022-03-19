@@ -232,7 +232,7 @@ fun RegisterButton(
             contentColor = Color.White
         ),
         modifier = Modifier
-            .layoutId(LoginLayoutViews.LoginButton)
+            .layoutId(LoginLayoutViews.LoginButtonId)
             .width(200.dp)
             .clip(RoundedCornerShape(30.dp))
     ) {

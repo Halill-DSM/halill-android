@@ -1,6 +1,8 @@
 package com.halill.halill.di.auth
 
 import com.google.firebase.auth.FirebaseAuth
+import com.halill.data.features.auth.datasource.local.LocalUserDataSource
+import com.halill.data.features.auth.datasource.local.LocalUserDataSourceImpl
 import com.halill.data.features.auth.datasource.remote.RemoteRegisterDataSource
 import com.halill.data.features.auth.datasource.remote.RemoteRegisterDataSourceImpl
 import dagger.Module
@@ -18,4 +20,10 @@ object AuthDataSourceModule {
     fun provideRemoteRegisterDataSource(
         auth: FirebaseAuth
     ): RemoteRegisterDataSource = RemoteRegisterDataSourceImpl(auth)
+
+    @Singleton
+    @Provides
+    fun provideLocalUserDataSource(
+        auth: FirebaseAuth
+    ): LocalUserDataSource = LocalUserDataSourceImpl(auth)
 }

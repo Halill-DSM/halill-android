@@ -63,7 +63,7 @@ fun HalIllApp() {
         composable(
             route = "login"
         ) {
-            Login(scaffoldState = scaffoldState, navController = navController)
+            Login(navController = navController)
         }
 
         composable(

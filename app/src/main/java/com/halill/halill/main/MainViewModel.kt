@@ -7,6 +7,7 @@ import com.halill.domain.features.auth.usecase.FetchUserInfoUseCase
 import com.halill.halill.base.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,15 +18,19 @@ class MainViewModel @Inject constructor(
     override val initialState: MainState
         get() = MainState.initial()
 
-    suspend fun fetchUserInfo() {
-        try {
-            val user = fetchUserInfoUseCase.execute(Unit)
-            user.collect {
-                setUser(it)
+    private val _mainViewEffect = MutableEventFlow<MainViewEffect>()
+    val mainViewEffect = _mainViewEffect.asEventFlow()
+
+    fun fetchUserInfo() {
+        viewModelScope.launch {
+            try {
+                val user = fetchUserInfoUseCase.execute(Unit)
+                user.collect {
+                    setUser(it)
+                }
+            } catch (e: NotLoginException) {
+                _mainViewEffect.emit(MainViewEffect.StartLogin)
             }
-            sendEvent(MainEvent.DoneLogin)
-        } catch (e: NotLoginException) {
-            sendEvent(MainEvent.NeedLogin)
         }
     }
 
@@ -40,20 +45,6 @@ class MainViewModel @Inject constructor(
                     oldState.copy(
                         userEntity = UserEntity(event.name, event.email),
                         isLoading = false
-                    )
-                )
-            }
-            is MainEvent.DoneLogin -> {
-                setState(
-                    oldState.copy(
-                        needLogin = false
-                    )
-                )
-            }
-            is MainEvent.NeedLogin -> {
-                setState(
-                    oldState.copy(
-                        needLogin = true
                     )
                 )
             }

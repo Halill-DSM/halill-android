@@ -18,6 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.halill.halill.R
+import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.features.list.ListPage
 import com.halill.halill.ui.theme.Teal700
 
@@ -30,11 +31,15 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
     val floatingIcon = rememberVectorPainter(image = Icons.Filled.Add)
 
     val state = viewModel.state.collectAsState().value
-    LaunchedEffect(key1 = state) {
-        viewModel.fetchUserInfo()
-    }
+    viewModel.fetchUserInfo()
 
-    StartLogin(navController = navController, needLogin = state.needLogin)
+    viewModel.mainViewEffect.observeWithLifecycle {
+        when (it) {
+            is MainViewEffect.StartLogin -> {
+                startLogin(navController = navController)
+            }
+        }
+    }
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -63,12 +68,9 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
     }
 }
 
-@Composable
-fun StartLogin(navController: NavController, needLogin: Boolean) {
-    if (needLogin) {
-        navController.navigate("login") {
-            launchSingleTop = true
-        }
+private fun startLogin(navController: NavController) {
+    navController.navigate("login") {
+        launchSingleTop = true
     }
 }
 

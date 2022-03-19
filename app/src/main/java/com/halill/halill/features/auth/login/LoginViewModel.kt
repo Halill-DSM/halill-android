@@ -1,13 +1,11 @@
 package com.halill.halill.features.auth.login
 
-import androidx.lifecycle.viewModelScope
 import com.halill.domain.features.auth.param.LoginParam
 import com.halill.domain.features.auth.usecase.LoginUseCase
 import com.halill.halill.base.BaseViewModel
 import com.halill.halill.base.MutableEventFlow
 import com.halill.halill.base.asEventFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,7 +20,7 @@ class LoginViewModel @Inject constructor(
     val loginViewEffect = _loginViewEffect.asEventFlow()
 
     suspend fun login() {
-        if (doneInput()) {
+        if (!state.value.isLoading) {
             startLoading()
             val parameter =
                 LoginParam(email = state.value.email, password = state.value.password)
@@ -38,9 +36,6 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-
-    private fun doneInput(): Boolean =
-        state.value.email.isNotEmpty() && state.value.password.isNotEmpty()
 
     fun setEmail(email: String) {
         sendEvent(LoginEvent.InputEmail(email))

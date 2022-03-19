@@ -36,12 +36,12 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun Login(
+    scaffoldState: ScaffoldState,
     navController: NavController,
     darkTheme: Boolean = isSystemInDarkTheme(),
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val backgroundColor = if (darkTheme) Color.Black else Teal200
-    val scaffoldState = rememberScaffoldState()
     handleViewEffect(
         scaffoldState = scaffoldState,
         navController = navController,

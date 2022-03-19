@@ -23,7 +23,6 @@ class RemoteLoginDataSourceImpl @Inject constructor(
                 }
             }
         }.onFailure {
-            it
             throw LoginFailedException()
         }
     }

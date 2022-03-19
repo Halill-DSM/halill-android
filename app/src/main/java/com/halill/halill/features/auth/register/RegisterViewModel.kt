@@ -1,7 +1,6 @@
 package com.halill.halill.features.auth.register
 
 import androidx.lifecycle.viewModelScope
-import com.halill.domain.exception.RegisterFailedException
 import com.halill.domain.features.auth.param.RegisterParam
 import com.halill.domain.features.auth.usecase.RegisterUseCase
 import com.halill.halill.base.*
@@ -44,11 +43,12 @@ class RegisterViewModel @Inject constructor(
             password = state.password
         )
         viewModelScope.launch {
-            try {
+            kotlin.runCatching {
                 registerUseCase.execute(parameter)
+            }.onSuccess {
                 _registerViewEffect.emit(RegisterViewEffect.FinishRegister)
-            } catch (e: RegisterFailedException) {
-
+            }.onFailure {
+                _registerViewEffect.emit(RegisterViewEffect.FailRegister)
             }
         }
     }

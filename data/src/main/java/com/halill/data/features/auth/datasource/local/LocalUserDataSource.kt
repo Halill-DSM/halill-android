@@ -6,4 +6,6 @@ import kotlinx.coroutines.flow.Flow
 interface LocalUserDataSource {
 
     suspend fun fetchUser(): Flow<UserEntity>
+
+    suspend fun deleteUser()
 }

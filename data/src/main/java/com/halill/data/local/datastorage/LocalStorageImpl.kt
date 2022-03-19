@@ -29,6 +29,12 @@ class LocalStorageImpl @Inject constructor(
             it[IS_LOGIN_KEY] = true
         }
     }
+
+    override suspend fun saveIsNotLoginState() {
+        context.dataStore.edit {
+            it[IS_LOGIN_KEY] = false
+        }
+    }
 }
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "halill")

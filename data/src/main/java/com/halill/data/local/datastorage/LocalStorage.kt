@@ -7,4 +7,6 @@ interface LocalStorage {
     suspend fun isLoginState(): Flow<Boolean>
 
     suspend fun saveIsLoginState()
+
+    suspend fun saveIsNotLoginState()
 }

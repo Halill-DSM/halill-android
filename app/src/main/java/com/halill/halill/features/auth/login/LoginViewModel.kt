@@ -61,10 +61,10 @@ class LoginViewModel @Inject constructor(
     override fun reduceEvent(oldState: LoginState, event: LoginEvent) {
         when (event) {
             is LoginEvent.InputEmail -> {
-                setState(oldState.copy(email = event.email, notDoneInput = false))
+                setState(oldState.copy(email = event.email, doneInput = true))
             }
             is LoginEvent.InputPassword -> {
-                setState(oldState.copy(password = event.password, notDoneInput = false))
+                setState(oldState.copy(password = event.password, doneInput = true))
             }
             is LoginEvent.StartLoading -> {
                 setState(oldState.copy(isLoading = true))
@@ -73,7 +73,7 @@ class LoginViewModel @Inject constructor(
                 setState(oldState.copy(isLoading = false))
             }
             is LoginEvent.NotDoneInput -> {
-                setState(oldState.copy(notDoneInput = true))
+                setState(oldState.copy(doneInput = false))
             }
         }
     }

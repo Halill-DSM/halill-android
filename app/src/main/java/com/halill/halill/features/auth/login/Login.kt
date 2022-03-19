@@ -201,10 +201,8 @@ fun LoginLayout(
                         loginViewModel.login()
                     }
                 } else {
-                    if (!state.notDoneInput) {
-                        coroutineScope.launch {
-                            loginViewModel.notDoneInput()
-                        }
+                    coroutineScope.launch {
+                        loginViewModel.notDoneInput()
                     }
                 }
             }
@@ -277,7 +275,7 @@ fun LoginButton(
 }
 
 private fun doneInput(state: LoginState) =
-    state.email.isNotEmpty() && state.password.isNotEmpty() && !state.notDoneInput
+    state.email.isNotBlank() && state.password.isNotBlank() && state.doneInput
 
 @Composable
 private fun AskRegisterText() {

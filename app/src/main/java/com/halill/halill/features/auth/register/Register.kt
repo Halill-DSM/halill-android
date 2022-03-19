@@ -37,6 +37,8 @@ fun Register(
 ) {
     val state = viewModel.state.collectAsState().value
 
+    val scope = rememberCoroutineScope()
+
     Scaffold(scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
@@ -59,14 +61,17 @@ fun Register(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
                 RegisterEmailTextField(
                     state,
                     doOnEmailTextChange = { email -> viewModel.setEmail(email) }
                 )
+
                 RegisterPasswordTextField(
                     state,
                     doOnPasswordTextChange = { password -> viewModel.setPassword(password) }
                 )
+
                 RegisterCheckPasswordTextField(
                     state,
                     doOnCheckPasswordTextChange = { checkPassword ->
@@ -75,14 +80,24 @@ fun Register(
                         )
                     }
                 )
+
                 RegisterNameTextField(
                     state.name,
                     doOnNameTextChange = { name -> viewModel.setName(name) })
+
+                val emptyComment = stringResource(id = R.string.login_empty_comment)
                 RegisterButton(
-                    scaffoldState = scaffoldState,
                     state = state,
                     doOnRegisterButtonClick = {
                         viewModel.register()
+                    },
+                    doOnClickWhenEmpty = {
+                        scope.launch {
+                            scaffoldState.snackbarHostState.showSnackbar(
+                                emptyComment,
+                                duration = SnackbarDuration.Short
+                            )
+                        }
                     }
                 )
             }
@@ -210,24 +225,17 @@ fun RegisterNameTextField(
 
 @Composable
 fun RegisterButton(
-    scaffoldState: ScaffoldState,
     state: RegisterState,
-    doOnRegisterButtonClick: () -> Unit
+    doOnRegisterButtonClick: () -> Unit,
+    doOnClickWhenEmpty: () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-    val emptyComment = stringResource(id = R.string.login_empty_comment)
     Spacer(modifier = Modifier.height(25.dp))
     Button(
         onClick = {
             if (state.doneInput()) {
                 doOnRegisterButtonClick()
             } else {
-                scope.launch {
-                    scaffoldState.snackbarHostState.showSnackbar(
-                        emptyComment,
-                        duration = SnackbarDuration.Short
-                    )
-                }
+                doOnClickWhenEmpty()
             }
         },
         colors = ButtonDefaults.buttonColors(

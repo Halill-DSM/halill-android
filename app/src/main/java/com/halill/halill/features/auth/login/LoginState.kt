@@ -6,10 +6,10 @@ data class LoginState(
     val email: String,
     val password: String,
     val isLoading: Boolean,
-    val notDoneInput: Boolean
+    val doneInput: Boolean
 ) : MviState {
     companion object {
         fun initial() =
-            LoginState(email = "", password = "", isLoading = false,  notDoneInput = false)
+            LoginState(email = "", password = "", isLoading = false,  doneInput = false)
     }
 }

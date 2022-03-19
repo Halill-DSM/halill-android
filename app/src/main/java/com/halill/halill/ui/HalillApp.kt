@@ -22,6 +22,7 @@ fun HalIllApp() {
     val navController = rememberNavController()
     val systemUiController = rememberSystemUiController()
     val scaffoldState = rememberScaffoldState()
+
     if (isSystemInDarkTheme()) {
         systemUiController.setSystemBarsColor(
             color = Color.Black

@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -17,17 +18,21 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.halill.halill.R
+import com.halill.halill.base.EventFlow
+import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.features.list.ListPage
 import com.halill.halill.ui.theme.Teal700
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Main(navController: NavController) {
+fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     val scaffoldState = rememberScaffoldState()
 
     val navHostController = rememberNavController()
 
     val floatingIcon = rememberVectorPainter(image = Icons.Filled.Add)
+
+    viewModel.fetchUserInfo()
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -52,6 +57,22 @@ fun Main(navController: NavController) {
             composable(BottomNavigationItem.List.route) { ListPage(navController = navController) }
             composable(BottomNavigationItem.Calendar.route) { Calendar() }
             composable(BottomNavigationItem.MyPage.route) { MyPage() }
+        }
+    }
+
+    handleViewEffect(navController = navController, uiEvent = viewModel.mainViewEffect)
+}
+
+@Composable
+private fun handleViewEffect(
+    navController: NavController,
+    uiEvent: EventFlow<MainViewEffect>
+) {
+    uiEvent.observeWithLifecycle { mainEvent ->
+        when (mainEvent) {
+            is MainViewEffect.StartLogin -> {
+                navController.navigate("login")
+            }
         }
     }
 }

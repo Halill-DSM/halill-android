@@ -1,10 +1,12 @@
 package com.halill.halill.main
 
+import androidx.lifecycle.viewModelScope
 import com.halill.domain.exception.NotLoginException
 import com.halill.domain.features.auth.entity.UserEntity
 import com.halill.domain.features.auth.usecase.FetchUserInfoUseCase
 import com.halill.halill.base.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,16 +20,18 @@ class MainViewModel @Inject constructor(
     private val _mainViewEffect = MutableEventFlow<MainViewEffect>()
     val mainViewEffect: EventFlow<MainViewEffect> = _mainViewEffect.asEventFlow()
 
-    suspend fun fetchUserInfo() {
-        try {
-            val user = fetchUserInfoUseCase.execute(Unit)
-            setUser(user)
-        } catch (e: NotLoginException) {
-            _mainViewEffect.emit(MainViewEffect.StartLogin)
+    fun fetchUserInfo() {
+        viewModelScope.launch {
+            try {
+                val user = fetchUserInfoUseCase.execute(Unit)
+                setUser(user)
+            } catch (e: NotLoginException) {
+                _mainViewEffect.emit(MainViewEffect.StartLogin)
+            }
         }
     }
 
-    fun setUser(userEntity: UserEntity) {
+    private fun setUser(userEntity: UserEntity) {
         sendEvent(MainEvent.SetUser(userEntity.name, userEntity.email))
     }
 

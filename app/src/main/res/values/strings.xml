@@ -30,4 +30,5 @@
     <string name="empty_done_list">완료한 할일이 없습니다</string>
     <string name="done_comment">(완료됨)</string>
     <string name="require_todo_comment">할일을 작성해보세요!</string>
+    <string name="mypage_comment">님의 할일 기록입니다.</string>
 </resources>

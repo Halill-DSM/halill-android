@@ -23,10 +23,18 @@ class CalendarViewModel @Inject constructor(
     override fun reduceEvent(oldState: CalendarState, event: CalendarEvent) {
         when (event) {
             is CalendarEvent.NextMonth -> {
-
+                setState(
+                    oldState.copy(
+                        showingMonthDate = oldState.showingMonthDate.plusMonths(1)
+                    )
+                )
             }
             is CalendarEvent.BeforeMonth -> {
-
+                setState(
+                    oldState.copy(
+                        showingMonthDate = oldState.showingMonthDate.minusMonths(1)
+                    )
+                )
             }
             is CalendarEvent.SelectDate -> {
 

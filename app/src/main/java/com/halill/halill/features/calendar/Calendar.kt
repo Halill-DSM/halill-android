@@ -57,19 +57,31 @@ fun CalendarMonthLayout(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        IconButton(onClick = doOnBeforeMonthClick, modifier = Modifier
-            .padding(10.dp)
-            .size(60.dp)) {
-            Icon(Icons.Filled.NavigateBefore, contentDescription = "beforeMonth")
+        IconButton(
+            onClick = doOnBeforeMonthClick, modifier = Modifier
+                .padding(10.dp)
+                .size(60.dp)
+        ) {
+            Icon(
+                Icons.Filled.NavigateBefore,
+                contentDescription = "beforeMonth",
+                modifier = Modifier.fillMaxWidth()
+            )
         }
 
         val monthText = "${showingDate.year}년 ${showingDate.monthValue}월"
         Text(text = monthText, fontSize = 22.sp)
 
-        IconButton(onClick = doOnNextClick, modifier = Modifier
-            .padding(10.dp)
-            .size(60.dp)) {
-            Icon(Icons.Filled.NavigateNext, "nextMonth")
+        IconButton(
+            onClick = doOnNextClick, modifier = Modifier
+                .padding(10.dp)
+                .size(60.dp)
+        ) {
+            Icon(
+                Icons.Filled.NavigateNext,
+                contentDescription = "nextMonth",
+                modifier = Modifier.fillMaxWidth()
+            )
 
         }
     }

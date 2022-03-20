@@ -1,14 +1,20 @@
 package com.halill.halill.features.mypage
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -27,12 +33,23 @@ fun MyPage(
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
     val coroutineScope = rememberCoroutineScope()
-    viewModel.fetchUserInfo()
+    LaunchedEffect(Unit) {
+        viewModel.fetchUserInfo()
+    }
 
+    val scaffoldState = rememberScaffoldState()
+
+    val saveNameFailedComment = stringResource(id = R.string.save_name_failed)
     viewModel.myPageViewEffect.observeWithLifecycle {
         when (it) {
             is MyPageViewEffect.StartLogin -> {
                 navController.navigate("login")
+            }
+
+            is MyPageViewEffect.SaveNameFailed -> {
+                scaffoldState.snackbarHostState.showSnackbar(
+                    saveNameFailedComment
+                )
             }
         }
     }
@@ -51,7 +68,6 @@ fun MyPage(
             viewModel.run {
                 saveUserName(name)
                 dismissSaveNameDialog()
-                fetchUserInfo()
             }
         }
     )
@@ -83,8 +99,21 @@ fun SaveUserNameDialog(userName: String, doOnDone: (String) -> Unit) {
         mutableStateOf(userName)
     }
     Dialog(onDismissRequest = { doOnDone(name.value) }) {
-        Column {
-            TextField(value = name.value, onValueChange = { name.value = it })
+        Column(
+            Modifier
+                .clip(RoundedCornerShape(15.dp))
+                .background(Color.White)
+        ) {
+            TextField(
+                value = name.value,
+                onValueChange = { name.value = it },
+                modifier = Modifier
+                    .padding(0.dp, 30.dp)
+                    .fillMaxWidth()
+            )
+            Button(onClick = { doOnDone(name.value) }, modifier = Modifier.fillMaxWidth()) {
+                Text(text = stringResource(id = R.string.done_input))
+            }
         }
     }
 }

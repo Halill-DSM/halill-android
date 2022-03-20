@@ -1,5 +1,6 @@
 package com.halill.halill.features.mypage
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.halill.domain.features.auth.usecase.FetchUserInfoUseCase
 import com.halill.domain.features.auth.usecase.LogoutUseCase
@@ -30,17 +31,22 @@ class MyPageViewModel @Inject constructor(
         _myPageViewEffect.emit(MyPageViewEffect.StartLogin)
     }
 
-    fun fetchUserInfo() {
-        viewModelScope.launch {
-            fetchUserInfoUseCase.execute(Unit).collect { user ->
-                sendEvent(MyPageEvent.SetUser(user))
-            }
+    suspend fun fetchUserInfo() {
+        fetchUserInfoUseCase.execute(Unit).collect { user ->
+            sendEvent(MyPageEvent.SetUser(user))
+            Log.d("user_name", user.name)
         }
     }
 
     fun saveUserName(name: String) {
         viewModelScope.launch {
-            saveUserNameUseCase.execute(name)
+            saveUserNameUseCase.execute(name).collect { isSuccess ->
+                if (isSuccess) {
+                    fetchUserInfo()
+                } else {
+                    _myPageViewEffect.emit(MyPageViewEffect.SaveNameFailed)
+                }
+            }
         }
     }
 

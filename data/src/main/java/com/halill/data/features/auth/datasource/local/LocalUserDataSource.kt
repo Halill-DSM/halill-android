@@ -11,5 +11,5 @@ interface LocalUserDataSource {
 
     suspend fun fetchIsLoginState(): Flow<Boolean>
 
-    fun saveUserName(name: String)
+    fun saveUserName(name: String): Flow<Boolean>
 }

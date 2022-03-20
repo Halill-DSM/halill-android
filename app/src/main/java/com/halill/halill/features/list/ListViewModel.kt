@@ -37,7 +37,7 @@ class ListViewModel @Inject constructor(
                         sendEvent(ListEvent.EmptyList)
                     }
                 }
-            }.runCatching {
+            }.onFailure {
                 sendEvent(ListEvent.EmptyList)
             }
 
@@ -47,14 +47,14 @@ class ListViewModel @Inject constructor(
     private fun isBothListNotEmpty(entity: UserTodoListEntity): Boolean =
         entity.doneList.isNotEmpty() || entity.todoList.isNotEmpty()
 
-    fun doneTodo(todoId: Long) {
+    fun doneTodo(todoId: String) {
         viewModelScope.launch {
             doneTodoUseCase.execute(todoId)
             loadTodoList()
         }
     }
 
-    fun deleteTodo(todoId: Long) {
+    fun deleteTodo(todoId: String) {
         viewModelScope.launch {
             deleteTodoUseCase.execute(todoId)
             emitViewEffect(ListViewEffect.DoneDeleteTodo)
@@ -62,7 +62,7 @@ class ListViewModel @Inject constructor(
         }
     }
 
-    fun startDetailTodo(id: Long) {
+    fun startDetailTodo(id: String) {
         emitViewEffect(ListViewEffect.StartTodoDetail(id))
     }
 

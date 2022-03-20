@@ -9,6 +9,8 @@ import com.halill.domain.exception.ReadFireBaseStoreFailException
 import com.halill.domain.features.todo.entity.AllTimeTodoCountEntity
 import com.halill.domain.features.todo.entity.TodoEntity
 import com.halill.domain.features.todo.param.WriteTodoParam
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.single
 import javax.inject.Inject
 
@@ -30,31 +32,33 @@ class RemoteTodoDataSourceImpl @Inject constructor(
         private const val ALL_DONE_COUNT_KEY = "all_done_count"
     }
 
-    override suspend fun getTodoList(): List<TodoEntity> {
+    override suspend fun getTodoList(): Flow<List<TodoEntity>> {
         val user = auth.currentUser
         return if (user != null) {
             val data = dataBase.collection(user.email!!).document(TODO_KEY).collection("list")
             try {
-                data.get().dataBaseQueryTaskToFlow().single().map {
-                    val title: String = it.data[TODO_TITLE] as String
-                    val content: String = it.data[TODO_CONTENT] as String
-                    val deadline: String = it.data[TODO_DEADLINE] as String
-                    val isComplete: Boolean = it.data[TODO_IS_DONE] as Boolean
+                data.get().dataBaseQueryTaskToFlow().map {
+                    it.map { query ->
+                        val title: String = query.data[TODO_TITLE] as String
+                        val content: String = query.data[TODO_CONTENT] as String
+                        val deadline: String = query.data[TODO_DEADLINE] as String
+                        val isComplete: Boolean = query.data[TODO_IS_DONE] as Boolean
 
-                    TodoEntity(
-                        id = it.id.toLong(),
-                        title = title,
-                        content = content,
-                        deadline = deadline.toLocalDateTime(),
-                        isCompleted = isComplete
-                    )
+                        TodoEntity(
+                            id = query.id,
+                            title = title,
+                            content = content,
+                            deadline = deadline.toLocalDateTime(),
+                            isCompleted = isComplete
+                        )
+                    }
                 }
             } catch (e: ReadFireBaseStoreFailException) {
-                emptyList()
+                throw ReadFireBaseStoreFailException()
             }
 
         } else {
-            emptyList()
+            throw ReadFireBaseStoreFailException()
         }
     }
 
@@ -66,7 +70,7 @@ class RemoteTodoDataSourceImpl @Inject constructor(
             TODO_DEADLINE to todo.deadline.toString(),
             TODO_IS_DONE to todo.isCompleted
         )
-        dataBase.collection(userEmail).document("todo").collection("list").add(data)
+        dataBase.collection(userEmail).document(TODO_KEY).collection("list").add(data)
     }
 
     override suspend fun fetchAllTimeCount(): AllTimeTodoCountEntity {

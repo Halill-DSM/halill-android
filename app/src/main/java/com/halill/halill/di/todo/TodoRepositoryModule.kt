@@ -16,9 +16,8 @@ object TodoRepositoryModule {
     @Singleton
     @Provides
     fun provideGetTodoListRepository(
-        localTodoDataSource: LocalTodoDataSource,
         remoteTodoDataSource: RemoteTodoDataSource
-    ): FetchTodoListRepository = FetchTodoListRepositoryImpl(localTodoDataSource, remoteTodoDataSource)
+    ): FetchTodoListRepository = FetchTodoListRepositoryImpl(remoteTodoDataSource)
 
     @Singleton
     @Provides

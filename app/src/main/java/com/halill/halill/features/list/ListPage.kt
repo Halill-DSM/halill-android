@@ -88,8 +88,8 @@ private fun handleViewEffect(
 
 @Composable
 fun SwitchContentDoneOrTodoText(mainState: ListState, doOnClick: () -> Unit) {
-    val text = if (mainState.showDoneList) "할일보기" else "완료한 할일 보기"
-    val icon = if (mainState.showDoneList) Icons.Filled.RadioButtonUnchecked else Icons.Filled.Check
+    val text = if (mainState.showDoneList) "완료한 할일" else "할일"
+    val icon = if (mainState.showDoneList) Icons.Filled.Check else Icons.Filled.RadioButtonUnchecked
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,

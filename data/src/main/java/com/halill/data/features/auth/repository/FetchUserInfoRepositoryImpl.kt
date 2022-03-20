@@ -12,4 +12,8 @@ class FetchUserInfoRepositoryImpl @Inject constructor(
 
     override suspend fun fetchUserInfo(): Flow<UserEntity> =
         localUserDataSource.fetchUser()
+
+    override suspend fun isLoginState(): Flow<Boolean> =
+        localUserDataSource.fetchIsLoginState()
+
 }

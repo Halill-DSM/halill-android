@@ -30,6 +30,7 @@ class LoginViewModel @Inject constructor(
             }.onSuccess {
                 _loginViewEffect.emit(LoginViewEffect.FinishLogin)
             }.onFailure {
+                it
                 _loginViewEffect.emit(LoginViewEffect.WrongId)
             }.also {
                 doneLoading()

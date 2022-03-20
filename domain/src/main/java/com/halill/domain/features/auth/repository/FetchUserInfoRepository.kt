@@ -6,4 +6,6 @@ import kotlinx.coroutines.flow.Flow
 interface FetchUserInfoRepository {
 
     suspend fun fetchUserInfo(): Flow<UserEntity>
+
+    suspend fun isLoginState(): Flow<Boolean>
 }

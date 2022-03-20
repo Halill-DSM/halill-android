@@ -31,14 +31,9 @@ class RegisterViewModel @Inject constructor(
         sendEvent(RegisterEvent.InputCheckPassword(password))
     }
 
-    fun setName(name: String) {
-        sendEvent(RegisterEvent.InputName(name))
-    }
-
     fun register() {
         val state = state.value
         val parameter = RegisterParam(
-            name = state.name,
             email = state.email,
             password = state.password
         )
@@ -63,9 +58,6 @@ class RegisterViewModel @Inject constructor(
             }
             is RegisterEvent.InputCheckPassword -> {
                 setState(oldState.copy(checkPassword = event.checkPassword))
-            }
-            is RegisterEvent.InputName -> {
-                setState(oldState.copy(name = event.name))
             }
         }
     }

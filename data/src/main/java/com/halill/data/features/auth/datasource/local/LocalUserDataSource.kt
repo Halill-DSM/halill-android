@@ -9,5 +9,7 @@ interface LocalUserDataSource {
 
     suspend fun deleteUser()
 
+    suspend fun fetchIsLoginState(): Flow<Boolean>
+
     fun saveUserName(name: String)
 }

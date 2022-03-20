@@ -229,7 +229,7 @@ private fun RegisterState.doneInput(): Boolean =
     isNotEmpty() && passwordIsSameWithCheck()
 
 private fun RegisterState.isNotEmpty(): Boolean =
-    email.isNotEmpty() && password.isNotEmpty() && checkPassword.isNotEmpty() && name.isNotEmpty()
+    email.isNotEmpty() && password.isNotEmpty() && checkPassword.isNotEmpty()
 
 private fun RegisterState.passwordIsSameWithCheck(): Boolean =
     password == checkPassword

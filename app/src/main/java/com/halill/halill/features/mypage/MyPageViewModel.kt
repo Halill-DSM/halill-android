@@ -1,17 +1,23 @@
 package com.halill.halill.features.mypage
 
-import com.halill.domain.features.auth.entity.UserEntity
+import androidx.lifecycle.viewModelScope
+import com.halill.domain.features.auth.usecase.FetchUserInfoUseCase
 import com.halill.domain.features.auth.usecase.LogoutUseCase
+import com.halill.domain.features.auth.usecase.SaveUserNameUseCase
 import com.halill.halill.base.BaseViewModel
 import com.halill.halill.base.EventFlow
 import com.halill.halill.base.MutableEventFlow
 import com.halill.halill.base.asEventFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MyPageViewModel @Inject constructor(
-    private val logoutUseCase: LogoutUseCase
+    private val logoutUseCase: LogoutUseCase,
+    private val saveUserNameUseCase: SaveUserNameUseCase,
+    private val fetchUserInfoUseCase: FetchUserInfoUseCase
 ) : BaseViewModel<MyPageState, MyPageEvent>() {
     override val initialState: MyPageState
         get() = MyPageState.initial()
@@ -24,8 +30,18 @@ class MyPageViewModel @Inject constructor(
         _myPageViewEffect.emit(MyPageViewEffect.StartLogin)
     }
 
-    fun setUser(userEntity: UserEntity) {
-        sendEvent(MyPageEvent.SetUser(userEntity))
+    fun fetchUserInfo() {
+        viewModelScope.launch {
+            fetchUserInfoUseCase.execute(Unit).collect { user ->
+                sendEvent(MyPageEvent.SetUser(user))
+            }
+        }
+    }
+
+    fun saveUserName(name: String) {
+        viewModelScope.launch {
+            saveUserNameUseCase.execute(name)
+        }
     }
 
     override fun reduceEvent(oldState: MyPageState, event: MyPageEvent) {

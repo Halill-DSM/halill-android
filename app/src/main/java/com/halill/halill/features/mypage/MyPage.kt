@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -20,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.halill.domain.features.auth.entity.UserEntity
 import com.halill.halill.R
 import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.ui.theme.Teal900
@@ -29,13 +27,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun MyPage(
     navController: NavController,
-    userEntity: UserEntity,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
-
-    LaunchedEffect(userEntity) {
-        viewModel.setUser(userEntity)
-    }
+    val coroutineScope = rememberCoroutineScope()
+    viewModel.fetchUserInfo()
 
     viewModel.myPageViewEffect.observeWithLifecycle {
         when (it) {
@@ -44,8 +39,6 @@ fun MyPage(
             }
         }
     }
-
-    val coroutineScope = rememberCoroutineScope()
     val myPageState = viewModel.state.collectAsState().value
     MyPageContent(myPageState, doOnLogoutClick = {
         coroutineScope.launch {

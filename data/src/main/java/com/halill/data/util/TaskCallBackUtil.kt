@@ -1,5 +1,6 @@
 package com.halill.data.util
 
+import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QueryDocumentSnapshot
@@ -42,6 +43,7 @@ fun Task<QuerySnapshot>.dataBaseQueryTaskToFlow(): Flow<QuerySnapshot> =
             trySendBlocking(it)
             close()
         }.addOnFailureListener {
+            Log.e("queryError", it.toString())
             throw ReadFireBaseStoreFailException()
         }
         awaitClose()

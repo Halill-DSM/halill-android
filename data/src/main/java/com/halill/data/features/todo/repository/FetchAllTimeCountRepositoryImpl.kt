@@ -6,6 +6,7 @@ import com.halill.data.util.OfflineCacheUtil
 import com.halill.domain.features.todo.entity.AllTimeTodoCountEntity
 import com.halill.domain.features.todo.repository.FetchAllTimeCountRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class FetchAllTimeCountRepositoryImpl @Inject constructor(
@@ -14,12 +15,15 @@ class FetchAllTimeCountRepositoryImpl @Inject constructor(
 ) : FetchAllTimeCountRepository {
 
     override suspend fun fetchAllTimeCount(): Flow<AllTimeTodoCountEntity> =
-        OfflineCacheUtil<AllTimeTodoCountEntity>()
-            .localData { localTodoDataSource.fetchAllTimeCount() }
-            .remoteData { remoteTodoDataSource.fetchAllTimeCount() }
-            .isNeedToRefreshRemoteData { localData, remoteData ->
-                (localData.allCount < remoteData.allCount) || (localData.allDoneCount < remoteData.allDoneCount)
-            }
-            .doRefreshRemote { localData -> remoteTodoDataSource.saveAllTimeCount(localData) }
-            .createFlow()
+        flow {
+            emit(remoteTodoDataSource.fetchAllTimeCount())
+        }
+//        OfflineCacheUtil<AllTimeTodoCountEntity>()
+//            .localData { localTodoDataSource.fetchAllTimeCount() }
+//            .remoteData { remoteTodoDataSource.fetchAllTimeCount() }
+//            .isNeedToRefreshRemoteData { localData, remoteData ->
+//                (localData.allCount < remoteData.allCount) || (localData.allDoneCount < remoteData.allDoneCount)
+//            }
+//            .doRefreshRemote { localData -> remoteTodoDataSource.saveAllTimeCount(localData) }
+//            .createFlow()
 }

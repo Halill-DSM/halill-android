@@ -29,13 +29,18 @@ class ListViewModel @Inject constructor(
 
     fun loadTodoList() {
         viewModelScope.launch {
-            getTodoListUseCase.execute(Unit).collect { entity ->
-                if (isBothListNotEmpty(entity)) {
-                    sendEvent(ListEvent.ShowList(entity.doneList, entity.todoList))
-                } else {
-                    sendEvent(ListEvent.EmptyList)
+            kotlin.runCatching {
+                getTodoListUseCase.execute(Unit).collect { entity ->
+                    if (isBothListNotEmpty(entity)) {
+                        sendEvent(ListEvent.ShowList(entity.doneList, entity.todoList))
+                    } else {
+                        sendEvent(ListEvent.EmptyList)
+                    }
                 }
+            }.runCatching {
+                sendEvent(ListEvent.EmptyList)
             }
+
         }
     }
 

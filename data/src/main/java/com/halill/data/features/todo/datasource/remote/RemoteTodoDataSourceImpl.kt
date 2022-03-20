@@ -33,22 +33,26 @@ class RemoteTodoDataSourceImpl @Inject constructor(
     override suspend fun getTodoList(): List<TodoEntity> {
         val user = auth.currentUser
         return if (user != null) {
-
             val data = dataBase.collection(user.email!!).document(TODO_KEY).collection("list")
-            data.get().dataBaseQueryTaskToFlow().single().map {
-                val title: String = it.data[TODO_TITLE] as String
-                val content: String = it.data[TODO_CONTENT] as String
-                val deadline: String = it.data[TODO_DEADLINE] as String
-                val isComplete: Boolean = it.data[TODO_IS_DONE] as Boolean
+            try {
+                data.get().dataBaseQueryTaskToFlow().single().map {
+                    val title: String = it.data[TODO_TITLE] as String
+                    val content: String = it.data[TODO_CONTENT] as String
+                    val deadline: String = it.data[TODO_DEADLINE] as String
+                    val isComplete: Boolean = it.data[TODO_IS_DONE] as Boolean
 
-                TodoEntity(
-                    id = it.id.toLong(),
-                    title = title,
-                    content = content,
-                    deadline = deadline.toLocalDateTime(),
-                    isCompleted = isComplete
-                )
+                    TodoEntity(
+                        id = it.id.toLong(),
+                        title = title,
+                        content = content,
+                        deadline = deadline.toLocalDateTime(),
+                        isCompleted = isComplete
+                    )
+                }
+            } catch (e: ReadFireBaseStoreFailException) {
+                emptyList()
             }
+
         } else {
             emptyList()
         }

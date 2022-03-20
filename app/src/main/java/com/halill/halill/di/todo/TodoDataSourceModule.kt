@@ -1,5 +1,6 @@
 package com.halill.halill.di.todo
 
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.halill.data.features.todo.database.dao.TodoDao
 import com.halill.data.features.todo.datasource.local.LocalTodoDataSource
@@ -18,8 +19,11 @@ import javax.inject.Singleton
 object TodoDataSourceModule {
     @Singleton
     @Provides
-    fun provideRemoteTodoDataSource(dataBase: FirebaseFirestore): RemoteTodoDataSource =
-        RemoteTodoDataSourceImpl(dataBase)
+    fun provideRemoteTodoDataSource(
+        dataBase: FirebaseFirestore,
+        auth: FirebaseAuth
+    ): RemoteTodoDataSource =
+        RemoteTodoDataSourceImpl(dataBase, auth)
 
     @Singleton
     @Provides

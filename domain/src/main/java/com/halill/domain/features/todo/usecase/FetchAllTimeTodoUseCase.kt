@@ -12,5 +12,4 @@ class FetchAllTimeTodoUseCase @Inject constructor(
 
     override suspend fun execute(data: Unit): Flow<AllTimeTodoCountEntity> =
         fetchAllTimeCountRepository.fetchAllTimeCount()
-
 }

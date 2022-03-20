@@ -31,13 +31,17 @@ fun MyPage(
     navController: NavController,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
+    val myPageState = viewModel.state.collectAsState().value
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
         viewModel.run {
             fetchUserInfo()
-            fetchAllTimeCount()
             fetchCurrentCount()
         }
+    }
+
+    LaunchedEffect(myPageState) {
+        viewModel.fetchAllTimeCount()
     }
 
     val scaffoldState = rememberScaffoldState()
@@ -56,7 +60,6 @@ fun MyPage(
             }
         }
     }
-    val myPageState = viewModel.state.collectAsState().value
     MyPageContent(
         myPageState,
         doOnLogoutClick = {
@@ -84,7 +87,13 @@ fun MyPageContent(
     doOnDoneSaveName: (String) -> Unit
 ) {
     Column {
-        Row(horizontalArrangement = SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+        Row(
+            horizontalArrangement = SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp, 10.dp, 20.dp, 0.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             val userName = myPageState.name.ifBlank { "User" }
             NameText(name = userName, doOnEditNameClick = doOnNameTextClick)
 
@@ -162,8 +171,7 @@ fun SaveUserNameDialog(userName: String, doOnDone: (String) -> Unit) {
 @Composable
 fun NameText(name: String, doOnEditNameClick: () -> Unit) {
     Row(
-        verticalAlignment = Alignment.Bottom,
-        modifier = Modifier.padding(10.dp, 10.dp, 0.dp, 0.dp)
+        verticalAlignment = Alignment.Bottom
     ) {
         Row(modifier = Modifier.clickable {
             doOnEditNameClick()

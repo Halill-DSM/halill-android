@@ -22,6 +22,7 @@ import androidx.navigation.NavController
 import com.halill.halill.R
 import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.ui.theme.Black
+import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.ui.theme.Teal900
 import kotlinx.coroutines.launch
 
@@ -107,11 +108,29 @@ fun MyPageCountLayout(myPageState: MyPageState) {
     val allTimeCountTitle = stringResource(id = R.string.all_count)
     val allTimeDoneTitle = stringResource(id = R.string.all_time_done_todo_count)
 
-    Column(verticalArrangement = SpaceBetween, modifier = Modifier.fillMaxHeight()) {
+    Column(
+        verticalArrangement = SpaceBetween,
+        modifier = Modifier
+            .fillMaxHeight()
+            .padding(30.dp, 60.dp, 30.dp, 122.dp)
+    ) {
+        Divider(color = Teal700, thickness = 1.dp)
         MyPageCountContent(title = currentTodoTitle, count = myPageState.currentTodoCount)
+        Divider(color = Teal700, thickness = 1.dp)
         MyPageCountContent(title = currentDoneTitle, count = myPageState.currentDoneCount)
-        MyPageCountContent(title = allTimeDoneTitle, count = myPageState.allTimeDoneTodoCount)
-        MyPageCountContent(title = allTimeCountTitle, count = myPageState.allCount)
+        Divider(color = Teal700, thickness = 1.dp)
+        MyPageCountContent(
+            title = allTimeDoneTitle,
+            count = myPageState.allTimeDoneTodoCount,
+            countColor = Teal900
+        )
+        Divider(color = Teal700, thickness = 1.dp)
+        MyPageCountContent(
+            title = allTimeCountTitle,
+            count = myPageState.allCount,
+            countColor = Teal900
+        )
+        Divider(color = Teal700, thickness = 1.dp)
     }
 }
 
@@ -185,6 +204,7 @@ fun LogoutButton(doOnClick: () -> Unit) {
 fun MyPageCountContent(title: String, count: Int, countColor: Color = Black) {
     Row(horizontalArrangement = SpaceBetween, modifier = Modifier.fillMaxWidth()) {
         Text(text = title)
-        Text(text = count.toString(), color = countColor)
+        val countText = "$count ${stringResource(id = R.string.count)}"
+        Text(text = countText, color = countColor, fontSize = 20.sp)
     }
 }

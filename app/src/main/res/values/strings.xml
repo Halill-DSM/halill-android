@@ -37,4 +37,5 @@
     <string name="current_done_count">완료한 일</string>
     <string name="all_count">총 작성한 할일의 개수</string>
     <string name="all_time_done_todo_count">총 완료한 할일의 개수</string>
+    <string name="count">개</string>
 </resources>

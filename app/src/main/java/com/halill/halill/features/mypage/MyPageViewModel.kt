@@ -63,7 +63,7 @@ class MyPageViewModel @Inject constructor(
             is MyPageEvent.SetAllTimeTodoCount -> {
                 setState(
                     oldState.copy(
-                        allTimeTodoCount = event.allTimeTodoCount,
+                        allCount = event.allCount,
                         allTimeDoneTodoCount = event.allTimeDoneCount
                     )
                 )

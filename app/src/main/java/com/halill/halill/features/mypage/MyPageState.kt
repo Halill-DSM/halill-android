@@ -8,7 +8,7 @@ data class MyPageState(
     val showSaveNameDialog: Boolean,
     val currentTodoCount: Int,
     val currentDoneCount: Int,
-    val allTimeTodoCount: Int,
+    val allCount: Int,
     val allTimeDoneTodoCount: Int
 ) : MviState {
 
@@ -20,7 +20,7 @@ data class MyPageState(
                 showSaveNameDialog = false,
                 currentTodoCount = 0,
                 currentDoneCount = 0,
-                allTimeTodoCount = 0,
+                allCount = 0,
                 allTimeDoneTodoCount = 0
             )
     }

@@ -16,7 +16,7 @@ object TodoRepositoryModule {
     @Provides
     fun provideGetTodoListRepository(
         localTodoDataSource: LocalTodoDataSource
-    ): GetTodoListRepository = GetTodoListRepositoryImpl(localTodoDataSource)
+    ): FetchTodoListRepository = FetchTodoListRepositoryImpl(localTodoDataSource)
 
     @Singleton
     @Provides
@@ -40,7 +40,7 @@ object TodoRepositoryModule {
     @Provides
     fun provideGetTodoDetailRepository(
         localTodoDataSource: LocalTodoDataSource
-    ): GetTodoDetailRepository = GetTodoDetailRepositoryImpl(localTodoDataSource)
+    ): FetchTodoDetailRepository = FetchTodoDetailRepositoryImpl(localTodoDataSource)
 
     @Singleton
     @Provides

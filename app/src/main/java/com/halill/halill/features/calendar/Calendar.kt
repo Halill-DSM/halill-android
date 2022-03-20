@@ -1,4 +1,4 @@
-package com.halill.halill.main
+package com.halill.halill.features.calendar
 
 import androidx.compose.runtime.Composable
 

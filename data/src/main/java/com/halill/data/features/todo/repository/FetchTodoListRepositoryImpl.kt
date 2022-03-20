@@ -7,7 +7,7 @@ import com.halill.domain.features.todo.entity.UserTodoListEntity
 import com.halill.domain.features.todo.entity.toUserTodoListEntity
 import com.halill.domain.features.todo.repository.FetchTodoListRepository
 import kotlinx.coroutines.flow.*
-import java.time.LocalDateTime
+import java.time.LocalDate
 import javax.inject.Inject
 
 class FetchTodoListRepositoryImpl @Inject constructor(
@@ -23,6 +23,6 @@ class FetchTodoListRepositoryImpl @Inject constructor(
         return CurrentTodoCountEntity(list.todoList.size, list.doneList.size)
     }
 
-    override suspend fun fetchTodoListWithDate(date: LocalDateTime): List<TodoEntity> =
+    override suspend fun fetchTodoListWithDate(date: LocalDate): List<TodoEntity> =
         localTodoDataSource.fetchTodoListWithDate(date)
 }

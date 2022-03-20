@@ -6,7 +6,7 @@ import com.halill.data.features.todo.database.entity.toEntity
 import com.halill.domain.features.todo.entity.TodoEntity
 import com.halill.domain.features.todo.param.EditTodoParam
 import com.halill.domain.features.todo.param.WriteTodoParam
-import java.time.LocalDateTime
+import java.time.LocalDate
 import javax.inject.Inject
 
 class LocalTodoDataSourceImpl @Inject constructor(
@@ -35,6 +35,6 @@ class LocalTodoDataSourceImpl @Inject constructor(
         todoDao.saveTodoList(param.toDataEntity())
     }
 
-    override suspend fun fetchTodoListWithDate(date: LocalDateTime): List<TodoEntity> =
+    override suspend fun fetchTodoListWithDate(date: LocalDate): List<TodoEntity> =
         todoDao.fetchTodoListWithDate(date).toEntity()
 }

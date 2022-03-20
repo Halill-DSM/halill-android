@@ -13,10 +13,10 @@ abstract class BaseViewModel<S : MviState, E: MviEvent> : ViewModel() {
     abstract fun reduceEvent(oldState: S, event: E)
 
     inner class BaseViewModelReducer: Reducer<S, E>(initialState) {
+
         override fun reduce(oldState: S, event: E) {
             reduceEvent(oldState, event)
         }
-
     }
 
     fun sendEvent(event: E) {

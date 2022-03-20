@@ -27,6 +27,6 @@ object TodoDataSourceModule {
 
     @Singleton
     @Provides
-    fun provideLocalTodoDataSource(dao: TodoDao, localStorage: LocalStorage): LocalTodoDataSource =
-        LocalTodoDataSourceImpl(dao, localStorage)
+    fun provideLocalTodoDataSource(dao: TodoDao): LocalTodoDataSource =
+        LocalTodoDataSourceImpl(dao)
 }

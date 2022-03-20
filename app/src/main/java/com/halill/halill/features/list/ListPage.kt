@@ -55,7 +55,7 @@ fun ListPage(navController: NavController, viewModel: ListViewModel = hiltViewMo
         }
 
         MainPager(
-            mainState = state,
+            state = state,
             onItemClick = { id -> viewModel.startDetailTodo(id) },
             onDoneClick = { id -> viewModel.doneTodo(id) },
             onDeleteClick = { id -> viewModel.deleteTodo(id) }
@@ -109,7 +109,7 @@ fun SwitchContentDoneOrTodoText(mainState: ListState, doOnClick: () -> Unit) {
 @ExperimentalPagerApi
 @Composable
 fun MainPager(
-    mainState: ListState,
+    state: ListState,
     onItemClick: (Long) -> Unit,
     onDoneClick: (Long) -> Unit,
     onDeleteClick: (Long) -> Unit
@@ -120,10 +120,10 @@ fun MainPager(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         when {
-            mainState.isLoading -> LoadingText()
-            checkBothListIsEmpty(mainState) -> BothEmptySoRequireTodoText()
+            state.isLoading -> LoadingText()
+            checkBothListIsEmpty(state) -> BothEmptySoRequireTodoText()
             else -> ShowList(
-                state = mainState,
+                state = state,
                 onItemClick,
                 onDoneClick,
                 onDeleteClick

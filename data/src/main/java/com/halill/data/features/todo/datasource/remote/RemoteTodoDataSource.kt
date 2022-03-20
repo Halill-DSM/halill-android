@@ -7,5 +7,7 @@ interface RemoteTodoDataSource {
 
     suspend fun fetchAllTimeCount(): Flow<AllTimeTodoCountEntity>
 
-    suspend fun saveAllTimeCount(allTimeTodoCountEntity: AllTimeTodoCountEntity)
+    suspend fun plusOneToAllCount()
+
+    suspend fun plusOneToAllDoneCount()
 }

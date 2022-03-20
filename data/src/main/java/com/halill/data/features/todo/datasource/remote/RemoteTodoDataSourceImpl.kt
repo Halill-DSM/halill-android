@@ -34,13 +34,40 @@ class RemoteTodoDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveAllTimeCount(allTimeTodoCountEntity: AllTimeTodoCountEntity) {
+    override suspend fun plusOneToAllCount() {
         val userEmail = auth.currentUser!!.email!!
-        val data = hashMapOf(
-            ALL_TODO_COUNT_KEY to allTimeTodoCountEntity.allCount,
-            ALL_DONE_COUNT_KEY to allTimeTodoCountEntity.allDoneCount
-        )
-
-        dataBase.collection(userEmail).document(ALL_COUNT_KEY).set(data)
+        getOriginalValueToPlusOne(
+            userEmail,
+            doOnPlusOne = { originalAllCount, originalAllDoneCount ->
+                val data = hashMapOf(
+                    ALL_TODO_COUNT_KEY to originalAllCount + 1,
+                    ALL_DONE_COUNT_KEY to originalAllDoneCount
+                )
+                dataBase.collection(userEmail).document(ALL_COUNT_KEY).set(data)
+            })
     }
+
+    override suspend fun plusOneToAllDoneCount() {
+        val userEmail = auth.currentUser!!.email!!
+        getOriginalValueToPlusOne(
+            userEmail,
+            doOnPlusOne = { originalAllCount, originalAllDoneCount ->
+                val data = hashMapOf(
+                    ALL_TODO_COUNT_KEY to originalAllCount,
+                    ALL_DONE_COUNT_KEY to originalAllDoneCount + 1
+                )
+                dataBase.collection(userEmail).document(ALL_COUNT_KEY).set(data)
+            })
+    }
+
+    private fun getOriginalValueToPlusOne(email: String, doOnPlusOne: (Int, Int) -> Unit) {
+        dataBase.collection(email).document(ALL_COUNT_KEY).get().addOnSuccessListener {
+            val originalAllCount: Int = (it[ALL_TODO_COUNT_KEY] as Long).toInt()
+            val originalAllDoneCount: Int = (it[ALL_DONE_COUNT_KEY] as Long).toInt()
+
+            doOnPlusOne(originalAllCount, originalAllDoneCount)
+        }
+    }
+
+
 }

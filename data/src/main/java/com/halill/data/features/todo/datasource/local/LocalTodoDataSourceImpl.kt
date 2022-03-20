@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.zip
 import javax.inject.Inject
 
 class LocalTodoDataSourceImpl @Inject constructor(
-    private val todoDao: TodoDao,
-    private val localStorage: LocalStorage
+    private val todoDao: TodoDao
 ) : LocalTodoDataSource {
+
     override suspend fun fetchTodoList(): List<TodoEntity> =
         todoDao.getTodoList().toEntity()
 
@@ -36,15 +36,5 @@ class LocalTodoDataSourceImpl @Inject constructor(
 
     override suspend fun editTodo(param: EditTodoParam) {
         todoDao.saveTodoList(param.toDataEntity())
-    }
-
-    override suspend fun fetchAllTimeCount(): AllTimeTodoCountEntity {
-        val allCount = localStorage.fetchAllTimeCount()
-
-        val allDoneCount = localStorage.fetchAllTimeDoneCount()
-
-        return allCount.zip(allDoneCount) { all, allDone ->
-            AllTimeTodoCountEntity(all, allDone)
-        }.single()
     }
 }

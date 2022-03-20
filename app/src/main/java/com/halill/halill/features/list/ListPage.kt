@@ -148,7 +148,11 @@ fun ShowList(
     if (state.showDoneList) {
         ShowDoneList(doneList = doneList, onItemClick = onItemClick, onDeleteClick = onDeleteClick)
     } else {
-        ShowTodoList(todoList, onItemClick, onDoneClick)
+        if (todoList.isEmpty()) {
+            EmptyTodoListText()
+        } else {
+            TodoList(todoList, onItemClick, onDoneClick)
+        }
     }
 }
 
@@ -162,19 +166,6 @@ fun ShowDoneList(
         EmptyDoneListText()
     } else {
         DoneList(doneList, onItemClick, onDeleteClick)
-    }
-}
-
-@Composable
-fun ShowTodoList(
-    todoList: List<TodoEntity>,
-    onItemClick: (Long) -> Unit,
-    onDoneClick: (Long) -> Unit
-) {
-    if (todoList.isEmpty()) {
-        EmptyTodoListText()
-    } else {
-        TodoList(todoList, onItemClick, onDoneClick)
     }
 }
 

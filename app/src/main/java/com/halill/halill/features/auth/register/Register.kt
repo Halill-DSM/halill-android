@@ -221,7 +221,10 @@ fun RegisterButton(
             .width(200.dp)
             .clip(RoundedCornerShape(30.dp))
     ) {
-        Text(text = stringResource(id = R.string.register))
+        val text =
+            if (state.isLoading) stringResource(id = R.string.loading_comment)
+            else stringResource(id = R.string.register)
+        Text(text = text)
     }
 }
 

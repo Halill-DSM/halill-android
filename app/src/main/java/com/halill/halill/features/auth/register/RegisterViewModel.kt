@@ -31,33 +31,63 @@ class RegisterViewModel @Inject constructor(
         sendEvent(RegisterEvent.InputCheckPassword(password))
     }
 
+    private fun startLoading() {
+        sendEvent(RegisterEvent.StartLoading)
+    }
+
+    private fun finishLoading() {
+        sendEvent(RegisterEvent.FinishLoading)
+    }
+
     fun register() {
         val state = state.value
-        val parameter = RegisterParam(
-            email = state.email,
-            password = state.password
-        )
-        viewModelScope.launch {
-            kotlin.runCatching {
-                registerUseCase.execute(parameter)
-            }.onSuccess {
-                _registerViewEffect.emit(RegisterViewEffect.FinishRegister)
-            }.onFailure {
-                _registerViewEffect.emit(RegisterViewEffect.FailRegister)
+        if (!state.isLoading) {
+            startLoading()
+            val parameter = RegisterParam(
+                email = state.email,
+                password = state.password
+            )
+            viewModelScope.launch {
+                kotlin.runCatching {
+                    registerUseCase.execute(parameter)
+                }.onSuccess {
+                    _registerViewEffect.emit(RegisterViewEffect.FinishRegister)
+                }.onFailure {
+                    _registerViewEffect.emit(RegisterViewEffect.FailRegister)
+                }.also {
+                    finishLoading()
+                }
             }
         }
+
     }
 
     override fun reduceEvent(oldState: RegisterState, event: RegisterEvent) {
         when (event) {
             is RegisterEvent.InputEmail -> {
-                setState(oldState.copy(email = event.email))
+                setState(
+                    oldState.copy(email = event.email)
+                )
             }
             is RegisterEvent.InputPassword -> {
-                setState(oldState.copy(password = event.password))
+                setState(
+                    oldState.copy(password = event.password)
+                )
             }
             is RegisterEvent.InputCheckPassword -> {
-                setState(oldState.copy(checkPassword = event.checkPassword))
+                setState(
+                    oldState.copy(checkPassword = event.checkPassword)
+                )
+            }
+            is RegisterEvent.FinishLoading -> {
+                setState(
+                    oldState.copy(isLoading = false)
+                )
+            }
+            is RegisterEvent.StartLoading -> {
+                setState(
+                    oldState.copy(isLoading = true)
+                )
             }
         }
     }

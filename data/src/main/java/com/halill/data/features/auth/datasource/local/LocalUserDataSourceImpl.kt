@@ -3,10 +3,9 @@ package com.halill.data.features.auth.datasource.local
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.halill.data.local.datastorage.LocalStorage
+import com.halill.data.util.createFlowToCheckTaskCallbackIsSuccess
 import com.halill.domain.features.auth.entity.UserEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -33,17 +32,14 @@ class LocalUserDataSourceImpl @Inject constructor(
         createSaveNameCallback(name)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun createSaveNameCallback(param: String): Flow<Boolean> =
-        callbackFlow {
-            val user = auth.currentUser
+    private fun createSaveNameCallback(param: String): Flow<Boolean> {
+        val user = auth.currentUser
 
-            val profileUpdates = userProfileChangeRequest {
-                displayName = param
-            }
-            user!!.updateProfile(profileUpdates).addOnCompleteListener {
-                trySendBlocking(it.isSuccessful)
-                close()
-            }
-            awaitClose()
+        val profileUpdates = userProfileChangeRequest {
+            displayName = param
         }
+        return user!!.updateProfile(profileUpdates).createFlowToCheckTaskCallbackIsSuccess()
+    }
+
+
 }

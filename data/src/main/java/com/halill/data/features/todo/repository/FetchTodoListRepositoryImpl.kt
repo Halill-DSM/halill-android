@@ -12,7 +12,7 @@ class FetchTodoListRepositoryImpl @Inject constructor(
 ) : FetchTodoListRepository {
 
     override suspend fun getTodoList(): Flow<UserTodoListEntity> = flow {
-        emit(localTodoDataSource.getTodoList().toUserTodoListEntity())
+        emit(localTodoDataSource.fetchTodoList().toUserTodoListEntity())
     }
 
 }

@@ -9,4 +9,12 @@ interface LocalStorage {
     suspend fun saveIsLoginState()
 
     suspend fun saveIsNotLoginState()
+
+    suspend fun fetchAllTimeCount(): Flow<Int>
+
+    suspend fun plusOneAllTimeCount()
+
+    suspend fun fetchAllTimeDoneCount(): Flow<Int>
+
+    suspend fun plusOneAllTimeDoneCount()
 }

@@ -9,5 +9,5 @@ class FetchTodoDetailRepositoryImpl @Inject constructor(
     private val localTodoDataSource: LocalTodoDataSource
 ) : FetchTodoDetailRepository {
     override suspend fun getTodoDetail(id: Long): TodoEntity =
-        localTodoDataSource.getTodoDetail(id)
+        localTodoDataSource.fetchTodoDetail(id)
 }

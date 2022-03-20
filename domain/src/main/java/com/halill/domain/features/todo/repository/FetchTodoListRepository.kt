@@ -8,9 +8,9 @@ import java.time.LocalDateTime
 
 interface FetchTodoListRepository {
 
-    suspend fun getTodoList(): Flow<UserTodoListEntity>
+    suspend fun fetchTodoList(): Flow<UserTodoListEntity>
 
-    suspend fun getTodoListSize(): CurrentTodoCountEntity
+    suspend fun fetchTodoListSize(): CurrentTodoCountEntity
 
-    suspend fun getTodoListWithDate(date: LocalDateTime): List<TodoEntity>
+    suspend fun fetchTodoListWithDate(date: LocalDateTime): List<TodoEntity>
 }

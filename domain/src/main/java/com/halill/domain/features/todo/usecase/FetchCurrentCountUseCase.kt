@@ -10,5 +10,5 @@ class FetchCurrentCountUseCase @Inject constructor(
 ) : UseCase<Unit, CurrentTodoCountEntity>() {
 
     override suspend fun execute(data: Unit): CurrentTodoCountEntity =
-        fetchTodoListRepository.getTodoListSize()
+        fetchTodoListRepository.fetchTodoListSize()
 }

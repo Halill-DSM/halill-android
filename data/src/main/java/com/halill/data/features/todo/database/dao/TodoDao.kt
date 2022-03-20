@@ -5,11 +5,12 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.halill.data.features.todo.database.entity.TodoRoomEntity
+import java.time.LocalDateTime
 
 @Dao
 interface TodoDao {
     @Query("SELECT * FROM todolist")
-    suspend fun getTodoList(): List<TodoRoomEntity>
+    suspend fun fetchTodoList(): List<TodoRoomEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveTodoList(todoRoomList: TodoRoomEntity)
@@ -21,5 +22,8 @@ interface TodoDao {
     suspend fun deleteTodo(todoId: Long)
 
     @Query("SELECT * FROM todolist WHERE id = :todoId")
-    suspend fun getTodoDetail(todoId: Long): TodoRoomEntity
+    suspend fun fetchTodoDetail(todoId: Long): TodoRoomEntity
+
+    @Query("SELECT * FROM todolist WHERE deadline = :date")
+    suspend fun fetchTodoListWithDate(date: LocalDateTime): List<TodoRoomEntity>
 }

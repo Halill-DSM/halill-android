@@ -11,5 +11,5 @@ class GetTodoListUseCase @Inject constructor(
 ) : UseCase<Unit, Flow<UserTodoListEntity>>() {
 
     override suspend fun execute(data: Unit): Flow<UserTodoListEntity> =
-        fetchTodoListRepository.getTodoList()
+        fetchTodoListRepository.fetchTodoList()
 }

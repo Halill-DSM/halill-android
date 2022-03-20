@@ -9,6 +9,6 @@ class GetTodoDetailUseCase @Inject constructor(
     private val fetchTodoDetailRepository: FetchTodoDetailRepository
 ) : UseCase<Long, TodoEntity>() {
     override suspend fun execute(data: Long): TodoEntity =
-        fetchTodoDetailRepository.getTodoDetail(data)
+        fetchTodoDetailRepository.fetchTodoDetail(data)
 
 }

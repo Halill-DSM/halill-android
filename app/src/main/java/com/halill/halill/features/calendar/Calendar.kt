@@ -17,7 +17,15 @@ import java.time.LocalDate
 @Composable
 fun Calendar(viewModel: CalendarViewModel = hiltViewModel()) {
     val state = viewModel.state.collectAsState().value
-    CalendarContent(state = state)
+    CalendarContent(
+        state = state,
+        doOnNextClick = {
+            viewModel.showNextMonth()
+        },
+        doOnBeforeMonthClick = {
+            viewModel.showBeforeMonth()
+        }
+    )
 }
 
 @Composable
@@ -28,7 +36,9 @@ fun CalendarContent(
 ) {
     Column {
         CalendarMonthLayout(
-            state.showingMonthDate
+            state.showingMonthDate,
+            doOnBeforeMonthClick = doOnBeforeMonthClick,
+            doOnNextClick = doOnNextClick
         )
     }
 }

@@ -12,6 +12,14 @@ class CalendarViewModel @Inject constructor(
     override val initialState: CalendarState
         get() = CalendarState.initial()
 
+    fun showNextMonth() {
+        sendEvent(CalendarEvent.NextMonth)
+    }
+
+    fun showBeforeMonth() {
+        sendEvent(CalendarEvent.BeforeMonth)
+    }
+
     override fun reduceEvent(oldState: CalendarState, event: CalendarEvent) {
         when (event) {
             is CalendarEvent.NextMonth -> {

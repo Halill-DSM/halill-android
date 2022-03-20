@@ -47,14 +47,14 @@ class ListViewModel @Inject constructor(
     private fun isBothListNotEmpty(entity: UserTodoListEntity): Boolean =
         entity.doneList.isNotEmpty() || entity.todoList.isNotEmpty()
 
-    fun doneTodo(todoId: String) {
+    fun doneTodo(todoId: Long) {
         viewModelScope.launch {
             doneTodoUseCase.execute(todoId)
             loadTodoList()
         }
     }
 
-    fun deleteTodo(todoId: String) {
+    fun deleteTodo(todoId: Long) {
         viewModelScope.launch {
             deleteTodoUseCase.execute(todoId)
             emitViewEffect(ListViewEffect.DoneDeleteTodo)
@@ -62,7 +62,7 @@ class ListViewModel @Inject constructor(
         }
     }
 
-    fun startDetailTodo(id: String) {
+    fun startDetailTodo(id: Long) {
         emitViewEffect(ListViewEffect.StartTodoDetail(id))
     }
 

@@ -6,7 +6,9 @@ import com.halill.domain.features.todo.param.EditTodoParam
 import com.halill.domain.features.todo.param.WriteTodoParam
 
 interface LocalTodoDataSource {
+    suspend fun fetchTodoList(): List<TodoEntity>
 
+    suspend fun saveTodoList(todo: WriteTodoParam)
 
     suspend fun doneTodo(id: Long)
 

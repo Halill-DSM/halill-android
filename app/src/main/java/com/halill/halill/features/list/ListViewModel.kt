@@ -37,7 +37,7 @@ class ListViewModel @Inject constructor(
                         sendEvent(ListEvent.EmptyList)
                     }
                 }
-            }.onFailure {
+            }.runCatching {
                 sendEvent(ListEvent.EmptyList)
             }
 

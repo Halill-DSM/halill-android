@@ -16,21 +16,21 @@ object TodoRepositoryModule {
     @Singleton
     @Provides
     fun provideGetTodoListRepository(
-        remoteTodoDataSource: RemoteTodoDataSource
-    ): FetchTodoListRepository = FetchTodoListRepositoryImpl(remoteTodoDataSource)
+        localTodoDataSource: LocalTodoDataSource
+    ): FetchTodoListRepository =
+        FetchTodoListRepositoryImpl(localTodoDataSource)
 
     @Singleton
     @Provides
     fun provideSaveTodoRepository(
-        localTodoDataSource: LocalTodoDataSource,
-        remoteTodoDataSource: RemoteTodoDataSource
-    ): SaveTodoRepository = SaveTodoRepositoryImpl(localTodoDataSource, remoteTodoDataSource)
+        localTodoDataSource: LocalTodoDataSource
+    ): SaveTodoRepository = SaveTodoRepositoryImpl(localTodoDataSource)
 
     @Singleton
     @Provides
     fun provideDoneTodoRepository(
-        remoteTodoDataSource: RemoteTodoDataSource
-    ): DoneTodoRepository = DoneTodoRepositoryImpl(remoteTodoDataSource)
+        localTodoDataSource: LocalTodoDataSource
+    ): DoneTodoRepository = DoneTodoRepositoryImpl(localTodoDataSource)
 
     @Singleton
     @Provides
@@ -49,4 +49,10 @@ object TodoRepositoryModule {
     fun provideEditTodoRepository(
         localTodoDataSource: LocalTodoDataSource
     ): EditTodoRepository = EditTodoRepositoryImpl(localTodoDataSource)
+
+    @Singleton
+    @Provides
+    fun provideFetchAllTimeCountRepository(
+        remoteTodoDataSource: RemoteTodoDataSource
+    ): FetchAllTimeCountRepository = FetchAllTimeCountRepositoryImpl(remoteTodoDataSource)
 }

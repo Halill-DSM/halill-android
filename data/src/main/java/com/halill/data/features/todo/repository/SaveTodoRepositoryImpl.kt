@@ -7,11 +7,10 @@ import com.halill.domain.features.todo.repository.SaveTodoRepository
 import javax.inject.Inject
 
 class SaveTodoRepositoryImpl @Inject constructor(
-    private val localTodoDataSource: LocalTodoDataSource,
-    private val remoteTodoDataSource: RemoteTodoDataSource
+    private val localTodoDataSource: LocalTodoDataSource
 ) : SaveTodoRepository {
+
     override suspend fun saveTodo(todo: WriteTodoParam) {
-        val count = localTodoDataSource.fetchAllTimeCount()
-        remoteTodoDataSource.saveTodo(count.allCount, todo)
+        localTodoDataSource.saveTodoList(todo)
     }
 }

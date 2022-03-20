@@ -1,19 +1,11 @@
 package com.halill.data.features.todo.datasource.remote
 
 import com.halill.domain.features.todo.entity.AllTimeTodoCountEntity
-import com.halill.domain.features.todo.entity.TodoEntity
-import com.halill.domain.features.todo.param.WriteTodoParam
 import kotlinx.coroutines.flow.Flow
 
 interface RemoteTodoDataSource {
 
-    suspend fun getTodoList(): Flow<List<TodoEntity>>
-
-    suspend fun saveTodo(id: Int, todo: WriteTodoParam)
-
-    suspend fun doneTodo(id: Int)
-
-    suspend fun fetchAllTimeCount(): AllTimeTodoCountEntity
+    suspend fun fetchAllTimeCount(): Flow<AllTimeTodoCountEntity>
 
     suspend fun saveAllTimeCount(allTimeTodoCountEntity: AllTimeTodoCountEntity)
 }

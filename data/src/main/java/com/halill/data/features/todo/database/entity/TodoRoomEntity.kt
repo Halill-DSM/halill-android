@@ -9,29 +9,29 @@ import java.time.LocalDateTime
 
 @Entity(tableName = "todolist")
 data class TodoRoomEntity(
-    @PrimaryKey
-    var id: Int,
     var title: String,
     var content: String,
     var deadline: LocalDateTime,
     var isCompleted: Boolean
-)
+) {
+    @PrimaryKey(autoGenerate = true)
+    var id: Long = 0
+}
 
 fun List<TodoRoomEntity>.toEntity() =
     this.map { it.toEntity() }
 
 fun TodoRoomEntity.toEntity(): TodoEntity =
     TodoEntity(
-        id = id.toLong(),
+        id = id,
         title = title,
         content = content,
         deadline = deadline,
         isCompleted = isCompleted
     )
 
-fun WriteTodoParam.toDataEntity(id: Int) =
+fun WriteTodoParam.toDataEntity() =
     TodoRoomEntity(
-        id = id,
         title = title,
         content = content,
         deadline = deadline,
@@ -40,9 +40,10 @@ fun WriteTodoParam.toDataEntity(id: Int) =
 
 fun EditTodoParam.toDataEntity() =
     TodoRoomEntity(
-        id = todoId.toInt(),
         title = data.title,
         content = data.content,
         deadline = data.deadline,
         isCompleted = data.isCompleted
-    )
+    ).apply {
+        id = todoId
+    }

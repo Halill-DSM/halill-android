@@ -1,9 +1,13 @@
 package com.halill.data.util
 
+import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
+import com.halill.data.features.todo.datasource.remote.RemoteTodoDataSourceImpl
 import com.halill.domain.exception.ReadFireBaseStoreFailException
+import com.halill.domain.features.todo.entity.TodoEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
@@ -39,6 +43,7 @@ fun Task<QuerySnapshot>.dataBaseQueryTaskToFlow(): Flow<QuerySnapshot> =
             trySendBlocking(it)
             close()
         }.addOnFailureListener {
+            Log.e("queryError", it.toString())
             throw ReadFireBaseStoreFailException()
         }
         awaitClose()

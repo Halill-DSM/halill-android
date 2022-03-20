@@ -33,4 +33,8 @@
     <string name="mypage_comment">님의 할일 기록입니다.</string>
     <string name="done_input">완료</string>
     <string name="save_name_failed">사용자 이름 저장을 실패했습니다</string>
+    <string name="current_todo_count">남은 해야할 일</string>
+    <string name="current_done_count">완료한 일</string>
+    <string name="all_count">총 작성한 할일의 개수</string>
+    <string name="all_time_done_todo_count">총 완료한 할일의 개수</string>
 </resources>

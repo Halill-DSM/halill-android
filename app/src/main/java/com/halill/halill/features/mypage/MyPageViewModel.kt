@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.halill.domain.features.auth.usecase.FetchUserInfoUseCase
 import com.halill.domain.features.auth.usecase.LogoutUseCase
 import com.halill.domain.features.auth.usecase.SaveUserNameUseCase
+import com.halill.domain.features.todo.usecase.FetchAllTimeTodoUseCase
+import com.halill.domain.features.todo.usecase.FetchCurrentCountUseCase
 import com.halill.halill.base.BaseViewModel
 import com.halill.halill.base.EventFlow
 import com.halill.halill.base.MutableEventFlow
@@ -18,7 +20,9 @@ import javax.inject.Inject
 class MyPageViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
     private val saveUserNameUseCase: SaveUserNameUseCase,
-    private val fetchUserInfoUseCase: FetchUserInfoUseCase
+    private val fetchUserInfoUseCase: FetchUserInfoUseCase,
+    private val fetchCurrentCountUseCase: FetchCurrentCountUseCase,
+    private val fetchAllTimeTodoUseCase: FetchAllTimeTodoUseCase
 ) : BaseViewModel<MyPageState, MyPageEvent>() {
     override val initialState: MyPageState
         get() = MyPageState.initial()
@@ -35,6 +39,17 @@ class MyPageViewModel @Inject constructor(
         fetchUserInfoUseCase.execute(Unit).collect { user ->
             sendEvent(MyPageEvent.SetUser(user))
             Log.d("user_name", user.name)
+        }
+    }
+
+    suspend fun fetchCurrentCount() {
+        val data = fetchCurrentCountUseCase.execute(Unit)
+        sendEvent(MyPageEvent.SetCurrentTodoCount(data.todoCount, data.doneCount))
+    }
+
+    suspend fun fetchAllTimeCount() {
+        fetchAllTimeTodoUseCase.execute(Unit).collect {
+            sendEvent(MyPageEvent.SetAllTimeTodoCount(it.allCount, it.allDoneCount))
         }
     }
 

@@ -6,10 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill.R
 import com.halill.halill.base.observeWithLifecycle
+import com.halill.halill.ui.theme.Black
 import com.halill.halill.ui.theme.Teal900
 import kotlinx.coroutines.launch
 
@@ -34,7 +32,11 @@ fun MyPage(
 ) {
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
-        viewModel.fetchUserInfo()
+        viewModel.run {
+            fetchUserInfo()
+            fetchAllTimeCount()
+            fetchCurrentCount()
+        }
     }
 
     val scaffoldState = rememberScaffoldState()
@@ -80,16 +82,36 @@ fun MyPageContent(
     doOnNameTextClick: () -> Unit,
     doOnDoneSaveName: (String) -> Unit
 ) {
-    Row(horizontalArrangement = SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-        val userName = myPageState.name.ifBlank { "User" }
-        NameText(name = userName, doOnEditNameClick = doOnNameTextClick)
+    Column {
+        Row(horizontalArrangement = SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+            val userName = myPageState.name.ifBlank { "User" }
+            NameText(name = userName, doOnEditNameClick = doOnNameTextClick)
 
-        LogoutButton(doOnClick = {
-            doOnLogoutClick()
-        })
+            LogoutButton(doOnClick = {
+                doOnLogoutClick()
+            })
+        }
+
+        MyPageCountLayout(myPageState)
     }
+
     if (myPageState.showSaveNameDialog) {
         SaveUserNameDialog(userName = myPageState.name, doOnDone = doOnDoneSaveName)
+    }
+}
+
+@Composable
+fun MyPageCountLayout(myPageState: MyPageState) {
+    val currentTodoTitle = stringResource(id = R.string.current_todo_count)
+    val currentDoneTitle = stringResource(id = R.string.current_done_count)
+    val allTimeCountTitle = stringResource(id = R.string.all_count)
+    val allTimeDoneTitle = stringResource(id = R.string.all_time_done_todo_count)
+
+    Column(verticalArrangement = SpaceBetween, modifier = Modifier.fillMaxHeight()) {
+        MyPageCountContent(title = currentTodoTitle, count = myPageState.currentTodoCount)
+        MyPageCountContent(title = currentDoneTitle, count = myPageState.currentDoneCount)
+        MyPageCountContent(title = allTimeDoneTitle, count = myPageState.allTimeDoneTodoCount)
+        MyPageCountContent(title = allTimeCountTitle, count = myPageState.allCount)
     }
 }
 
@@ -157,4 +179,12 @@ fun LogoutButton(doOnClick: () -> Unit) {
             }
             .padding(10.dp)
     )
+}
+
+@Composable
+fun MyPageCountContent(title: String, count: Int, countColor: Color = Black) {
+    Row(horizontalArrangement = SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+        Text(text = title)
+        Text(text = count.toString(), color = countColor)
+    }
 }

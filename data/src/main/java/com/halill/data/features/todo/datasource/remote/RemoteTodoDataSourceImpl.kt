@@ -25,8 +25,8 @@ class RemoteTodoDataSourceImpl @Inject constructor(
         try {
             return dataBase.collection(userEmail).document(ALL_COUNT_KEY).get().dataBaseTaskToFlow()
                 .map {
-                    val allCount: Int = (it.data?.get(ALL_TODO_COUNT_KEY) ?: 0) as Int
-                    val allDoneCount: Int = (it.data?.get(ALL_DONE_COUNT_KEY) ?: 0) as Int
+                    val allCount: Int = (it.data?.get(ALL_TODO_COUNT_KEY) as Long).toInt()
+                    val allDoneCount: Int = (it.data?.get(ALL_DONE_COUNT_KEY) as Long).toInt()
                     AllTimeTodoCountEntity(allCount, allDoneCount)
                 }
         } catch (e: ReadFireBaseStoreFailException) {

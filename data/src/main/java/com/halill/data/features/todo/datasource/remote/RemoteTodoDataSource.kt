@@ -9,7 +9,9 @@ interface RemoteTodoDataSource {
 
     suspend fun getTodoList(): Flow<List<TodoEntity>>
 
-    suspend fun saveTodo(todo: WriteTodoParam)
+    suspend fun saveTodo(id: Int, todo: WriteTodoParam)
+
+    suspend fun doneTodo(id: Int)
 
     suspend fun fetchAllTimeCount(): AllTimeTodoCountEntity
 

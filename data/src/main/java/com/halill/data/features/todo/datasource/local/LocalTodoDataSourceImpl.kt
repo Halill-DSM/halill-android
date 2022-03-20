@@ -16,12 +16,6 @@ class LocalTodoDataSourceImpl @Inject constructor(
     private val todoDao: TodoDao,
     private val localStorage: LocalStorage
 ) : LocalTodoDataSource {
-    override suspend fun fetchTodoList(): List<TodoEntity> =
-        todoDao.getTodoList().toEntity()
-
-    override suspend fun saveTodoList(todo: WriteTodoParam) {
-        todoDao.saveTodoList(todo.toDataEntity())
-    }
 
     override suspend fun doneTodo(id: Long) {
         todoDao.doneTodo(id)

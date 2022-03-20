@@ -11,7 +11,7 @@ class SaveTodoRepositoryImpl @Inject constructor(
     private val remoteTodoDataSource: RemoteTodoDataSource
 ) : SaveTodoRepository {
     override suspend fun saveTodo(todo: WriteTodoParam) {
-        //localTodoDataSource.saveTodoList(todo)
-        remoteTodoDataSource.saveTodo(todo)
+        val count = localTodoDataSource.fetchAllTimeCount()
+        remoteTodoDataSource.saveTodo(count.allCount, todo)
     }
 }

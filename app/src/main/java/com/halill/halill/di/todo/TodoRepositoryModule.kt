@@ -29,8 +29,8 @@ object TodoRepositoryModule {
     @Singleton
     @Provides
     fun provideDoneTodoRepository(
-        localTodoDataSource: LocalTodoDataSource
-    ): DoneTodoRepository = DoneTodoRepositoryImpl(localTodoDataSource)
+        remoteTodoDataSource: RemoteTodoDataSource
+    ): DoneTodoRepository = DoneTodoRepositoryImpl(remoteTodoDataSource)
 
     @Singleton
     @Provides

@@ -9,9 +9,7 @@ import com.halill.domain.exception.ReadFireBaseStoreFailException
 import com.halill.domain.features.todo.entity.AllTimeTodoCountEntity
 import com.halill.domain.features.todo.entity.TodoEntity
 import com.halill.domain.features.todo.param.WriteTodoParam
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 class RemoteTodoDataSourceImpl @Inject constructor(
@@ -45,7 +43,7 @@ class RemoteTodoDataSourceImpl @Inject constructor(
                         val isComplete: Boolean = query.data[TODO_IS_DONE] as Boolean
 
                         TodoEntity(
-                            id = query.id,
+                            id = query.id.toLong(),
                             title = title,
                             content = content,
                             deadline = deadline.toLocalDateTime(),
@@ -62,7 +60,7 @@ class RemoteTodoDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveTodo(todo: WriteTodoParam) {
+    override suspend fun saveTodo(id: Int, todo: WriteTodoParam) {
         val userEmail = auth.currentUser!!.email!!
         val data = hashMapOf(
             TODO_TITLE to todo.title,
@@ -70,7 +68,27 @@ class RemoteTodoDataSourceImpl @Inject constructor(
             TODO_DEADLINE to todo.deadline.toString(),
             TODO_IS_DONE to todo.isCompleted
         )
-        dataBase.collection(userEmail).document(TODO_KEY).collection("list").add(data)
+        dataBase.collection(userEmail).document(TODO_KEY).collection("list")
+            .document(id.toString()).set(data)
+
+    }
+
+    override suspend fun doneTodo(id: Int) {
+        val userEmail = auth.currentUser!!.email!!
+        val oldValue = dataBase.collection(userEmail).document(TODO_KEY).collection("list")
+        oldValue.get().addOnSuccessListener {
+            it.map { query ->
+                val data = hashMapOf(
+                    TODO_TITLE to query[TODO_TITLE],
+                    TODO_CONTENT to query[TODO_CONTENT],
+                    TODO_DEADLINE to query[TODO_DEADLINE],
+                    TODO_IS_DONE to true
+                )
+
+                dataBase.collection(userEmail).document(TODO_KEY).collection("list")
+                    .document(id.toString()).set(data)
+            }
+        }
     }
 
     override suspend fun fetchAllTimeCount(): AllTimeTodoCountEntity {

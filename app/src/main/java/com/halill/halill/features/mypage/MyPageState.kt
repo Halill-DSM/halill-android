@@ -5,6 +5,7 @@ import com.halill.halill.base.MviState
 data class MyPageState(
     val name: String,
     val email: String,
+    val showSaveNameDialog: Boolean,
     val currentTodoCount: Int,
     val currentDoneCount: Int,
     val allTimeTodoCount: Int,
@@ -16,6 +17,7 @@ data class MyPageState(
             MyPageState(
                 name = "",
                 email = "",
+                showSaveNameDialog = false,
                 currentTodoCount = 0,
                 currentDoneCount = 0,
                 allTimeTodoCount = 0,

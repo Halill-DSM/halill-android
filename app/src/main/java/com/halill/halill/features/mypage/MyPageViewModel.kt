@@ -44,6 +44,14 @@ class MyPageViewModel @Inject constructor(
         }
     }
 
+    fun showSaveNameDialog() {
+        sendEvent(MyPageEvent.ShowSaveNameDialog)
+    }
+
+    fun dismissSaveNameDialog() {
+        sendEvent(MyPageEvent.DismissSaveNameDialog)
+    }
+
     override fun reduceEvent(oldState: MyPageState, event: MyPageEvent) {
         when (event) {
             is MyPageEvent.SetAllTimeTodoCount -> {
@@ -69,6 +77,20 @@ class MyPageViewModel @Inject constructor(
                     oldState.copy(
                         name = event.userEntity.name,
                         email = event.userEntity.email
+                    )
+                )
+            }
+            is MyPageEvent.DismissSaveNameDialog -> {
+                setState(
+                    oldState.copy(
+                        showSaveNameDialog = false
+                    )
+                )
+            }
+            MyPageEvent.ShowSaveNameDialog -> {
+                setState(
+                    oldState.copy(
+                        showSaveNameDialog = true
                     )
                 )
             }

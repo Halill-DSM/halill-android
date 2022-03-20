@@ -1,6 +1,12 @@
 package com.halill.data.util
 
 import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.QueryDocumentSnapshot
+import com.google.firebase.firestore.QuerySnapshot
+import com.halill.data.features.todo.datasource.remote.RemoteTodoDataSourceImpl
+import com.halill.domain.exception.ReadFireBaseStoreFailException
+import com.halill.domain.features.todo.entity.TodoEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
@@ -13,6 +19,30 @@ fun <T> Task<T>.createFlowToCheckTaskCallbackIsSuccess(): Flow<Boolean> =
         this@createFlowToCheckTaskCallbackIsSuccess.addOnCompleteListener {
             trySendBlocking(it.isSuccessful)
             close()
+        }
+        awaitClose()
+    }
+
+@OptIn(ExperimentalCoroutinesApi::class)
+fun Task<DocumentSnapshot>.dataBaseTaskToFlow(): Flow<DocumentSnapshot> =
+    callbackFlow {
+        this@dataBaseTaskToFlow.addOnSuccessListener {
+            trySendBlocking(it)
+            close()
+        }.addOnFailureListener {
+            throw ReadFireBaseStoreFailException()
+        }
+        awaitClose()
+    }
+
+@OptIn(ExperimentalCoroutinesApi::class)
+fun Task<QuerySnapshot>.dataBaseQueryTaskToFlow(): Flow<QuerySnapshot> =
+    callbackFlow {
+        this@dataBaseQueryTaskToFlow.addOnSuccessListener {
+            trySendBlocking(it)
+            close()
+        }.addOnFailureListener {
+            throw ReadFireBaseStoreFailException()
         }
         awaitClose()
     }

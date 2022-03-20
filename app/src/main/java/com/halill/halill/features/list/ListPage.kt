@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,8 +45,9 @@ import java.time.temporal.ChronoUnit
 @Composable
 fun ListPage(navController: NavController, viewModel: ListViewModel = hiltViewModel()) {
     val state = viewModel.state.collectAsState().value
-
-    viewModel.loadTodoList()
+    LaunchedEffect(Unit) {
+        viewModel.loadTodoList()
+    }
 
     Column(horizontalAlignment = Alignment.End) {
         SwitchContentDoneOrTodoText(mainState = state) {

@@ -6,14 +6,14 @@ data class RegisterState(
     val email: String,
     val password: String,
     val checkPassword: String,
-    val name: String
+    val isLoading: Boolean
 ) : MviState {
     companion object {
         fun initial() = RegisterState(
             email = "",
             password = "",
             checkPassword = "",
-            name = ""
+            isLoading = false
         )
     }
 }

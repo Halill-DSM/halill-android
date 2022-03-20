@@ -1,6 +1,7 @@
 package com.halill.halill.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavType
@@ -20,6 +21,8 @@ import com.halill.halill.ui.theme.Teal900
 fun HalIllApp() {
     val navController = rememberNavController()
     val systemUiController = rememberSystemUiController()
+    val scaffoldState = rememberScaffoldState()
+
     if (isSystemInDarkTheme()) {
         systemUiController.setSystemBarsColor(
             color = Color.Black
@@ -61,13 +64,13 @@ fun HalIllApp() {
         composable(
             route = "login"
         ) {
-            Login(navController)
+            Login(navController = navController, scaffoldState = scaffoldState)
         }
 
         composable(
             route = "register"
         ) {
-            Register(navController)
+            Register(scaffoldState = scaffoldState, navController = navController)
         }
     }
 }

@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -30,9 +29,14 @@ import com.halill.halill.ui.theme.Teal900
 import kotlinx.coroutines.launch
 
 @Composable
-fun Register(navController: NavController, viewModel: RegisterViewModel = hiltViewModel()) {
+fun Register(
+    scaffoldState: ScaffoldState,
+    navController: NavController,
+    viewModel: RegisterViewModel = hiltViewModel()
+) {
     val state = viewModel.state.collectAsState().value
-    val scaffoldState = rememberScaffoldState()
+
+    val scope = rememberCoroutineScope()
 
     Scaffold(scaffoldState = scaffoldState,
         topBar = {
@@ -56,14 +60,17 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = hiltVi
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
                 RegisterEmailTextField(
                     state,
                     doOnEmailTextChange = { email -> viewModel.setEmail(email) }
                 )
+
                 RegisterPasswordTextField(
                     state,
                     doOnPasswordTextChange = { password -> viewModel.setPassword(password) }
                 )
+
                 RegisterCheckPasswordTextField(
                     state,
                     doOnCheckPasswordTextChange = { checkPassword ->
@@ -72,14 +79,20 @@ fun Register(navController: NavController, viewModel: RegisterViewModel = hiltVi
                         )
                     }
                 )
-                RegisterNameTextField(
-                    state.name,
-                    doOnNameTextChange = { name -> viewModel.setName(name) })
+
+                val emptyComment = stringResource(id = R.string.login_empty_comment)
                 RegisterButton(
-                    scaffoldState = scaffoldState,
                     state = state,
                     doOnRegisterButtonClick = {
                         viewModel.register()
+                    },
+                    doOnClickWhenEmpty = {
+                        scope.launch {
+                            scaffoldState.snackbarHostState.showSnackbar(
+                                emptyComment,
+                                duration = SnackbarDuration.Short
+                            )
+                        }
                     }
                 )
             }
@@ -185,46 +198,18 @@ fun RegisterCheckPasswordTextField(
 }
 
 @Composable
-fun RegisterNameTextField(
-    nameText: String,
-    doOnNameTextChange: (String) -> Unit
-) {
-    val nameLabel = "이름을 입력해주세요"
-
-    Spacer(modifier = Modifier.height(25.dp))
-
-    IdTextField(
-        text = nameText,
-        label = nameLabel,
-        layoutId = "register_name_tf",
-        doOnValueChange = {
-            doOnNameTextChange(it)
-        },
-        keyboardType = KeyboardType.Text,
-        imeAction = ImeAction.Done
-    )
-}
-
-@Composable
 fun RegisterButton(
-    scaffoldState: ScaffoldState,
     state: RegisterState,
-    doOnRegisterButtonClick: () -> Unit
+    doOnRegisterButtonClick: () -> Unit,
+    doOnClickWhenEmpty: () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-    val emptyComment = stringResource(id = R.string.login_empty_comment)
     Spacer(modifier = Modifier.height(25.dp))
     Button(
         onClick = {
             if (state.doneInput()) {
                 doOnRegisterButtonClick()
             } else {
-                scope.launch {
-                    scaffoldState.snackbarHostState.showSnackbar(
-                        emptyComment,
-                        duration = SnackbarDuration.Short
-                    )
-                }
+                doOnClickWhenEmpty()
             }
         },
         colors = ButtonDefaults.buttonColors(
@@ -232,11 +217,14 @@ fun RegisterButton(
             contentColor = Color.White
         ),
         modifier = Modifier
-            .layoutId(LoginLayoutViews.LoginButton)
+            .layoutId(LoginLayoutViews.LoginButtonId)
             .width(200.dp)
             .clip(RoundedCornerShape(30.dp))
     ) {
-        Text(text = stringResource(id = R.string.register))
+        val text =
+            if (state.isLoading) stringResource(id = R.string.loading_comment)
+            else stringResource(id = R.string.register)
+        Text(text = text)
     }
 }
 
@@ -244,7 +232,7 @@ private fun RegisterState.doneInput(): Boolean =
     isNotEmpty() && passwordIsSameWithCheck()
 
 private fun RegisterState.isNotEmpty(): Boolean =
-    email.isNotEmpty() && password.isNotEmpty() && checkPassword.isNotEmpty() && name.isNotEmpty()
+    email.isNotEmpty() && password.isNotEmpty() && checkPassword.isNotEmpty()
 
 private fun RegisterState.passwordIsSameWithCheck(): Boolean =
     password == checkPassword

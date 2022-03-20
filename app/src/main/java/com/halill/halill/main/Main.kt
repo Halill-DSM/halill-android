@@ -6,9 +6,11 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -17,17 +19,28 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.halill.halill.R
+import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.features.list.ListPage
+import com.halill.halill.features.mypage.MyPage
 import com.halill.halill.ui.theme.Teal700
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Main(navController: NavController) {
+fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     val scaffoldState = rememberScaffoldState()
-
     val navHostController = rememberNavController()
 
     val floatingIcon = rememberVectorPainter(image = Icons.Filled.Add)
+
+    viewModel.fetchUserInfo()
+
+    viewModel.mainViewEffect.observeWithLifecycle {
+        when (it) {
+            is MainViewEffect.StartLogin -> {
+                startLogin(navController = navController)
+            }
+        }
+    }
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -51,8 +64,14 @@ fun Main(navController: NavController) {
         ) {
             composable(BottomNavigationItem.List.route) { ListPage(navController = navController) }
             composable(BottomNavigationItem.Calendar.route) { Calendar() }
-            composable(BottomNavigationItem.MyPage.route) { MyPage() }
+            composable(BottomNavigationItem.MyPage.route) { MyPage(navController) }
         }
+    }
+}
+
+private fun startLogin(navController: NavController) {
+    navController.navigate("login") {
+        launchSingleTop = true
     }
 }
 
@@ -66,8 +85,8 @@ fun BottomNavBar(
         ),
         backgroundColor = Teal700
     ) {
-        val bottomTabSelectedItem = remember {
-            mutableStateOf<BottomNavigationItem>(BottomNavigationItem.List)
+        val bottomTabSelectedItem = rememberSaveable {
+            mutableStateOf<String>(BottomNavigationItem.List.route)
         }
         BottomNavigationItem(
             modifier = Modifier.weight(1f),
@@ -76,7 +95,7 @@ fun BottomNavBar(
                     BottomNavigationItem.List.route,
                     navController
                 )
-                bottomTabSelectedItem.value = BottomNavigationItem.List
+                bottomTabSelectedItem.value = BottomNavigationItem.List.route
             },
             icon = {
                 Icon(
@@ -84,7 +103,7 @@ fun BottomNavBar(
                     contentDescription = null
                 )
             },
-            selected = bottomTabSelectedItem.value is BottomNavigationItem.List
+            selected = bottomTabSelectedItem.value == BottomNavigationItem.List.route
         )
 
         BottomNavigationItem(
@@ -94,7 +113,7 @@ fun BottomNavBar(
                     BottomNavigationItem.Calendar.route,
                     navController
                 )
-                bottomTabSelectedItem.value = BottomNavigationItem.Calendar
+                bottomTabSelectedItem.value = BottomNavigationItem.Calendar.route
             },
             icon = {
                 Icon(
@@ -102,7 +121,7 @@ fun BottomNavBar(
                     contentDescription = null
                 )
             },
-            selected = bottomTabSelectedItem.value is BottomNavigationItem.Calendar
+            selected = bottomTabSelectedItem.value == BottomNavigationItem.Calendar.route
         )
 
         BottomNavigationItem(
@@ -112,7 +131,7 @@ fun BottomNavBar(
                     BottomNavigationItem.MyPage.route,
                     navController
                 )
-                bottomTabSelectedItem.value = BottomNavigationItem.MyPage
+                bottomTabSelectedItem.value = BottomNavigationItem.MyPage.route
             },
             icon = {
                 Icon(
@@ -120,7 +139,7 @@ fun BottomNavBar(
                     contentDescription = null
                 )
             },
-            selected = bottomTabSelectedItem.value is BottomNavigationItem.MyPage
+            selected = bottomTabSelectedItem.value == BottomNavigationItem.MyPage.route
         )
 
         Box(modifier = Modifier.weight(1f))

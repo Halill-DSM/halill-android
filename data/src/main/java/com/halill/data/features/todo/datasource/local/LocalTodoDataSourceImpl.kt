@@ -3,15 +3,20 @@ package com.halill.data.features.todo.datasource.local
 import com.halill.data.features.todo.database.dao.TodoDao
 import com.halill.data.features.todo.database.entity.toDataEntity
 import com.halill.data.features.todo.database.entity.toEntity
+import com.halill.data.local.datastorage.LocalStorage
+import com.halill.domain.features.todo.entity.AllTimeTodoCountEntity
 import com.halill.domain.features.todo.entity.TodoEntity
 import com.halill.domain.features.todo.param.EditTodoParam
 import com.halill.domain.features.todo.param.WriteTodoParam
+import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.zip
 import javax.inject.Inject
 
 class LocalTodoDataSourceImpl @Inject constructor(
     private val todoDao: TodoDao
 ) : LocalTodoDataSource {
-    override suspend fun getTodoList(): List<TodoEntity> =
+
+    override suspend fun fetchTodoList(): List<TodoEntity> =
         todoDao.getTodoList().toEntity()
 
     override suspend fun saveTodoList(todo: WriteTodoParam) {
@@ -26,7 +31,7 @@ class LocalTodoDataSourceImpl @Inject constructor(
         todoDao.deleteTodo(id)
     }
 
-    override suspend fun getTodoDetail(id: Long): TodoEntity =
+    override suspend fun fetchTodoDetail(id: Long): TodoEntity =
         todoDao.getTodoDetail(id).toEntity()
 
     override suspend fun editTodo(param: EditTodoParam) {

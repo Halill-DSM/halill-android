@@ -1,10 +1,7 @@
 package com.halill.halill.main
 
 import androidx.lifecycle.viewModelScope
-import com.halill.domain.features.todo.entity.UserTodoListEntity
-import com.halill.domain.features.todo.usecase.DeleteTodoUseCase
-import com.halill.domain.features.todo.usecase.DoneTodoUseCase
-import com.halill.domain.features.todo.usecase.GetTodoListUseCase
+import com.halill.domain.features.auth.usecase.CheckLoginUseCase
 import com.halill.halill.base.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
@@ -13,18 +10,26 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    private val checkLoginUseCase: CheckLoginUseCase
 ) : BaseViewModel<MainState, MainEvent>() {
 
     override val initialState: MainState
-        get() = MainState.initial()
+        get() = MainState
 
     private val _mainViewEffect = MutableEventFlow<MainViewEffect>()
-    val mainViewEffect: EventFlow<MainViewEffect> = _mainViewEffect.asEventFlow()
+    val mainViewEffect = _mainViewEffect.asEventFlow()
+
+    fun fetchUserInfo() {
+        viewModelScope.launch {
+            checkLoginUseCase.execute(Unit).collect { isLogin ->
+                if(!isLogin) {
+                    _mainViewEffect.emit(MainViewEffect.StartLogin)
+                }
+            }
+        }
+    }
 
     override fun reduceEvent(oldState: MainState, event: MainEvent) {
-        when (event) {
-
-        }
     }
 
 

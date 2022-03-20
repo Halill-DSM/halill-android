@@ -6,5 +6,6 @@ sealed class RegisterEvent : MviEvent {
     data class InputEmail(val email: String) : RegisterEvent()
     data class InputPassword(val password: String) : RegisterEvent()
     data class InputCheckPassword(val checkPassword: String) : RegisterEvent()
-    data class InputName(val name: String) : RegisterEvent()
+    object StartLoading : RegisterEvent()
+    object FinishLoading : RegisterEvent()
 }

@@ -1,15 +1,16 @@
 package com.halill.halill.features.auth.login
 
-import androidx.lifecycle.viewModelScope
+import com.halill.domain.features.auth.param.LoginParam
+import com.halill.domain.features.auth.usecase.LoginUseCase
 import com.halill.halill.base.BaseViewModel
 import com.halill.halill.base.MutableEventFlow
 import com.halill.halill.base.asEventFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
+    private val loginUseCase: LoginUseCase
 ) : BaseViewModel<LoginState, LoginEvent>() {
 
     override val initialState: LoginState
@@ -18,21 +19,27 @@ class LoginViewModel @Inject constructor(
     private val _loginViewEffect = MutableEventFlow<LoginViewEffect>()
     val loginViewEffect = _loginViewEffect.asEventFlow()
 
-//    fun login() {
-//        viewModelScope.launch {
-//            if (doneInput()) {
-//                startLoading()
-//                val parameter =
-//                    LoginParameter(email = state.value.email, password = state.value.password)
-//                loginUseCase.execute(parameter)
-//                _loginViewEffect.emit(LoginViewEffect.FinishLogin)
-//                doneLoading()
-//            }
-//        }
-//    }
+    suspend fun login() {
+        if (!state.value.isLoading) {
+            startLoading()
+            val parameter =
+                LoginParam(email = state.value.email, password = state.value.password)
 
-    private fun doneInput(): Boolean =
-        state.value.email.isNotEmpty() && state.value.password.isNotEmpty()
+            kotlin.runCatching {
+                loginUseCase.execute(parameter)
+            }.onSuccess {
+                _loginViewEffect.emit(LoginViewEffect.FinishLogin)
+            }.onFailure {
+                _loginViewEffect.emit(LoginViewEffect.WrongId)
+            }.also {
+                doneLoading()
+            }
+        }
+    }
+
+    fun setStateInitial() {
+        sendEvent(LoginEvent.InitState)
+    }
 
     fun setEmail(email: String) {
         sendEvent(LoginEvent.InputEmail(email))
@@ -50,19 +57,30 @@ class LoginViewModel @Inject constructor(
         sendEvent(LoginEvent.DoneLoading)
     }
 
+    suspend fun notDoneInput() {
+        _loginViewEffect.emit(LoginViewEffect.NotDoneInput)
+        sendEvent(LoginEvent.NotDoneInput)
+    }
+
     override fun reduceEvent(oldState: LoginState, event: LoginEvent) {
         when (event) {
             is LoginEvent.InputEmail -> {
-                setState(oldState.copy(email = event.email))
+                setState(oldState.copy(email = event.email, doneInput = true))
             }
             is LoginEvent.InputPassword -> {
-                setState(oldState.copy(password = event.password))
+                setState(oldState.copy(password = event.password, doneInput = true))
             }
             is LoginEvent.StartLoading -> {
                 setState(oldState.copy(isLoading = true))
             }
             is LoginEvent.DoneLoading -> {
                 setState(oldState.copy(isLoading = false))
+            }
+            is LoginEvent.NotDoneInput -> {
+                setState(oldState.copy(doneInput = false))
+            }
+            is LoginEvent.InitState -> {
+                setState(LoginState.initial())
             }
         }
     }

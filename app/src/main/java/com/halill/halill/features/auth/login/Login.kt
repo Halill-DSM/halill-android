@@ -26,6 +26,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill.R
+import com.halill.halill.base.EventFlow
 import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.features.auth.IdTextField
 import com.halill.halill.features.auth.PasswordTextField
@@ -35,11 +36,17 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun Login(
+    scaffoldState: ScaffoldState,
     navController: NavController,
-    darkTheme: Boolean = isSystemInDarkTheme()
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
     val backgroundColor = if (darkTheme) Color.Black else Teal200
-    val scaffoldState = rememberScaffoldState()
+    handleViewEffect(
+        scaffoldState = scaffoldState,
+        navController = navController,
+        effect = viewModel.loginViewEffect
+    )
     Scaffold(scaffoldState = scaffoldState) {
         BoxWithConstraints(
             modifier = Modifier
@@ -50,22 +57,23 @@ fun Login(
                 LoginTitle()
                 LoginComment()
                 LoginIluImage()
-                LoginLayout(navController)
+                LoginLayout(navController, viewModel)
             }
         }
     }
-    handleViewEffect(scaffoldState = scaffoldState, navController = navController)
 }
 
 @Composable
 private fun handleViewEffect(
     scaffoldState: ScaffoldState,
     navController: NavController,
-    viewModel: LoginViewModel = hiltViewModel()
+    effect: EventFlow<LoginViewEffect>
 ) {
     val wrongComment = stringResource(id = R.string.wrong_id_comment)
     val internetErrorComment = stringResource(id = R.string.internet_error_comment)
-    viewModel.loginViewEffect.observeWithLifecycle(action = {
+    val emptyComment = stringResource(id = R.string.login_empty_comment)
+
+    effect.observeWithLifecycle(action = {
         when (it) {
             is LoginViewEffect.WrongId
             -> scaffoldState.snackbarHostState.showSnackbar(
@@ -76,6 +84,11 @@ private fun handleViewEffect(
                 internetErrorComment,
                 duration = SnackbarDuration.Short
             )
+            is LoginViewEffect.NotDoneInput ->
+                scaffoldState.snackbarHostState.showSnackbar(
+                    emptyComment,
+                    duration = SnackbarDuration.Short
+                )
             is LoginViewEffect.FinishLogin -> navController.popBackStack()
         }
     })
@@ -143,7 +156,10 @@ fun LoginIluImage() {
 }
 
 @Composable
-fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel = hiltViewModel()) {
+fun LoginLayout(
+    navController: NavController,
+    loginViewModel: LoginViewModel
+) {
     val state = loginViewModel.state.collectAsState().value
     ConstraintLayout(
         loginLayoutConstraint(),
@@ -154,6 +170,8 @@ fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel = h
             .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
             .background(color = Color.White)
     ) {
+        val coroutineScope = rememberCoroutineScope()
+
         val emailLabel = "이메일"
         IdTextField(
             text = state.email,
@@ -163,6 +181,7 @@ fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel = h
             },
             imeAction = ImeAction.Next
         )
+
         val passwordLabel = "비밀번호"
         PasswordTextField(
             text = state.password,
@@ -172,12 +191,27 @@ fun LoginLayout(navController: NavController, loginViewModel: LoginViewModel = h
             },
             imeAction = ImeAction.Done
         )
+
+
         LoginButton(
             loginState = state,
-            onLoginButtonClick = { }
+            onLoginButtonClick = { isDoneInput ->
+                if (isDoneInput) {
+                    coroutineScope.launch {
+                        loginViewModel.login()
+                    }
+                } else {
+                    coroutineScope.launch {
+                        loginViewModel.notDoneInput()
+                    }
+                }
+            }
         )
         AskRegisterText()
-        StartRegisterButton(navController)
+        StartRegisterButton(doOnClick = {
+            navController.navigate("register")
+            loginViewModel.setStateInitial()
+        })
     }
 }
 
@@ -185,7 +219,7 @@ private fun loginLayoutConstraint(): ConstraintSet =
     ConstraintSet {
         val idTextField = createRefFor(LoginLayoutViews.IdTextField)
         val passwordTextField = createRefFor(LoginLayoutViews.PasswordField)
-        val loginButton = createRefFor(LoginLayoutViews.LoginButton)
+        val loginButton = createRefFor(LoginLayoutViews.LoginButtonId)
         val askRegisterText = createRefFor(LoginLayoutViews.AskRegisterText)
         val registerButton = createRefFor(LoginLayoutViews.RegisterButton)
         constrain(idTextField) {
@@ -217,45 +251,37 @@ private fun loginLayoutConstraint(): ConstraintSet =
     }
 
 @Composable
-fun LoginButton(loginState: LoginState, onLoginButtonClick: () -> Unit) {
-    val scope = rememberCoroutineScope()
-    val scaffoldState = rememberScaffoldState()
-
+fun LoginButton(
+    loginState: LoginState,
+    onLoginButtonClick: (Boolean) -> Unit
+) {
     val focusManager = LocalFocusManager.current
-    val emptyComment = stringResource(id = R.string.login_empty_comment)
 
     Button(
         onClick = {
             focusManager.clearFocus()
-            if (doneInput(loginState)) {
-                onLoginButtonClick()
-            } else {
-                scope.launch {
-                    scaffoldState.snackbarHostState.showSnackbar(
-                        emptyComment,
-                        duration = SnackbarDuration.Short
-                    )
-                }
-            }
+            onLoginButtonClick(doneInput(loginState))
         },
         colors = buttonColors(
-            backgroundColor = if (doneInput(loginState)) Teal900 else Color.Gray,
+            backgroundColor = Teal900,
             contentColor = Color.White
         ),
         modifier = Modifier
-            .layoutId(LoginLayoutViews.LoginButton)
+            .layoutId(LoginLayoutViews.LoginButtonId)
             .clip(RoundedCornerShape(30.dp))
     ) {
-        Text(text = stringResource(id = R.string.login))
+        val text =
+            if (loginState.isLoading) stringResource(id = R.string.loading_comment)
+            else stringResource(id = R.string.login)
+        Text(text = text)
     }
-
 }
 
 private fun doneInput(state: LoginState) =
-    state.email.isNotEmpty() && state.password.isNotEmpty()
+    state.email.isNotBlank() && state.password.isNotBlank() && state.doneInput
 
 @Composable
-fun AskRegisterText() {
+private fun AskRegisterText() {
     Text(
         text = stringResource(id = R.string.ask_register),
         Modifier
@@ -266,9 +292,9 @@ fun AskRegisterText() {
 }
 
 @Composable
-fun StartRegisterButton(navController: NavController) {
+fun StartRegisterButton(doOnClick: () -> Unit) {
     TextButton(
-        onClick = { navController.navigate("register") },
+        onClick = { doOnClick() },
         Modifier
             .layoutId(LoginLayoutViews.RegisterButton)
             .wrapContentSize(),

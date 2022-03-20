@@ -1,6 +1,7 @@
 package com.halill.halill.di.todo
 
 import com.halill.data.features.todo.datasource.local.LocalTodoDataSource
+import com.halill.data.features.todo.datasource.remote.RemoteTodoDataSource
 import com.halill.data.features.todo.repository.*
 import com.halill.domain.features.todo.repository.*
 import dagger.Module
@@ -16,19 +17,22 @@ object TodoRepositoryModule {
     @Provides
     fun provideGetTodoListRepository(
         localTodoDataSource: LocalTodoDataSource
-    ): GetTodoListRepository = GetTodoListRepositoryImpl(localTodoDataSource)
+    ): FetchTodoListRepository =
+        FetchTodoListRepositoryImpl(localTodoDataSource)
 
     @Singleton
     @Provides
     fun provideSaveTodoRepository(
-        localTodoDataSource: LocalTodoDataSource
-    ): SaveTodoRepository = SaveTodoRepositoryImpl(localTodoDataSource)
+        localTodoDataSource: LocalTodoDataSource,
+        remoteTodoDataSource: RemoteTodoDataSource
+    ): SaveTodoRepository = SaveTodoRepositoryImpl(localTodoDataSource, remoteTodoDataSource)
 
     @Singleton
     @Provides
     fun provideDoneTodoRepository(
-        localTodoDataSource: LocalTodoDataSource
-    ): DoneTodoRepository = DoneTodoRepositoryImpl(localTodoDataSource)
+        localTodoDataSource: LocalTodoDataSource,
+        remoteTodoDataSource: RemoteTodoDataSource
+    ): DoneTodoRepository = DoneTodoRepositoryImpl(localTodoDataSource, remoteTodoDataSource)
 
     @Singleton
     @Provides
@@ -40,11 +44,17 @@ object TodoRepositoryModule {
     @Provides
     fun provideGetTodoDetailRepository(
         localTodoDataSource: LocalTodoDataSource
-    ): GetTodoDetailRepository = GetTodoDetailRepositoryImpl(localTodoDataSource)
+    ): FetchTodoDetailRepository = FetchTodoDetailRepositoryImpl(localTodoDataSource)
 
     @Singleton
     @Provides
     fun provideEditTodoRepository(
         localTodoDataSource: LocalTodoDataSource
     ): EditTodoRepository = EditTodoRepositoryImpl(localTodoDataSource)
+
+    @Singleton
+    @Provides
+    fun provideFetchAllTimeCountRepository(
+        remoteTodoDataSource: RemoteTodoDataSource
+    ): FetchAllTimeCountRepository = FetchAllTimeCountRepositoryImpl(remoteTodoDataSource)
 }

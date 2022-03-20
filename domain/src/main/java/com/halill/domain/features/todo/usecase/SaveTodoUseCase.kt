@@ -8,6 +8,7 @@ import javax.inject.Inject
 class SaveTodoUseCase @Inject constructor(
     private val saveTodoRepository: SaveTodoRepository
 ): UseCase<WriteTodoParam, Unit>() {
+
     override suspend fun execute(data: WriteTodoParam) {
         saveTodoRepository.saveTodo(data)
     }

@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,8 +45,9 @@ import java.time.temporal.ChronoUnit
 @Composable
 fun ListPage(navController: NavController, viewModel: ListViewModel = hiltViewModel()) {
     val state = viewModel.state.collectAsState().value
-
-    viewModel.loadTodoList()
+    LaunchedEffect(Unit) {
+        viewModel.loadTodoList()
+    }
 
     Column(horizontalAlignment = Alignment.End) {
         SwitchContentDoneOrTodoText(mainState = state) {
@@ -53,7 +55,7 @@ fun ListPage(navController: NavController, viewModel: ListViewModel = hiltViewMo
         }
 
         MainPager(
-            mainState = state,
+            state = state,
             onItemClick = { id -> viewModel.startDetailTodo(id) },
             onDoneClick = { id -> viewModel.doneTodo(id) },
             onDeleteClick = { id -> viewModel.deleteTodo(id) }
@@ -107,7 +109,7 @@ fun SwitchContentDoneOrTodoText(mainState: ListState, doOnClick: () -> Unit) {
 @ExperimentalPagerApi
 @Composable
 fun MainPager(
-    mainState: ListState,
+    state: ListState,
     onItemClick: (Long) -> Unit,
     onDoneClick: (Long) -> Unit,
     onDeleteClick: (Long) -> Unit
@@ -118,10 +120,10 @@ fun MainPager(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         when {
-            mainState.isLoading -> LoadingText()
-            checkBothListIsEmpty(mainState) -> BothEmptySoRequireTodoText()
+            state.isLoading -> LoadingText()
+            checkBothListIsEmpty(state) -> BothEmptySoRequireTodoText()
             else -> ShowList(
-                state = mainState,
+                state = state,
                 onItemClick,
                 onDoneClick,
                 onDeleteClick

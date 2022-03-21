@@ -2,6 +2,7 @@ package com.halill.halill.features.calendar
 
 import androidx.lifecycle.viewModelScope
 import com.halill.domain.features.todo.usecase.DoneTodoUseCase
+import com.halill.domain.features.todo.usecase.FetchDateTodoMapUseCase
 import com.halill.domain.features.todo.usecase.FetchTodoListWithDateUseCase
 import com.halill.halill.base.BaseViewModel
 import com.halill.halill.util.toMontDayList
@@ -13,7 +14,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CalendarViewModel @Inject constructor(
     private val doneTodoUseCase: DoneTodoUseCase,
-    private val fetchTodoListWithDateUseCase: FetchTodoListWithDateUseCase
+    private val fetchTodoListWithDateUseCase: FetchTodoListWithDateUseCase,
+    private val fetchDateTodoMapUseCase: FetchDateTodoMapUseCase
 ) : BaseViewModel<CalendarState, CalendarEvent>() {
 
     override val initialState: CalendarState
@@ -29,6 +31,11 @@ class CalendarViewModel @Inject constructor(
 
     fun selectDate(date: LocalDate) {
         sendEvent(CalendarEvent.SelectDate(date))
+    }
+
+    suspend fun fetchDateTodoMap() {
+        val todoMap = fetchDateTodoMapUseCase.execute(Unit)
+        sendEvent(CalendarEvent.SetDateTodoMap(todoMap))
     }
 
     fun doneTodo(id: Long) {
@@ -55,6 +62,7 @@ class CalendarViewModel @Inject constructor(
                     )
                 )
             }
+
             is CalendarEvent.BeforeMonth -> {
                 setState(
                     oldState.copy(
@@ -64,6 +72,7 @@ class CalendarViewModel @Inject constructor(
                     )
                 )
             }
+
             is CalendarEvent.SelectDate -> {
                 setState(
                     oldState.copy(
@@ -71,10 +80,19 @@ class CalendarViewModel @Inject constructor(
                     )
                 )
             }
+
             is CalendarEvent.ShowDateTodoList -> {
                 setState(
                     oldState.copy(
                         selectedDateTodoList = event.todolist
+                    )
+                )
+            }
+
+            is CalendarEvent.SetDateTodoMap -> {
+                setState(
+                    oldState.copy(
+                        dateTodoMap = event.dateTodoMap
                     )
                 )
             }

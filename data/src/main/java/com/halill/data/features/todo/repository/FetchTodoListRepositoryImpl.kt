@@ -25,4 +25,16 @@ class FetchTodoListRepositoryImpl @Inject constructor(
 
     override suspend fun fetchTodoListWithDate(date: LocalDate): List<TodoEntity> =
         localTodoDataSource.fetchTodoListWithDate(date)
+
+    override suspend fun fetchDateTodoMap(): Map<LocalDate, List<TodoEntity>> {
+        val todoList = localTodoDataSource.fetchTodoList()
+        val dateTodoMap = HashMap<LocalDate, MutableList<TodoEntity>>()
+        todoList.forEach {
+            if (dateTodoMap[it.deadline.toLocalDate()] == null) {
+                dateTodoMap[it.deadline.toLocalDate()] = ArrayList()
+            }
+            dateTodoMap[it.deadline.toLocalDate()]!!.add(it)
+        }
+        return dateTodoMap
+    }
 }

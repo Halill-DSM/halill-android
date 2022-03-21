@@ -13,4 +13,6 @@ interface FetchTodoListRepository {
     suspend fun fetchTodoListSize(): CurrentTodoCountEntity
 
     suspend fun fetchTodoListWithDate(date: LocalDate): List<TodoEntity>
+
+    suspend fun fetchDateTodoMap(): Map<LocalDate, List<TodoEntity>>
 }

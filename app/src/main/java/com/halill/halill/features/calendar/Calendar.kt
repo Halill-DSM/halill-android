@@ -33,6 +33,10 @@ import java.time.LocalDate
 fun Calendar(navController: NavController, viewModel: CalendarViewModel = hiltViewModel()) {
     val state = viewModel.state.collectAsState().value
 
+    LaunchedEffect(state) {
+        viewModel.fetchDateTodoMap()
+    }
+
     LaunchedEffect(state.selectedDate) {
         viewModel.fetchTodoListWithDate()
     }
@@ -288,7 +292,8 @@ fun CalendarDayItem(day: LocalDate, state: CalendarState, doOnDateSelect: (Local
             ) {
                 doOnDateSelect(day)
             }
-            .border(1.dp, color = backGroundColor)) {
+            .border(1.dp, color = backGroundColor)
+    ) {
         Text(
             text = day.dayOfMonth.toString(),
             color = textColor,
@@ -297,6 +302,9 @@ fun CalendarDayItem(day: LocalDate, state: CalendarState, doOnDateSelect: (Local
                 .background(borderColor)
                 .size(25.dp)
         )
+        if (state.dateTodoMap[day]?.isNotEmpty() == true) {
+            Text(text = "e")
+        }
     }
 
 }

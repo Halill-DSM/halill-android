@@ -10,8 +10,10 @@ data class CalendarState(
     val selectedDate: LocalDate,
     val showingMonthDate: LocalDate,
     val showingMonthDayList: List<LocalDate>,
-    val selectedDateTodoList: List<TodoEntity>
+    val selectedDateTodoList: List<TodoEntity>,
+    val dateTodoMap: Map<LocalDate, TodoEntity>
 ) : MviState {
+
     companion object {
         fun initial(): CalendarState =
             CalendarState(
@@ -19,7 +21,8 @@ data class CalendarState(
                 selectedDate = LocalDate.now(),
                 showingMonthDate = LocalDate.now(),
                 showingMonthDayList = LocalDate.now().toMontDayList(),
-                selectedDateTodoList = emptyList()
+                selectedDateTodoList = emptyList(),
+                dateTodoMap = emptyMap()
             )
     }
 }

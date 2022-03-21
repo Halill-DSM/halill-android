@@ -64,7 +64,7 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
             Modifier.padding(innerPadding)
         ) {
             composable(BottomNavigationItem.List.route) { ListPage(navController = navController) }
-            composable(BottomNavigationItem.Calendar.route) { Calendar() }
+            composable(BottomNavigationItem.Calendar.route) { Calendar(navController) }
             composable(BottomNavigationItem.MyPage.route) { MyPage(navController) }
         }
     }
@@ -87,7 +87,7 @@ fun BottomNavBar(
         backgroundColor = Teal700
     ) {
         val bottomTabSelectedItem = rememberSaveable {
-            mutableStateOf<String>(BottomNavigationItem.List.route)
+            mutableStateOf(BottomNavigationItem.List.route)
         }
         BottomNavigationItem(
             modifier = Modifier.weight(1f),

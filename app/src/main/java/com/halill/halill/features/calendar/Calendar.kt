@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.halill.halill.features.list.TodoList
 import com.halill.halill.ui.theme.Gray100
 import com.halill.halill.ui.theme.Gray200
@@ -29,7 +30,7 @@ import com.halill.halill.util.isToday
 import java.time.LocalDate
 
 @Composable
-fun Calendar(viewModel: CalendarViewModel = hiltViewModel()) {
+fun Calendar(navController: NavController, viewModel: CalendarViewModel = hiltViewModel()) {
     val state = viewModel.state.collectAsState().value
 
     LaunchedEffect(state.selectedDate) {
@@ -48,10 +49,10 @@ fun Calendar(viewModel: CalendarViewModel = hiltViewModel()) {
             viewModel.selectDate(date)
         },
         doOnTodoClick = { id ->
-
+            navController.navigate("todoDetail/$id")
         },
         doOnDoneClick = { id ->
-
+            viewModel.doneTodo(id)
         }
     )
 }

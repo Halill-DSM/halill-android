@@ -1,14 +1,18 @@
 package com.halill.halill.features.calendar
 
+import androidx.lifecycle.viewModelScope
+import com.halill.domain.features.todo.usecase.DoneTodoUseCase
 import com.halill.domain.features.todo.usecase.FetchTodoListWithDateUseCase
 import com.halill.halill.base.BaseViewModel
 import com.halill.halill.util.toMontDayList
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
 class CalendarViewModel @Inject constructor(
+    private val doneTodoUseCase: DoneTodoUseCase,
     private val fetchTodoListWithDateUseCase: FetchTodoListWithDateUseCase
 ) : BaseViewModel<CalendarState, CalendarEvent>() {
 
@@ -25,6 +29,13 @@ class CalendarViewModel @Inject constructor(
 
     fun selectDate(date: LocalDate) {
         sendEvent(CalendarEvent.SelectDate(date))
+    }
+
+    fun doneTodo(id: Long) {
+        viewModelScope.launch {
+            doneTodoUseCase.execute(id)
+            fetchTodoListWithDate()
+        }
     }
 
     suspend fun fetchTodoListWithDate() {

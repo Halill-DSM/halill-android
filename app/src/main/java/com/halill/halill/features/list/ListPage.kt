@@ -7,12 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.RadioButtonUnchecked
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,6 +30,7 @@ import com.halill.domain.features.todo.entity.TodoEntity
 import com.halill.halill.R
 import com.halill.halill.base.EventFlow
 import com.halill.halill.base.observeWithLifecycle
+import com.halill.halill.ui.theme.Purple400
 import com.halill.halill.ui.theme.Teal500
 import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.util.toShowDeadlineText
@@ -89,19 +85,33 @@ private fun handleViewEffect(
 @Composable
 fun SwitchContentDoneOrTodoText(mainState: ListState, doOnClick: () -> Unit) {
     val text = if (mainState.showDoneList) "완료한 할일" else "할일"
-    val icon = if (mainState.showDoneList) Icons.Filled.Check else Icons.Filled.RadioButtonUnchecked
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
+    val icon =
+        if (mainState.showDoneList) painterResource(id = R.drawable.ic_baseline_check_box_24)
+        else painterResource(id = R.drawable.ic_baseline_check_box_outline_blank_24)
+
+    val color = if (mainState.showDoneList) Purple400 else Teal700
+    Surface(
+        elevation = 4.dp,
+        color = color,
+        shape = CircleShape,
         modifier = Modifier
             .width(150.dp)
-            .clickable { doOnClick() }) {
-        Image(icon, contentDescription = "swipe")
-        Text(
-            text = text, fontSize = 15.sp,
-            modifier = Modifier
-                .padding(10.dp),
-        )
+            .padding(0.dp, 4.dp, 4.dp, 0.dp)
+            .clip(CircleShape)
+            .clickable { doOnClick() }
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Image(icon, contentDescription = "swipe")
+            Text(
+                text = text, fontSize = 15.sp,
+                modifier = Modifier
+                    .padding(10.dp),
+                color = Color.White
+            )
+        }
     }
 
 }
@@ -115,9 +125,9 @@ fun MainPager(
     onDeleteClick: (Long) -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
     ) {
         when {
             state.isLoading -> LoadingText()

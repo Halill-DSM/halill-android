@@ -3,6 +3,7 @@ package com.halill.halill.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val Purple200 = Color(0xFFBB86FC)
+val Purple400 = Color(0xFF7E24FF)
 val Purple500 = Color(0xFF6200EE)
 val Purple700 = Color(0xFF3700B3)
 

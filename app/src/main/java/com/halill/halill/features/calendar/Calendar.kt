@@ -1,5 +1,6 @@
 package com.halill.halill.features.calendar
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
@@ -55,7 +56,7 @@ fun CalendarContent(
             doOnNextClick = doOnNextClick
         )
         WeekTextLinearLayout()
-        Divider(color = Gray200, modifier = Modifier.padding(25.dp, 10.dp))
+        Divider(color = Gray200, modifier = Modifier.padding(25.dp, 0.dp))
         CalendarView(state, doOnDateSelect)
         Divider(color = Gray200, modifier = Modifier.padding(25.dp, 10.dp))
     }
@@ -129,7 +130,7 @@ fun CalendarMonthLayout(
 
 @Composable
 fun CalendarView(state: CalendarState, doOnDateSelect: (LocalDate) -> Unit) {
-    Column {
+    Column(modifier = Modifier.padding(0.dp, 7.dp, 0.dp, 0.dp)) {
         val monthDayList = state.showingMonthDayList
         val firstDayOfWeek = monthDayList[0].dayOfWeek.value
         val alreadyShowDateCount = if (firstDayOfWeek == 7) 7 else (7 - firstDayOfWeek)
@@ -147,7 +148,7 @@ fun CalendarView(state: CalendarState, doOnDateSelect: (LocalDate) -> Unit) {
     }
 }
 
-val calendarItemWidth = 28.dp
+val calendarItemWidth = 36.dp
 val calendarItemHeight = 55.dp
 
 @Composable
@@ -245,9 +246,14 @@ fun WeekLineLayout(content: @Composable () -> Unit) {
 
 @Composable
 fun CalendarDayItem(day: LocalDate, doOnDateSelect: (LocalDate) -> Unit) {
-    Text(
-        text = day.dayOfMonth.toString(),
-        textAlign = TextAlign.Center,
-        modifier = Modifier.size(calendarItemWidth, calendarItemHeight)
-    )
+    Column(modifier = Modifier.clickable {
+        doOnDateSelect(day)
+    }) {
+        Text(
+            text = day.dayOfMonth.toString(),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.size(calendarItemWidth, calendarItemHeight)
+        )
+    }
+
 }

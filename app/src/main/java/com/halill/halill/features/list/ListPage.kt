@@ -113,7 +113,6 @@ fun SwitchContentDoneOrTodoText(mainState: ListState, doOnClick: () -> Unit) {
             )
         }
     }
-
 }
 
 @ExperimentalPagerApi

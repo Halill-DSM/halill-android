@@ -22,10 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill.features.list.TodoList
-import com.halill.halill.ui.theme.Gray100
-import com.halill.halill.ui.theme.Gray200
-import com.halill.halill.ui.theme.Teal700
-import com.halill.halill.ui.theme.Teal900
+import com.halill.halill.ui.theme.*
 import com.halill.halill.util.isToday
 import java.time.LocalDate
 
@@ -302,8 +299,16 @@ fun CalendarDayItem(day: LocalDate, state: CalendarState, doOnDateSelect: (Local
                 .background(borderColor)
                 .size(25.dp)
         )
-        if (state.dateTodoMap[day]?.isNotEmpty() == true) {
-            Text(text = "e")
+        Spacer(modifier = Modifier.height(2.dp))
+        val dayTodoList = state.dateTodoMap[day] ?: emptyList()
+        if (dayTodoList.isNotEmpty()) {
+            if (dayTodoList.size > 4) {
+                dayTodoList.subList(0, 3)
+            }
+            dayTodoList.forEach { todo ->
+                val color = if (todo.isCompleted) Purple400 else Teal700
+                Divider(thickness = 3.dp, color = color, modifier = Modifier.padding(0.dp, 2.dp))
+            }
         }
     }
 

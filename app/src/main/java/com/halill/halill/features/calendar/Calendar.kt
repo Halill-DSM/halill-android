@@ -1,12 +1,10 @@
 package com.halill.halill.features.calendar
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -24,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.halill.halill.ui.theme.Gray200
 import com.halill.halill.ui.theme.Teal700
+import com.halill.halill.ui.theme.Teal900
 import com.halill.halill.util.isToday
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -258,20 +257,27 @@ fun WeekLineLayout(content: @Composable () -> Unit) {
 
 @Composable
 fun CalendarDayItem(day: LocalDate, state: CalendarState, doOnDateSelect: (LocalDate) -> Unit) {
+    val borderColor = if (day.isToday()) Teal900 else Color.White
+    val textColor = if (day.isToday()) Color.White else Color.Black
+
     val backGroundColor = if (state.selectedDate == day) Teal700 else Color.White
     val interactionSource = remember { MutableInteractionSource() }
-    Column(modifier = Modifier
-        .clickable(
-            interactionSource = interactionSource,
-            indication = null
-        ) {
-            doOnDateSelect(day)
-        }
-        .border(1.dp, shape = CircleShape, color = backGroundColor)) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .size(calendarItemWidth, calendarItemHeight)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) {
+                doOnDateSelect(day)
+            }
+            .border(1.dp, color = backGroundColor)) {
         Text(
             text = day.dayOfMonth.toString(),
+            color = textColor,
             textAlign = TextAlign.Center,
-            modifier = Modifier.size(calendarItemWidth, calendarItemHeight)
+            modifier = Modifier.background(borderColor).size(25.dp)
         )
     }
 

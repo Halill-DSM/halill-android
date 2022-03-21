@@ -61,7 +61,11 @@ class CalendarViewModel @Inject constructor(
                 )
             }
             is CalendarEvent.ShowDateTodoList -> {
-
+                setState(
+                    oldState.copy(
+                        selectedDateTodoList = event.todolist
+                    )
+                )
             }
         }
     }

@@ -20,17 +20,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.halill.halill.features.list.TodoList
+import com.halill.halill.ui.theme.Gray100
 import com.halill.halill.ui.theme.Gray200
 import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.ui.theme.Teal900
 import com.halill.halill.util.isToday
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @Composable
 fun Calendar(viewModel: CalendarViewModel = hiltViewModel()) {
     val state = viewModel.state.collectAsState().value
-    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(state.selectedDate) {
+        viewModel.fetchTodoListWithDate()
+    }
+
     CalendarContent(
         state = state,
         doOnNextClick = {
@@ -41,9 +46,12 @@ fun Calendar(viewModel: CalendarViewModel = hiltViewModel()) {
         },
         doOnDateSelect = { date ->
             viewModel.selectDate(date)
-            coroutineScope.launch {
-                viewModel.fetchTodoListWithDate()
-            }
+        },
+        doOnTodoClick = { id ->
+
+        },
+        doOnDoneClick = { id ->
+
         }
     )
 }
@@ -53,7 +61,9 @@ fun CalendarContent(
     state: CalendarState,
     doOnBeforeMonthClick: () -> Unit,
     doOnNextClick: () -> Unit,
-    doOnDateSelect: (LocalDate) -> Unit
+    doOnDateSelect: (LocalDate) -> Unit,
+    doOnTodoClick: (Long) -> Unit,
+    doOnDoneClick: (Long) -> Unit
 ) {
     Column {
         CalendarMonthLayout(
@@ -62,9 +72,14 @@ fun CalendarContent(
             doOnNextClick = doOnNextClick
         )
         WeekTextLinearLayout()
-        Divider(color = Gray200, modifier = Modifier.padding(25.dp, 0.dp))
+        Divider(color = Gray100)
         CalendarView(state, doOnDateSelect)
-        Divider(color = Gray200, modifier = Modifier.padding(25.dp, 10.dp))
+        Divider(color = Gray200)
+        TodoList(
+            todoList = state.selectedDateTodoList,
+            onItemClick = doOnTodoClick,
+            onDoneClick = doOnDoneClick
+        )
     }
 }
 
@@ -277,7 +292,9 @@ fun CalendarDayItem(day: LocalDate, state: CalendarState, doOnDateSelect: (Local
             text = day.dayOfMonth.toString(),
             color = textColor,
             textAlign = TextAlign.Center,
-            modifier = Modifier.background(borderColor).size(25.dp)
+            modifier = Modifier
+                .background(borderColor)
+                .size(25.dp)
         )
     }
 

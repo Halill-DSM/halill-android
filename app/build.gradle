@@ -10,10 +10,10 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.halill.halill"
+        applicationId "com.halill.halill2"
         minSdk 26
         targetSdk 31
-        versionCode 2
+        versionCode 3
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

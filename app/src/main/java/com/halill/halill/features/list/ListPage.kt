@@ -31,6 +31,7 @@ import com.halill.halill.R
 import com.halill.halill.base.EventFlow
 import com.halill.halill.base.observeWithLifecycle
 import com.halill.halill.ui.theme.Purple400
+import com.halill.halill.ui.theme.Purple500
 import com.halill.halill.ui.theme.Teal500
 import com.halill.halill.ui.theme.Teal700
 import com.halill.halill.util.toShowDeadlineText
@@ -274,7 +275,7 @@ fun DoneItem(done: TodoEntity, onItemClick: (Long) -> Unit, onDeleteClick: (Long
             DeadlineText(deadline = done.deadline, done = true)
             Divider(
                 modifier = Modifier.padding(PaddingValues(0.dp, 8.dp)),
-                color = Teal500,
+                color = Purple500,
                 thickness = 1.dp
             )
         }

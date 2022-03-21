@@ -54,6 +54,9 @@ fun Calendar(navController: NavController, viewModel: CalendarViewModel = hiltVi
         },
         doOnDoneClick = { id ->
             viewModel.doneTodo(id)
+        },
+        doOnDeleteClick = { id ->
+            viewModel.deleteTodo(id)
         }
     )
 }
@@ -65,7 +68,8 @@ fun CalendarContent(
     doOnNextClick: () -> Unit,
     doOnDateSelect: (LocalDate) -> Unit,
     doOnTodoClick: (Long) -> Unit,
-    doOnDoneClick: (Long) -> Unit
+    doOnDoneClick: (Long) -> Unit,
+    doOnDeleteClick: (Long) -> Unit
 ) {
     Column {
         CalendarMonthLayout(
@@ -80,7 +84,8 @@ fun CalendarContent(
         TodoList(
             todoList = state.selectedDateTodoList,
             onItemClick = doOnTodoClick,
-            onDoneClick = doOnDoneClick
+            onDoneClick = doOnDoneClick,
+            onDeleteClick = doOnDeleteClick
         )
     }
 }

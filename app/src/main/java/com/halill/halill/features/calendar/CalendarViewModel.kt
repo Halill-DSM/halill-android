@@ -1,6 +1,7 @@
 package com.halill.halill.features.calendar
 
 import androidx.lifecycle.viewModelScope
+import com.halill.domain.features.todo.usecase.DeleteTodoUseCase
 import com.halill.domain.features.todo.usecase.DoneTodoUseCase
 import com.halill.domain.features.todo.usecase.FetchDateTodoMapUseCase
 import com.halill.domain.features.todo.usecase.FetchTodoListWithDateUseCase
@@ -14,6 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CalendarViewModel @Inject constructor(
     private val doneTodoUseCase: DoneTodoUseCase,
+    private val deleteTodoUseCase: DeleteTodoUseCase,
     private val fetchTodoListWithDateUseCase: FetchTodoListWithDateUseCase,
     private val fetchDateTodoMapUseCase: FetchDateTodoMapUseCase
 ) : BaseViewModel<CalendarState, CalendarEvent>() {
@@ -41,6 +43,13 @@ class CalendarViewModel @Inject constructor(
     fun doneTodo(id: Long) {
         viewModelScope.launch {
             doneTodoUseCase.execute(id)
+            fetchTodoListWithDate()
+        }
+    }
+
+    fun deleteTodo(id: Long) {
+        viewModelScope.launch {
+            deleteTodoUseCase.execute(id)
             fetchTodoListWithDate()
         }
     }

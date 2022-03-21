@@ -160,7 +160,12 @@ fun ShowList(
         if (todoList.isEmpty()) {
             EmptyTodoListText()
         } else {
-            TodoList(todoList, onItemClick, onDoneClick)
+            TodoList(
+                todoList,
+                onItemClick = onItemClick,
+                onDoneClick = onDoneClick,
+                onDeleteClick = onDeleteClick
+            )
         }
     }
 }
@@ -182,14 +187,19 @@ fun ShowDoneList(
 fun TodoList(
     todoList: List<TodoEntity>,
     onItemClick: (Long) -> Unit,
-    onDoneClick: (Long) -> Unit
+    onDoneClick: (Long) -> Unit,
+    onDeleteClick: (Long) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(0.dp, 4.dp)
     ) {
-        items(todoList) {
-            TodoItem(todo = it, onItemClick = onItemClick, onDoneClick = onDoneClick)
+        items(todoList) { todo ->
+            if (todo.isCompleted) {
+                DoneItem(done = todo, onItemClick = onItemClick, onDeleteClick = onDeleteClick)
+            } else {
+                TodoItem(todo = todo, onItemClick = onItemClick, onDoneClick = onDoneClick)
+            }
         }
     }
 

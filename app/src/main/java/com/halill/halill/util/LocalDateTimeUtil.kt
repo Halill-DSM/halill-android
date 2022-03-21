@@ -36,6 +36,20 @@ fun LocalDateTime.lastDateOfMonth(): Int {
     return deadlineDate.withDayOfMonth(deadlineDate.lengthOfMonth()).dayOfMonth
 }
 
+fun LocalDate.toMontDayList(): List<LocalDate> {
+    val currentDateSize = this.lengthOfMonth()
+    val year = this.year
+    val month = this.monthValue
+    return ArrayList<LocalDate>().apply {
+        for (day in 1 .. currentDateSize) {
+            add(LocalDate.of(year, month, day))
+        }
+    }
+}
+
+fun LocalDate.isToday() =
+    this == LocalDate.now()
+
 fun DifferentTime.toRemainShowText(): String = when {
     year > 0 -> "${year}년 "
     month > 0 -> "${month}개월 "
@@ -43,15 +57,14 @@ fun DifferentTime.toRemainShowText(): String = when {
     hour > 0 -> "${hour}시간 "
     minute > 0 -> "${minute}분"
 
-    year < 0 -> "${year*-1}년 "
-    month < 0 -> "${month*-1}개월 "
-    day < 0 -> "${day*-1}일 "
-    hour < 0 -> "${hour*-1}시간 "
-    minute < 0 -> "${minute*-1}분"
+    year < 0 -> "${year * -1}년 "
+    month < 0 -> "${month * -1}개월 "
+    day < 0 -> "${day * -1}일 "
+    hour < 0 -> "${hour * -1}시간 "
+    minute < 0 -> "${minute * -1}분"
 
     else -> "0분"
 }
-
 
 class DifferentTime(compareTime: LocalDateTime) {
     private val currentTime = LocalDateTime.now()

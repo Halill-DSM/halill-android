@@ -1,14 +1,12 @@
 package com.halill.halill.main
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -20,8 +18,10 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.halill.halill.R
 import com.halill.halill.base.observeWithLifecycle
+import com.halill.halill.features.calendar.Calendar
 import com.halill.halill.features.list.ListPage
 import com.halill.halill.features.mypage.MyPage
+import com.halill.halill.ui.theme.Purple500
 import com.halill.halill.ui.theme.Teal700
 
 @OptIn(ExperimentalPagerApi::class)
@@ -29,8 +29,6 @@ import com.halill.halill.ui.theme.Teal700
 fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     val scaffoldState = rememberScaffoldState()
     val navHostController = rememberNavController()
-
-    val floatingIcon = rememberVectorPainter(image = Icons.Filled.Add)
 
     viewModel.fetchUserInfo()
 
@@ -46,10 +44,11 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
         scaffoldState = scaffoldState,
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate("writeTodo") }
+                onClick = { navController.navigate("writeTodo") },
+                backgroundColor = Purple500
             ) {
-                Icon(
-                    painter = floatingIcon,
+                Image(
+                    painter = painterResource(id = R.drawable.ic_baseline_edit_white),
                     contentDescription = "write todo"
                 )
             }
@@ -63,7 +62,7 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
             Modifier.padding(innerPadding)
         ) {
             composable(BottomNavigationItem.List.route) { ListPage(navController = navController) }
-            composable(BottomNavigationItem.Calendar.route) { Calendar() }
+            composable(BottomNavigationItem.Calendar.route) { Calendar(navController) }
             composable(BottomNavigationItem.MyPage.route) { MyPage(navController) }
         }
     }
@@ -86,7 +85,7 @@ fun BottomNavBar(
         backgroundColor = Teal700
     ) {
         val bottomTabSelectedItem = rememberSaveable {
-            mutableStateOf<String>(BottomNavigationItem.List.route)
+            mutableStateOf(BottomNavigationItem.List.route)
         }
         BottomNavigationItem(
             modifier = Modifier.weight(1f),

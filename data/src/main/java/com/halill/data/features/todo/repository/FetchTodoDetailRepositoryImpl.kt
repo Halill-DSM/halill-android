@@ -8,6 +8,6 @@ import javax.inject.Inject
 class FetchTodoDetailRepositoryImpl @Inject constructor(
     private val localTodoDataSource: LocalTodoDataSource
 ) : FetchTodoDetailRepository {
-    override suspend fun getTodoDetail(id: Long): TodoEntity =
+    override suspend fun fetchTodoDetail(id: Long): TodoEntity =
         localTodoDataSource.fetchTodoDetail(id)
 }

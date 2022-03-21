@@ -1,7 +1,12 @@
 package com.halill.halill.features.calendar
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -18,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.halill.halill.ui.theme.Gray200
+import com.halill.halill.ui.theme.Teal700
+import com.halill.halill.util.isToday
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -140,6 +147,7 @@ fun CalendarView(state: CalendarState, doOnDateSelect: (LocalDate) -> Unit) {
             doOnDateSelect = doOnDateSelect
         )
         CalendarWeekLayout(
+            state = state,
             showingMonthDayList = monthDayList,
             alreadyShowDateCount = alreadyShowDateCount,
             doOnDateSelect = doOnDateSelect
@@ -161,6 +169,7 @@ fun CalendarFirstWeekLayout(
         CalendarFrontSpacer(dayOfWeek = firstDayOfWeek)
 
         FirstWeekLayout(
+            state = state,
             showingMonthDayList = state.showingMonthDayList,
             doOnDateSelect = doOnDateSelect
         )
@@ -182,11 +191,12 @@ fun CalendarFrontSpacer(dayOfWeek: Int) {
 
 @Composable
 fun FirstWeekLayout(
+    state: CalendarState,
     showingMonthDayList: List<LocalDate>,
     doOnDateSelect: (LocalDate) -> Unit
 ) {
     for (day in showingMonthDayList) {
-        CalendarDayItem(day, doOnDateSelect = doOnDateSelect)
+        CalendarDayItem(day, doOnDateSelect = doOnDateSelect, state = state)
         if (day.dayOfWeek.value == 6) {
             break
         }
@@ -195,6 +205,7 @@ fun FirstWeekLayout(
 
 @Composable
 fun CalendarWeekLayout(
+    state: CalendarState,
     showingMonthDayList: List<LocalDate>,
     alreadyShowDateCount: Int,
     doOnDateSelect: (LocalDate) -> Unit
@@ -221,7 +232,8 @@ fun CalendarWeekLayout(
                     } else {
                         CalendarDayItem(
                             showingMonthDayList[showedDateCount],
-                            doOnDateSelect = doOnDateSelect
+                            doOnDateSelect = doOnDateSelect,
+                            state = state
                         )
                         dayList.removeAt(0)
                         showedDateCount += 1
@@ -245,10 +257,17 @@ fun WeekLineLayout(content: @Composable () -> Unit) {
 }
 
 @Composable
-fun CalendarDayItem(day: LocalDate, doOnDateSelect: (LocalDate) -> Unit) {
-    Column(modifier = Modifier.clickable {
-        doOnDateSelect(day)
-    }) {
+fun CalendarDayItem(day: LocalDate, state: CalendarState, doOnDateSelect: (LocalDate) -> Unit) {
+    val backGroundColor = if (state.selectedDate == day) Teal700 else Color.White
+    val interactionSource = remember { MutableInteractionSource() }
+    Column(modifier = Modifier
+        .clickable(
+            interactionSource = interactionSource,
+            indication = null
+        ) {
+            doOnDateSelect(day)
+        }
+        .border(1.dp, shape = CircleShape, color = backGroundColor)) {
         Text(
             text = day.dayOfMonth.toString(),
             textAlign = TextAlign.Center,

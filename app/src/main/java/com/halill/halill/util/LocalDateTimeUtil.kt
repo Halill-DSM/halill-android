@@ -47,6 +47,9 @@ fun LocalDate.toMontDayList(): List<LocalDate> {
     }
 }
 
+fun LocalDate.isToday() =
+    this == LocalDate.now()
+
 fun DifferentTime.toRemainShowText(): String = when {
     year > 0 -> "${year}년 "
     month > 0 -> "${month}개월 "

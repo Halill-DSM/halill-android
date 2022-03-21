@@ -62,6 +62,9 @@ fun MyPage(
     }
     MyPageContent(
         myPageState,
+        doOnLogoutButtonClick = {
+            viewModel.showLogoutDialog()
+        },
         doOnLogoutClick = {
             coroutineScope.launch {
                 viewModel.logout()
@@ -75,6 +78,9 @@ fun MyPage(
                 saveUserName(name)
                 dismissSaveNameDialog()
             }
+        },
+        doOnLogoutDismiss = {
+            viewModel.dismissLogoutDialog()
         }
     )
 }
@@ -82,7 +88,9 @@ fun MyPage(
 @Composable
 fun MyPageContent(
     myPageState: MyPageState,
+    doOnLogoutButtonClick: () -> Unit,
     doOnLogoutClick: () -> Unit,
+    doOnLogoutDismiss: () -> Unit,
     doOnNameTextClick: () -> Unit,
     doOnDoneSaveName: (String) -> Unit
 ) {
@@ -97,9 +105,7 @@ fun MyPageContent(
             val userName = myPageState.name.ifBlank { "User" }
             NameText(name = userName, doOnEditNameClick = doOnNameTextClick)
 
-            LogoutButton(doOnClick = {
-                doOnLogoutClick()
-            })
+            LogoutButton(doOnClick = doOnLogoutButtonClick)
         }
 
         MyPageCountLayout(myPageState)
@@ -107,6 +113,10 @@ fun MyPageContent(
 
     if (myPageState.showSaveNameDialog) {
         SaveUserNameDialog(userName = myPageState.name, doOnDone = doOnDoneSaveName)
+    }
+
+    if (myPageState.showLogoutDialog) {
+        LogoutDialog(doOnLogoutClick = doOnLogoutClick, doOnDismiss = doOnLogoutDismiss)
     }
 }
 
@@ -164,6 +174,43 @@ fun SaveUserNameDialog(userName: String, doOnDone: (String) -> Unit) {
             Button(onClick = { doOnDone(name.value) }, modifier = Modifier.fillMaxWidth()) {
                 Text(text = stringResource(id = R.string.done_input))
             }
+        }
+    }
+}
+
+@Composable
+fun LogoutDialog(doOnLogoutClick: () -> Unit, doOnDismiss: () -> Unit) {
+    Dialog(onDismissRequest = doOnDismiss) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .clip(RoundedCornerShape(15.dp))
+                .background(Color.White)
+        ) {
+            Text(
+                text = stringResource(id = R.string.ask_logout),
+                modifier = Modifier
+                    .padding(0.dp, 30.dp)
+            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(id = R.string.no),
+                    color = Black,
+                    modifier = Modifier
+                        .padding(20.dp)
+                        .clickable { doOnDismiss() }
+                        .padding(20.dp))
+                Text(
+                    text = stringResource(id = R.string.logout),
+                    color = Color.Red,
+                    modifier = Modifier
+                        .clickable { doOnLogoutClick() }
+                        .padding(20.dp))
+            }
+
         }
     }
 }

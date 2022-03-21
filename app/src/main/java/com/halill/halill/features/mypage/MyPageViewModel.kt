@@ -71,6 +71,14 @@ class MyPageViewModel @Inject constructor(
         sendEvent(MyPageEvent.DismissSaveNameDialog)
     }
 
+    fun showLogoutDialog() {
+        sendEvent(MyPageEvent.ShowLogoutDialog)
+    }
+
+    fun dismissLogoutDialog() {
+        sendEvent(MyPageEvent.DismissLogoutDialog)
+    }
+
     override fun reduceEvent(oldState: MyPageState, event: MyPageEvent) {
         when (event) {
             is MyPageEvent.SetAllTimeTodoCount -> {
@@ -99,6 +107,7 @@ class MyPageViewModel @Inject constructor(
                     )
                 )
             }
+
             is MyPageEvent.DismissSaveNameDialog -> {
                 setState(
                     oldState.copy(
@@ -106,12 +115,28 @@ class MyPageViewModel @Inject constructor(
                     )
                 )
             }
-            MyPageEvent.ShowSaveNameDialog -> {
+
+            is MyPageEvent.ShowSaveNameDialog -> {
                 setState(
                     oldState.copy(
                         showSaveNameDialog = true
                     )
                 )
+            }
+
+            is MyPageEvent.DismissLogoutDialog -> {
+                setState(
+                    oldState.copy(
+                        showLogoutDialog = false
+                    )
+                )
+            }
+            is MyPageEvent.ShowLogoutDialog -> {
+               setState(
+                   oldState.copy(
+                       showLogoutDialog = true
+                   )
+               )
             }
         }
     }

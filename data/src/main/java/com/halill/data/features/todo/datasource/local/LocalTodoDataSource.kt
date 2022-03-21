@@ -20,4 +20,6 @@ interface LocalTodoDataSource {
     suspend fun editTodo(param: EditTodoParam)
 
     suspend fun fetchTodoListWithDate(date: LocalDate): List<TodoEntity>
+
+    suspend fun deleteAllTodo()
 }

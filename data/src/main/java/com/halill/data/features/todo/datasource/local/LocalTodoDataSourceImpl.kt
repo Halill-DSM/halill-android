@@ -37,4 +37,8 @@ class LocalTodoDataSourceImpl @Inject constructor(
 
     override suspend fun fetchTodoListWithDate(date: LocalDate): List<TodoEntity> =
         todoDao.fetchTodoListWithDate(date).toEntity()
+
+    override suspend fun deleteAllTodo() {
+        todoDao.deleteAll()
+    }
 }

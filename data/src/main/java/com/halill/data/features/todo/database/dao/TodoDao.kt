@@ -26,4 +26,7 @@ interface TodoDao {
 
     @Query("SELECT * FROM todolist WHERE deadlineDate = :date")
     suspend fun fetchTodoListWithDate(date: LocalDate): List<TodoRoomEntity>
+
+    @Query("DELETE FROM todolist")
+    suspend fun deleteAll()
 }

@@ -9,4 +9,6 @@ sealed class MyPageEvent : MviEvent {
     data class SetUser(val userEntity: UserEntity) : MyPageEvent ()
     object ShowSaveNameDialog : MyPageEvent()
     object DismissSaveNameDialog : MyPageEvent()
+    object ShowLogoutDialog : MyPageEvent()
+    object DismissLogoutDialog : MyPageEvent()
 }

@@ -4,6 +4,7 @@ import com.halill.data.features.auth.datasource.local.LocalUserDataSource
 import com.halill.data.features.auth.datasource.remote.RemoteLoginDataSource
 import com.halill.data.features.auth.datasource.remote.RemoteRegisterDataSource
 import com.halill.data.features.auth.repository.*
+import com.halill.data.features.todo.datasource.local.LocalTodoDataSource
 import com.halill.data.local.datastorage.LocalStorage
 import com.halill.domain.features.auth.repository.*
 import dagger.Module
@@ -38,8 +39,9 @@ object AuthRepositoryModule {
     @Singleton
     @Provides
     fun provideLogoutRepository(
-        localUserDataSource: LocalUserDataSource
-    ): LogoutRepository = LogoutRepositoryImpl(localUserDataSource)
+        localUserDataSource: LocalUserDataSource,
+        localTodoDataSource: LocalTodoDataSource
+    ): LogoutRepository = LogoutRepositoryImpl(localUserDataSource, localTodoDataSource)
 
     @Singleton
     @Provides

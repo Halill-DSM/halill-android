@@ -3,9 +3,11 @@ package com.halill.data.features.todo.datasource.local
 import com.halill.domain.features.todo.entity.TodoEntity
 import com.halill.domain.features.todo.param.EditTodoParam
 import com.halill.domain.features.todo.param.WriteTodoParam
+import java.time.LocalDate
 
 interface LocalTodoDataSource {
-    suspend fun getTodoList(): List<TodoEntity>
+
+    suspend fun fetchTodoList(): List<TodoEntity>
 
     suspend fun saveTodoList(todo: WriteTodoParam)
 
@@ -13,7 +15,11 @@ interface LocalTodoDataSource {
 
     suspend fun deleteTodo(id: Long)
 
-    suspend fun getTodoDetail(id: Long): TodoEntity
+    suspend fun fetchTodoDetail(id: Long): TodoEntity
 
     suspend fun editTodo(param: EditTodoParam)
+
+    suspend fun fetchTodoListWithDate(date: LocalDate): List<TodoEntity>
+
+    suspend fun deleteAllTodo()
 }

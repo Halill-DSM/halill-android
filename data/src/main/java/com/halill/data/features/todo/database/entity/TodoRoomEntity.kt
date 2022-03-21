@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 import com.halill.domain.features.todo.entity.TodoEntity
 import com.halill.domain.features.todo.param.EditTodoParam
 import com.halill.domain.features.todo.param.WriteTodoParam
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Entity(tableName = "todolist")
@@ -12,6 +13,7 @@ data class TodoRoomEntity(
     var title: String,
     var content: String,
     var deadline: LocalDateTime,
+    var deadlineDate: LocalDate,
     var isCompleted: Boolean
 ) {
     @PrimaryKey(autoGenerate = true)
@@ -35,6 +37,7 @@ fun WriteTodoParam.toDataEntity() =
         title = title,
         content = content,
         deadline = deadline,
+        deadlineDate = deadline.toLocalDate(),
         isCompleted = isCompleted
     )
 
@@ -43,6 +46,7 @@ fun EditTodoParam.toDataEntity() =
         title = data.title,
         content = data.content,
         deadline = data.deadline,
+        deadlineDate = data.deadline.toLocalDate(),
         isCompleted = data.isCompleted
     ).apply {
         id = todoId

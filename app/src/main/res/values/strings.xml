@@ -30,4 +30,15 @@
     <string name="empty_done_list">완료한 할일이 없습니다</string>
     <string name="done_comment">(완료됨)</string>
     <string name="require_todo_comment">할일을 작성해보세요!</string>
+    <string name="mypage_comment">님의 할일 기록입니다.</string>
+    <string name="done_input">완료</string>
+    <string name="save_name_failed">사용자 이름 저장을 실패했습니다</string>
+    <string name="current_todo_count">남은 해야할 일</string>
+    <string name="current_done_count">완료한 일</string>
+    <string name="all_count">총 작성한 할일의 개수</string>
+    <string name="all_time_done_todo_count">총 완료한 할일의 개수</string>
+    <string name="count">개</string>
+    <string name="ask_logout">저장하신 할일이 모두 삭제됩니다.\n정말 로그아웃 하시겠습니까?</string>
+    <string name="no">아니요</string>
+    <string name="loading_all_time_count">총 작성한 할일을 불러오는 중 입니다..</string>
 </resources>

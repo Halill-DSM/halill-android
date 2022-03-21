@@ -23,6 +23,7 @@ class MyPageViewModel @Inject constructor(
     private val fetchCurrentCountUseCase: FetchCurrentCountUseCase,
     private val fetchAllTimeTodoUseCase: FetchAllTimeTodoUseCase
 ) : BaseViewModel<MyPageState, MyPageEvent>() {
+
     override val initialState: MyPageState
         get() = MyPageState.initial()
 
@@ -46,8 +47,10 @@ class MyPageViewModel @Inject constructor(
     }
 
     suspend fun fetchAllTimeCount() {
+        sendEvent(MyPageEvent.StartLoading)
         fetchAllTimeTodoUseCase.execute(Unit).collect {
             sendEvent(MyPageEvent.SetAllTimeTodoCount(it.allCount, it.allDoneCount))
+            sendEvent(MyPageEvent.FinishLoading)
         }
     }
 
@@ -131,12 +134,29 @@ class MyPageViewModel @Inject constructor(
                     )
                 )
             }
+
             is MyPageEvent.ShowLogoutDialog -> {
-               setState(
-                   oldState.copy(
-                       showLogoutDialog = true
-                   )
-               )
+                setState(
+                    oldState.copy(
+                        showLogoutDialog = true
+                    )
+                )
+            }
+
+            is MyPageEvent.FinishLoading -> {
+                setState(
+                    oldState.copy(
+                        isLoading = false
+                    )
+                )
+            }
+
+            is MyPageEvent.StartLoading -> {
+                setState(
+                    oldState.copy(
+                        isLoading = true
+                    )
+                )
             }
         }
     }

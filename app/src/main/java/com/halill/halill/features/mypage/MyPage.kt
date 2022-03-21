@@ -40,7 +40,7 @@ fun MyPage(
         }
     }
 
-    LaunchedEffect(myPageState) {
+    LaunchedEffect(myPageState.currentTodoCount, myPageState.currentDoneCount) {
         viewModel.fetchAllTimeCount()
     }
 
@@ -134,19 +134,32 @@ fun MyPageCountLayout(myPageState: MyPageState) {
             .padding(30.dp, 60.dp, 30.dp, 122.dp)
     ) {
         Divider(color = Teal700, thickness = 1.dp)
-        MyPageCountContent(title = currentTodoTitle, count = myPageState.currentTodoCount)
+
+        MyPageCountContent(
+            title = currentTodoTitle,
+            count = myPageState.currentTodoCount.toString()
+        )
         Divider(color = Teal700, thickness = 1.dp)
-        MyPageCountContent(title = currentDoneTitle, count = myPageState.currentDoneCount)
+
+        MyPageCountContent(
+            title = currentDoneTitle,
+            count = myPageState.currentDoneCount.toString()
+        )
         Divider(color = Teal700, thickness = 1.dp)
+
+        val allTimeDoneText =
+            if (myPageState.isLoading) "..." else myPageState.allTimeDoneTodoCount.toString()
         MyPageCountContent(
             title = allTimeDoneTitle,
-            count = myPageState.allTimeDoneTodoCount,
+            count = allTimeDoneText,
             countColor = Teal900
         )
         Divider(color = Teal700, thickness = 1.dp)
+
+        val allTimeTodoText = if (myPageState.isLoading) "..." else myPageState.allCount.toString()
         MyPageCountContent(
             title = allTimeCountTitle,
-            count = myPageState.allCount,
+            count = allTimeTodoText,
             countColor = Teal900
         )
         Divider(color = Teal700, thickness = 1.dp)
@@ -256,7 +269,7 @@ fun LogoutButton(doOnClick: () -> Unit) {
 }
 
 @Composable
-fun MyPageCountContent(title: String, count: Int, countColor: Color = Black) {
+fun MyPageCountContent(title: String, count: String, countColor: Color = Black) {
     Row(horizontalArrangement = SpaceBetween, modifier = Modifier.fillMaxWidth()) {
         Text(text = title)
         val countText = "$count ${stringResource(id = R.string.count)}"

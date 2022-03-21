@@ -11,4 +11,6 @@ sealed class MyPageEvent : MviEvent {
     object DismissSaveNameDialog : MyPageEvent()
     object ShowLogoutDialog : MyPageEvent()
     object DismissLogoutDialog : MyPageEvent()
+    object StartLoading : MyPageEvent()
+    object FinishLoading : MyPageEvent()
 }

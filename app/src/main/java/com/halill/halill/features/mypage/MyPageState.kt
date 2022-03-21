@@ -9,6 +9,7 @@ data class MyPageState(
     val showLogoutDialog: Boolean,
     val currentTodoCount: Int,
     val currentDoneCount: Int,
+    val isLoading: Boolean,
     val allCount: Int,
     val allTimeDoneTodoCount: Int
 ) : MviState {
@@ -22,6 +23,7 @@ data class MyPageState(
                 showLogoutDialog = false,
                 currentTodoCount = 0,
                 currentDoneCount = 0,
+                isLoading = false,
                 allCount = 0,
                 allTimeDoneTodoCount = 0
             )

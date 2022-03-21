@@ -2,6 +2,7 @@ package com.halill.halill.features.calendar
 
 import com.halill.domain.features.todo.usecase.FetchTodoListWithDateUseCase
 import com.halill.halill.base.BaseViewModel
+import com.halill.halill.util.toMontDayList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import javax.inject.Inject
@@ -27,7 +28,7 @@ class CalendarViewModel @Inject constructor(
     }
 
     suspend fun fetchTodoListWithDate() {
-        val selectedDate = state.value.selectedDateTime
+        val selectedDate = state.value.selectedDate
         val todoList = fetchTodoListWithDateUseCase.execute(selectedDate)
         sendEvent(CalendarEvent.ShowDateTodoList(todoList))
     }
@@ -37,19 +38,27 @@ class CalendarViewModel @Inject constructor(
             is CalendarEvent.NextMonth -> {
                 setState(
                     oldState.copy(
-                        showingMonthDate = oldState.showingMonthDate.plusMonths(1)
+                        showingMonthDate = oldState.showingMonthDate.plusMonths(1),
+                        showingMonthDayList = oldState.showingMonthDate.plusMonths(1)
+                            .toMontDayList()
                     )
                 )
             }
             is CalendarEvent.BeforeMonth -> {
                 setState(
                     oldState.copy(
-                        showingMonthDate = oldState.showingMonthDate.minusMonths(1)
+                        showingMonthDate = oldState.showingMonthDate.minusMonths(1),
+                        showingMonthDayList = oldState.showingMonthDate.minusMonths(1)
+                            .toMontDayList()
                     )
                 )
             }
             is CalendarEvent.SelectDate -> {
-
+                setState(
+                    oldState.copy(
+                        selectedDate = event.date
+                    )
+                )
             }
             is CalendarEvent.ShowDateTodoList -> {
 

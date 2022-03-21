@@ -41,7 +41,7 @@ fun LocalDate.toMontDayList(): List<LocalDate> {
     val year = this.year
     val month = this.monthValue
     return ArrayList<LocalDate>().apply {
-        for (day in 1 until currentDateSize) {
+        for (day in 1 .. currentDateSize) {
             add(LocalDate.of(year, month, day))
         }
     }

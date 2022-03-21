@@ -8,12 +8,11 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NavigateBefore
 import androidx.compose.material.icons.filled.NavigateNext
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -58,25 +57,32 @@ fun CalendarContent(
         WeekTextLinearLayout()
         Divider(color = Gray200, modifier = Modifier.padding(25.dp, 10.dp))
         CalendarView(state, doOnDateSelect)
+        Divider(color = Gray200, modifier = Modifier.padding(25.dp, 10.dp))
     }
 }
 
 @Composable
 fun WeekTextLinearLayout() {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(25.dp, 0.dp)
-    ) {
-        Text(text = "일", color = Color.Red)
-        Text(text = "월", color = Color.Black)
-        Text(text = "화", color = Color.Black)
-        Text(text = "수", color = Color.Black)
-        Text(text = "목", color = Color.Black)
-        Text(text = "금", color = Color.Black)
-        Text(text = "토", color = Color.Blue)
+    WeekLineLayout {
+        val weekTextList = remember {
+            listOf("일", "월", "화", "수", "목", "금", "토")
+        }
+        weekTextList.forEach { weekText ->
+            val textColor =
+                if (weekText == "일") Color.Red else if (weekText == "토") Color.Blue else Color.Black
+            WeekText(weekText = weekText, textColor = textColor)
+        }
     }
+}
+
+@Composable
+fun WeekText(weekText: String, textColor: Color) {
+    Text(
+        text = weekText,
+        color = textColor,
+        textAlign = TextAlign.Center,
+        modifier = Modifier.size(calendarItemWidth)
+    )
 }
 
 @Composable
@@ -124,12 +130,124 @@ fun CalendarMonthLayout(
 @Composable
 fun CalendarView(state: CalendarState, doOnDateSelect: (LocalDate) -> Unit) {
     Column {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(25.dp, 0.dp)
-        ) {
+        val monthDayList = state.showingMonthDayList
+        val firstDayOfWeek = monthDayList[0].dayOfWeek.value
+        val alreadyShowDateCount = if (firstDayOfWeek == 7) 7 else (7 - firstDayOfWeek)
+        CalendarFirstWeekLayout(
+            state = state,
+            firstDayOfWeek = firstDayOfWeek,
+            doOnDateSelect = doOnDateSelect
+        )
+        CalendarWeekLayout(
+            showingMonthDayList = monthDayList,
+            alreadyShowDateCount = alreadyShowDateCount,
+            doOnDateSelect = doOnDateSelect
+        )
 
+    }
+}
+
+val calendarItemWidth = 28.dp
+val calendarItemHeight = 55.dp
+
+@Composable
+fun CalendarFirstWeekLayout(
+    state: CalendarState,
+    firstDayOfWeek: Int,
+    doOnDateSelect: (LocalDate) -> Unit
+) {
+    WeekLineLayout {
+        CalendarFrontSpacer(dayOfWeek = firstDayOfWeek)
+
+        FirstWeekLayout(
+            showingMonthDayList = state.showingMonthDayList,
+            doOnDateSelect = doOnDateSelect
+        )
+    }
+}
+
+@Composable
+fun CalendarFrontSpacer(dayOfWeek: Int) {
+    if (dayOfWeek == 7) {
+        return
+    }
+    for (ct in 0 until dayOfWeek) {
+        Spacer(
+            modifier = Modifier
+                .size(calendarItemWidth, calendarItemHeight)
+        )
+    }
+}
+
+@Composable
+fun FirstWeekLayout(
+    showingMonthDayList: List<LocalDate>,
+    doOnDateSelect: (LocalDate) -> Unit
+) {
+    for (day in showingMonthDayList) {
+        CalendarDayItem(day, doOnDateSelect = doOnDateSelect)
+        if (day.dayOfWeek.value == 6) {
+            break
         }
     }
+}
+
+@Composable
+fun CalendarWeekLayout(
+    showingMonthDayList: List<LocalDate>,
+    alreadyShowDateCount: Int,
+    doOnDateSelect: (LocalDate) -> Unit
+) {
+    val dayList = showingMonthDayList.toMutableList().apply {
+        for (ct in 0 until alreadyShowDateCount) {
+            removeAt(0)
+        }
+    }
+
+    var showedDateCount = alreadyShowDateCount
+
+    Column {
+        while (dayList.isNotEmpty()) {
+            WeekLineLayout {
+                for (ct in 0 until 7) {
+                    if (showedDateCount >= showingMonthDayList.size) {
+                        Spacer(
+                            modifier = Modifier.size(
+                                calendarItemWidth,
+                                calendarItemHeight
+                            )
+                        )
+                    } else {
+                        CalendarDayItem(
+                            showingMonthDayList[showedDateCount],
+                            doOnDateSelect = doOnDateSelect
+                        )
+                        dayList.removeAt(0)
+                        showedDateCount += 1
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun WeekLineLayout(content: @Composable () -> Unit) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(25.dp, 0.dp)
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun CalendarDayItem(day: LocalDate, doOnDateSelect: (LocalDate) -> Unit) {
+    Text(
+        text = day.dayOfMonth.toString(),
+        textAlign = TextAlign.Center,
+        modifier = Modifier.size(calendarItemWidth, calendarItemHeight)
+    )
 }

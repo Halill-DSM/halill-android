@@ -13,7 +13,7 @@ android {
         applicationId "com.halill.halill2"
         minSdk 26
         targetSdk 31
-        versionCode 5
+        versionCode 7
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -97,4 +97,6 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:29.1.0')
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-firestore-ktx'
+
+    implementation "com.chargemap.compose:numberpicker:0.0.12"
 }

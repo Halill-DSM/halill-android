@@ -25,8 +25,8 @@ class RemoteTodoDataSourceImpl @Inject constructor(
         try {
             return dataBase.collection(userEmail).document(ALL_COUNT_KEY).get().dataBaseTaskToFlow()
                 .map {
-                    val allCount: Int = (it.data?.get(ALL_TODO_COUNT_KEY) as Long).toInt()
-                    val allDoneCount: Int = (it.data?.get(ALL_DONE_COUNT_KEY) as Long).toInt()
+                    val allCount: Int = (((it.get(ALL_TODO_COUNT_KEY))?:0L) as Long).toInt()
+                    val allDoneCount: Int = (((it.get(ALL_DONE_COUNT_KEY))?:0L) as Long).toInt()
                     AllTimeTodoCountEntity(allCount, allDoneCount)
                 }
         } catch (e: ReadFireBaseStoreFailException) {
@@ -62,8 +62,8 @@ class RemoteTodoDataSourceImpl @Inject constructor(
 
     private fun getOriginalValueToPlusOne(email: String, doOnPlusOne: (Int, Int) -> Unit) {
         dataBase.collection(email).document(ALL_COUNT_KEY).get().addOnSuccessListener {
-            val originalAllCount: Int = ((it[ALL_TODO_COUNT_KEY] ?: 0) as Long).toInt()
-            val originalAllDoneCount: Int = ((it[ALL_DONE_COUNT_KEY] ?: 0) as Long).toInt()
+            val originalAllCount: Int = ((it?.get(ALL_TODO_COUNT_KEY) ?: 0L) as Long).toInt()
+            val originalAllDoneCount: Int = ((it?.get(ALL_DONE_COUNT_KEY) ?: 0L) as Long).toInt()
 
             doOnPlusOne(originalAllCount, originalAllDoneCount)
         }

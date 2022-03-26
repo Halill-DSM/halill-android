@@ -213,7 +213,6 @@ fun LogoutDialog(doOnLogoutClick: () -> Unit, doOnDismiss: () -> Unit) {
                     text = stringResource(id = R.string.no),
                     color = Black,
                     modifier = Modifier
-                        .padding(20.dp)
                         .clickable { doOnDismiss() }
                         .padding(20.dp))
                 Text(

@@ -519,7 +519,7 @@ private fun minuteNumberPicker(doOnMinutePick: (Int) -> Unit, context: Context, 
         setOnValueChangedListener { picker, _, _ ->
             doOnMinutePick(picker.value)
         }
-        maxValue = 23
+        maxValue = 59
         minValue = 0
         value = minute
     }

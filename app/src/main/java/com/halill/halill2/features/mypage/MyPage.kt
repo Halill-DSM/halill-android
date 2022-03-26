@@ -169,15 +169,26 @@ fun SaveUserNameDialog(userName: String, doOnDone: (String) -> Unit) {
     }
     Dialog(onDismissRequest = { doOnDone(name.value) }) {
         Column(
-            Modifier
+            horizontalAlignment = Alignment.End, modifier = Modifier
                 .clip(RoundedCornerShape(15.dp))
                 .background(Color.White)
         ) {
+            val limitLength = 10
+            val currentLength = name.value.length
+            Text(
+                text = "$currentLength / $limitLength",
+                color = Teal900,
+                modifier = Modifier.padding(10.dp)
+            )
             TextField(
                 value = name.value,
-                onValueChange = { name.value = it },
+                onValueChange = {
+                    if (it.length <= limitLength) {
+                        name.value = it
+                    }
+                },
                 modifier = Modifier
-                    .padding(0.dp, 30.dp)
+                    .padding(0.dp, 15.dp)
                     .fillMaxWidth()
             )
             Button(onClick = { doOnDone(name.value) }, modifier = Modifier.fillMaxWidth()) {

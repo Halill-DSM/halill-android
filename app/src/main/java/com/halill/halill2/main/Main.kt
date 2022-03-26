@@ -30,10 +30,13 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
     val scaffoldState = rememberScaffoldState()
     val navHostController = rememberNavController()
 
-    viewModel.fetchUserInfo()
+    LaunchedEffect(Unit) {
+        viewModel.checkLogin()
+    }
 
     viewModel.mainViewEffect.observeWithLifecycle {
         when (it) {
+
             is MainViewEffect.StartLogin -> {
                 startLogin(navController = navController)
             }
@@ -63,7 +66,7 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
         ) {
             composable(BottomNavigationItem.List.route) { ListPage(navController = navController) }
             composable(BottomNavigationItem.Calendar.route) { Calendar(navController) }
-            composable(BottomNavigationItem.MyPage.route) { MyPage(navController) }
+            composable(BottomNavigationItem.MyPage.route) { MyPage() }
         }
     }
 }

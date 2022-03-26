@@ -19,18 +19,14 @@ class MainViewModel @Inject constructor(
     private val _mainViewEffect = MutableEventFlow<MainViewEffect>()
     val mainViewEffect = _mainViewEffect.asEventFlow()
 
-    fun fetchUserInfo() {
-        viewModelScope.launch {
-            checkLoginUseCase.execute(Unit).collect { isLogin ->
-                if(!isLogin) {
-                    _mainViewEffect.emit(MainViewEffect.StartLogin)
-                }
+    suspend fun checkLogin() {
+        checkLoginUseCase.execute(Unit).collect { isLogin ->
+            if (!isLogin) {
+                _mainViewEffect.emit(MainViewEffect.StartLogin)
             }
         }
     }
 
     override fun reduceEvent(oldState: MainState, event: MainEvent) {
     }
-
-
 }

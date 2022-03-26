@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.halill.halill2.R
 import com.halill.halill2.base.observeWithLifecycle
 import com.halill.halill2.ui.theme.Black
@@ -28,7 +27,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun MyPage(
-    navController: NavController,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
     val myPageState = viewModel.state.collectAsState().value
@@ -49,9 +47,6 @@ fun MyPage(
     val saveNameFailedComment = stringResource(id = R.string.save_name_failed)
     viewModel.myPageViewEffect.observeWithLifecycle {
         when (it) {
-            is MyPageViewEffect.StartLogin -> {
-                navController.navigate("login")
-            }
 
             is MyPageViewEffect.SaveNameFailed -> {
                 scaffoldState.snackbarHostState.showSnackbar(
@@ -67,6 +62,7 @@ fun MyPage(
         },
         doOnLogoutClick = {
             coroutineScope.launch {
+                viewModel.dismissLogoutDialog()
                 viewModel.logout()
             }
         },

@@ -8,6 +8,7 @@ import javax.inject.Inject
 class CheckLoginUseCase @Inject constructor(
     private val fetchUserInfoRepository: FetchUserInfoRepository
 ) : UseCase<Unit, Flow<Boolean>>() {
+
     override suspend fun execute(data: Unit): Flow<Boolean> =
         fetchUserInfoRepository.isLoginState()
 }

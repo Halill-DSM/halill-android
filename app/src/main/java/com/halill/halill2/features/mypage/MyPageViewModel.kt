@@ -32,7 +32,6 @@ class MyPageViewModel @Inject constructor(
 
     suspend fun logout() {
         logoutUseCase.execute(Unit)
-        _myPageViewEffect.emit(MyPageViewEffect.StartLogin)
     }
 
     suspend fun fetchUserInfo() {

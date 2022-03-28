@@ -1,7 +1,5 @@
 package com.halill.halill2.features.write
 
-import android.content.Context
-import android.widget.NumberPicker
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -28,16 +26,15 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.chargemap.compose.numberpicker.NumberPicker
 import com.halill.halill2.R
 import com.halill.halill2.ui.theme.Teal700
 import com.halill.halill2.ui.theme.Teal900
 import com.halill.halill2.util.lastDateOfMonth
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
 
 @Composable
 fun WriteTodo(
@@ -315,7 +312,7 @@ fun WriteTodoButton(
 }
 
 private fun WriteTodoState.doneInput() =
-    title.isNotEmpty() && content.isNotEmpty()
+    title.isNotBlank() && content.isNotBlank()
 
 @Composable
 fun SelectDateDialog(
@@ -379,69 +376,28 @@ fun DateDialogContent(
 @Composable
 fun YearNumberPicker(doOnYearPick: (Int) -> Unit, state: WriteTodoState) {
     val deadline = state.deadline
-    AndroidView(
-        modifier = Modifier.wrapContentSize(),
-        factory = { context ->
-            yearNumberPicker(doOnYearPick, context, deadline.year)
-        }
+    NumberPicker(
+        value = deadline.year,
+        onValueChange = doOnYearPick,
+        range = deadline.year - 3..deadline.year + 3
     )
 }
-
-private fun yearNumberPicker(doOnYearPick: (Int) -> Unit, context: Context, year: Int) =
-    NumberPicker(context).apply {
-        setOnValueChangedListener { picker, _, _ ->
-            doOnYearPick(picker.value)
-        }
-        maxValue = year + 1
-        minValue = year - 1
-        value = year
-    }
 
 @Composable
 fun MonthNumberPicker(state: WriteTodoState, doOnMonthPick: (Int) -> Unit) {
     val deadline = state.deadline
-    AndroidView(
-        modifier = Modifier.wrapContentSize(),
-        factory = { context ->
-            monthNumberPicker(doOnMonthPick, context, deadline.monthValue)
-        }
-    )
+    NumberPicker(value = deadline.monthValue, onValueChange = doOnMonthPick, range = 1..12)
 }
-
-private fun monthNumberPicker(doOnMonthPick: (Int) -> Unit, context: Context, month: Int) =
-    NumberPicker(context).apply {
-        setOnValueChangedListener { picker, _, _ ->
-            doOnMonthPick(picker.value)
-        }
-        maxValue = 12
-        minValue = 1
-        value = month
-    }
 
 @Composable
 fun DateNumberPicker(state: WriteTodoState, doOnDatePick: (Int) -> Unit) {
     val deadline = state.deadline
-    AndroidView(
-        modifier = Modifier.wrapContentSize(),
-        factory = { context ->
-            dateNumberPicker(doOnDatePick, context, deadline)
-        }
+    NumberPicker(
+        value = deadline.dayOfMonth,
+        onValueChange = doOnDatePick,
+        range = 1..deadline.lastDateOfMonth()
     )
 }
-
-private fun dateNumberPicker(
-    doOnDatePick: (Int) -> Unit,
-    context: Context,
-    deadline: LocalDateTime
-) =
-    NumberPicker(context).apply {
-        setOnValueChangedListener { picker, _, _ ->
-            doOnDatePick(picker.value)
-        }
-        maxValue = deadline.lastDateOfMonth()
-        minValue = 1
-        value = deadline.dayOfMonth
-    }
 
 @Composable
 fun SelectTimeDialog(
@@ -485,41 +441,11 @@ fun TimeDialogContent(
 @Composable
 fun HourNumberPicker(state: WriteTodoState, doOnHourPick: (Int) -> Unit) {
     val deadline = state.deadline
-    AndroidView(
-        modifier = Modifier.wrapContentSize(),
-        factory = { context ->
-            hourNumberPicker(doOnHourPick, context, deadline.hour)
-        }
-    )
+    NumberPicker(value = deadline.hour, onValueChange = doOnHourPick, range = 0..23)
 }
-
-private fun hourNumberPicker(doOnHourPick: (Int) -> Unit, context: Context, hour: Int) =
-    NumberPicker(context).apply {
-        setOnValueChangedListener { picker, _, _ ->
-            doOnHourPick(picker.value)
-        }
-        maxValue = 23
-        minValue = 0
-        value = hour
-    }
 
 @Composable
 fun MinuteNumberPicker(state: WriteTodoState, doOnMinutePick: (Int) -> Unit) {
     val deadline = state.deadline
-    AndroidView(
-        modifier = Modifier.wrapContentSize(),
-        factory = { context ->
-            minuteNumberPicker(doOnMinutePick, context, deadline.minute)
-        }
-    )
+    NumberPicker(value = deadline.minute, onValueChange = doOnMinutePick, range = 0..59)
 }
-
-private fun minuteNumberPicker(doOnMinutePick: (Int) -> Unit, context: Context, minute: Int) =
-    NumberPicker(context).apply {
-        setOnValueChangedListener { picker, _, _ ->
-            doOnMinutePick(picker.value)
-        }
-        maxValue = 23
-        minValue = 0
-        value = minute
-    }

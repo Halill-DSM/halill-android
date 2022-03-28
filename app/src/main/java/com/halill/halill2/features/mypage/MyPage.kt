@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.halill.halill2.R
 import com.halill.halill2.base.observeWithLifecycle
 import com.halill.halill2.ui.theme.Black
@@ -28,7 +27,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun MyPage(
-    navController: NavController,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
     val myPageState = viewModel.state.collectAsState().value
@@ -49,9 +47,6 @@ fun MyPage(
     val saveNameFailedComment = stringResource(id = R.string.save_name_failed)
     viewModel.myPageViewEffect.observeWithLifecycle {
         when (it) {
-            is MyPageViewEffect.StartLogin -> {
-                navController.navigate("login")
-            }
 
             is MyPageViewEffect.SaveNameFailed -> {
                 scaffoldState.snackbarHostState.showSnackbar(
@@ -67,6 +62,7 @@ fun MyPage(
         },
         doOnLogoutClick = {
             coroutineScope.launch {
+                viewModel.dismissLogoutDialog()
                 viewModel.logout()
             }
         },
@@ -173,15 +169,26 @@ fun SaveUserNameDialog(userName: String, doOnDone: (String) -> Unit) {
     }
     Dialog(onDismissRequest = { doOnDone(name.value) }) {
         Column(
-            Modifier
+            horizontalAlignment = Alignment.End, modifier = Modifier
                 .clip(RoundedCornerShape(15.dp))
                 .background(Color.White)
         ) {
+            val limitLength = 10
+            val currentLength = name.value.length
+            Text(
+                text = "$currentLength / $limitLength",
+                color = Teal900,
+                modifier = Modifier.padding(10.dp)
+            )
             TextField(
                 value = name.value,
-                onValueChange = { name.value = it },
+                onValueChange = {
+                    if (it.length <= limitLength) {
+                        name.value = it
+                    }
+                },
                 modifier = Modifier
-                    .padding(0.dp, 30.dp)
+                    .padding(0.dp, 15.dp)
                     .fillMaxWidth()
             )
             Button(onClick = { doOnDone(name.value) }, modifier = Modifier.fillMaxWidth()) {
@@ -213,7 +220,6 @@ fun LogoutDialog(doOnLogoutClick: () -> Unit, doOnDismiss: () -> Unit) {
                     text = stringResource(id = R.string.no),
                     color = Black,
                     modifier = Modifier
-                        .padding(20.dp)
                         .clickable { doOnDismiss() }
                         .padding(20.dp))
                 Text(

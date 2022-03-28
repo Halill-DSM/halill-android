@@ -120,7 +120,11 @@ class WriteTodoViewModel @Inject constructor(
                 setState(oldState.copy(deadline = oldState.deadline.changeYear(event.year)))
             }
             is WriteTodoEvent.InputDeadlineMonth -> {
-                setState(oldState.copy(deadline = oldState.deadline.changeMonth(event.month)))
+                setState(
+                    oldState.copy(
+                        deadline = oldState.deadline.changeDay(1).changeMonth(event.month)
+                    )
+                )
             }
             is WriteTodoEvent.InputDeadlineDay -> {
                 setState(oldState.copy(deadline = oldState.deadline.changeDay(event.day)))

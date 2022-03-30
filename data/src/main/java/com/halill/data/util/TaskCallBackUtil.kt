@@ -25,8 +25,6 @@ fun Task<DocumentSnapshot>.dataBaseTaskToFlow(): Flow<DocumentSnapshot> =
         this@dataBaseTaskToFlow.addOnSuccessListener {
             trySendBlocking(it)
             close()
-        }.addOnFailureListener {
-            throw ReadFireBaseStoreFailException()
         }
         awaitClose()
     }

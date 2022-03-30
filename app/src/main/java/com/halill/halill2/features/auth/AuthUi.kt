@@ -39,7 +39,7 @@ fun IdTextField(
         onValueChange = {
             doOnValueChange(it)
         },
-        label = { Text(label) },
+        label = { Text(label, color = Color.Black) },
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = Color.White
         ),

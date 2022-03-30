@@ -1,5 +1,6 @@
 package com.halill.halill2.ui.theme
 
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 val Purple200 = Color(0xFFBB86FC)
@@ -17,3 +18,4 @@ val Gray200 = Color(0xFFDDDDDDDD)
 
 val Black = Color(0xFFDD000000)
 
+val textFieldBackgroundColor = compositionLocalOf { Color.White }

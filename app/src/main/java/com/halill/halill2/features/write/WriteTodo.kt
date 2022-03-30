@@ -67,7 +67,7 @@ fun WriteTodo(
                         Icon(Icons.Filled.ArrowBack, "back")
                     }
                 },
-                backgroundColor = Teal700,
+                backgroundColor = MaterialTheme.colors.primary,
                 contentColor = Color.White,
                 elevation = 12.dp
             )
@@ -160,7 +160,7 @@ fun TitleTextField(state: WriteTodoState, doOnTitleChange: (String) -> Unit) {
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
         value = title,
-        label = { Text(text = titleLabel) },
+        label = { Text(text = titleLabel, color = Color.Gray) },
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp),
@@ -172,6 +172,11 @@ fun TitleTextField(state: WriteTodoState, doOnTitleChange: (String) -> Unit) {
             onDone = {
                 focusManager.moveFocus(FocusDirection.Down)
             }
+        ),
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = MaterialTheme.colors.primaryVariant,
+            unfocusedBorderColor = Color.Gray,
+            focusedLabelColor = MaterialTheme.colors.secondary,
         )
     )
 }
@@ -182,7 +187,7 @@ fun ContentTextField(state: WriteTodoState, doOnContentChange: (String) -> Unit)
     val contentLabel = stringResource(id = R.string.write_content)
     OutlinedTextField(
         value = content,
-        label = { Text(text = contentLabel) },
+        label = { Text(text = contentLabel, color = Color.Gray) },
         modifier = Modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = 300.dp, minWidth = 100.dp)
@@ -192,6 +197,11 @@ fun ContentTextField(state: WriteTodoState, doOnContentChange: (String) -> Unit)
         },
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Default
+        ),
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = MaterialTheme.colors.primaryVariant,
+            unfocusedBorderColor = Color.Gray,
+            focusedLabelColor = MaterialTheme.colors.secondary,
         )
     )
 }
@@ -326,7 +336,7 @@ fun SelectDateDialog(
         Surface(
             modifier = Modifier
                 .width(275.dp),
-            color = Color.White,
+            color = MaterialTheme.colors.onSurface,
             shape = RoundedCornerShape(15.dp)
         ) {
             DateDialogContent(
@@ -410,7 +420,7 @@ fun SelectTimeDialog(
         Surface(
             modifier = Modifier
                 .width(220.dp),
-            color = Color.White,
+            color = MaterialTheme.colors.onSurface,
             shape = RoundedCornerShape(15.dp)
         ) {
             TimeDialogContent(state, doOnMinutePick = doOnMinutePick, doOnHourPick = doOnHourPick)

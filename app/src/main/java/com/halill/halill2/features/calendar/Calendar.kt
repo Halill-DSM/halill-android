@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill2.features.list.TodoList
-import com.halill.halill2.ui.theme.*
 import com.halill.halill2.util.isToday
 import java.time.LocalDate
 
@@ -75,9 +74,9 @@ fun CalendarContent(
             doOnNextClick = doOnNextClick
         )
         WeekTextLinearLayout()
-        Divider(color = Gray100)
+        Divider(color = MaterialTheme.colors.onSurface)
         CalendarView(state, doOnDateSelect)
-        Divider(color = Gray200)
+        Divider(color = MaterialTheme.colors.onSurface)
         TodoList(
             todoList = state.selectedDateTodoList,
             onItemClick = doOnTodoClick,

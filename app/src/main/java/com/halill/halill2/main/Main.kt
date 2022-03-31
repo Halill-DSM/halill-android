@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -21,8 +22,6 @@ import com.halill.halill2.base.observeWithLifecycle
 import com.halill.halill2.features.calendar.Calendar
 import com.halill.halill2.features.list.ListPage
 import com.halill.halill2.features.mypage.MyPage
-import com.halill.halill2.ui.theme.Purple500
-import com.halill.halill2.ui.theme.Teal700
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -48,7 +47,7 @@ fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate("writeTodo") },
-                backgroundColor = Purple500
+                backgroundColor = MaterialTheme.colors.secondary
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_baseline_edit_white),
@@ -85,7 +84,8 @@ fun BottomNavBar(
         cutoutShape = MaterialTheme.shapes.small.copy(
             CornerSize(percent = 50)
         ),
-        backgroundColor = Teal700
+        backgroundColor = MaterialTheme.colors.primary,
+        contentColor = Color.White
     ) {
         val bottomTabSelectedItem = rememberSaveable {
             mutableStateOf(BottomNavigationItem.List.route)

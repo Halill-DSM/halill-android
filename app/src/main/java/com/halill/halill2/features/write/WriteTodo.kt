@@ -160,7 +160,7 @@ fun TitleTextField(state: WriteTodoState, doOnTitleChange: (String) -> Unit) {
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
         value = title,
-        label = { Text(text = titleLabel, color = Color.Gray) },
+        label = { Text(text = titleLabel) },
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp),
@@ -174,9 +174,9 @@ fun TitleTextField(state: WriteTodoState, doOnTitleChange: (String) -> Unit) {
             }
         ),
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = MaterialTheme.colors.primaryVariant,
+            focusedBorderColor = MaterialTheme.colors.primary,
             unfocusedBorderColor = Color.Gray,
-            focusedLabelColor = MaterialTheme.colors.secondary,
+            focusedLabelColor = MaterialTheme.colors.primary,
         )
     )
 }
@@ -187,7 +187,7 @@ fun ContentTextField(state: WriteTodoState, doOnContentChange: (String) -> Unit)
     val contentLabel = stringResource(id = R.string.write_content)
     OutlinedTextField(
         value = content,
-        label = { Text(text = contentLabel, color = Color.Gray) },
+        label = { Text(text = contentLabel) },
         modifier = Modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = 300.dp, minWidth = 100.dp)
@@ -199,9 +199,9 @@ fun ContentTextField(state: WriteTodoState, doOnContentChange: (String) -> Unit)
             imeAction = ImeAction.Default
         ),
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = MaterialTheme.colors.primaryVariant,
+            focusedBorderColor = MaterialTheme.colors.primary,
             unfocusedBorderColor = Color.Gray,
-            focusedLabelColor = MaterialTheme.colors.secondary,
+            focusedLabelColor = MaterialTheme.colors.primary,
         )
     )
 }

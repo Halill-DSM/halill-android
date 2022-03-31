@@ -90,7 +90,8 @@ fun SwitchContentDoneOrTodoText(mainState: ListState, doOnClick: () -> Unit) {
         if (mainState.showDoneList) painterResource(id = R.drawable.ic_baseline_check_box_24)
         else painterResource(id = R.drawable.ic_baseline_check_box_outline_blank_24)
 
-    val color = if (mainState.showDoneList) Purple400 else Teal700
+    val color =
+        if (mainState.showDoneList) MaterialTheme.colors.secondary else MaterialTheme.colors.primaryVariant
     Surface(
         elevation = 4.dp,
         color = color,
@@ -222,7 +223,7 @@ fun TodoItem(todo: TodoEntity, onItemClick: (Long) -> Unit, onDoneClick: (Long) 
             DeadlineText(deadline = todo.deadline)
             Divider(
                 modifier = Modifier.padding(PaddingValues(0.dp, 8.dp)),
-                color = Teal500,
+                color = MaterialTheme.colors.primaryVariant,
                 thickness = 1.dp
             )
         }
@@ -275,7 +276,7 @@ fun DoneItem(done: TodoEntity, onItemClick: (Long) -> Unit, onDeleteClick: (Long
             DeadlineText(deadline = done.deadline, done = true)
             Divider(
                 modifier = Modifier.padding(PaddingValues(0.dp, 8.dp)),
-                color = Purple500,
+                color = MaterialTheme.colors.secondary,
                 thickness = 1.dp
             )
         }

@@ -277,11 +277,11 @@ fun WeekLineLayout(content: @Composable () -> Unit) {
 @Composable
 fun CalendarDayItem(day: LocalDate, state: CalendarState, doOnDateSelect: (LocalDate) -> Unit) {
     val borderColor =
-        if (day.isToday()) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.background
+        if (day.isToday()) MaterialTheme.colors.primary else MaterialTheme.colors.background
     val textColor = if (day.isToday()) Color.White else Color.Unspecified
 
     val selectedBackGroundColor =
-        if (state.selectedDate == day) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.background
+        if (state.selectedDate == day) MaterialTheme.colors.primary else MaterialTheme.colors.background
     val interactionSource = remember { MutableInteractionSource() }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -311,7 +311,7 @@ fun CalendarDayItem(day: LocalDate, state: CalendarState, doOnDateSelect: (Local
             }
             dayTodoList.forEach { todo ->
                 val color =
-                    if (todo.isCompleted) MaterialTheme.colors.secondary else MaterialTheme.colors.primaryVariant
+                    if (todo.isCompleted) MaterialTheme.colors.secondary else MaterialTheme.colors.primary
                 Divider(thickness = 3.dp, color = color, modifier = Modifier.padding(0.dp, 2.dp))
             }
         }

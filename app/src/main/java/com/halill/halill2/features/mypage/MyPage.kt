@@ -21,7 +21,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.halill.halill2.R
 import com.halill.halill2.base.observeWithLifecycle
 import com.halill.halill2.ui.theme.Black
-import com.halill.halill2.ui.theme.Teal700
 import com.halill.halill2.ui.theme.Teal900
 import kotlinx.coroutines.launch
 
@@ -171,7 +170,7 @@ fun SaveUserNameDialog(userName: String, doOnDone: (String) -> Unit) {
         Column(
             horizontalAlignment = Alignment.End, modifier = Modifier
                 .clip(RoundedCornerShape(15.dp))
-                .background(Color.White)
+                .background(MaterialTheme.colors.surface)
         ) {
             val limitLength = 10
             val currentLength = name.value.length
@@ -191,7 +190,11 @@ fun SaveUserNameDialog(userName: String, doOnDone: (String) -> Unit) {
                     .padding(0.dp, 15.dp)
                     .fillMaxWidth()
             )
-            Button(onClick = { doOnDone(name.value) }, modifier = Modifier.fillMaxWidth()) {
+            Button(
+                onClick = { doOnDone(name.value) },
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
                 Text(text = stringResource(id = R.string.done_input))
             }
         }
@@ -205,7 +208,7 @@ fun LogoutDialog(doOnLogoutClick: () -> Unit, doOnDismiss: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .clip(RoundedCornerShape(15.dp))
-                .background(Color.White)
+                .background(MaterialTheme.colors.surface)
         ) {
             Text(
                 text = stringResource(id = R.string.ask_logout),
@@ -218,7 +221,6 @@ fun LogoutDialog(doOnLogoutClick: () -> Unit, doOnDismiss: () -> Unit) {
             ) {
                 Text(
                     text = stringResource(id = R.string.no),
-                    color = Black,
                     modifier = Modifier
                         .clickable { doOnDismiss() }
                         .padding(20.dp))

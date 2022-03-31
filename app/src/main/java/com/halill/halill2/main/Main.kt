@@ -84,7 +84,7 @@ fun BottomNavBar(
         cutoutShape = MaterialTheme.shapes.small.copy(
             CornerSize(percent = 50)
         ),
-        backgroundColor = MaterialTheme.colors.primary,
+        backgroundColor = MaterialTheme.colors.primaryVariant,
         contentColor = Color.White
     ) {
         val bottomTabSelectedItem = rememberSaveable {

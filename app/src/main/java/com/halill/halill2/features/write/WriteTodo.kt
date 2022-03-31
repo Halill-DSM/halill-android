@@ -336,7 +336,7 @@ fun SelectDateDialog(
         Surface(
             modifier = Modifier
                 .width(275.dp),
-            color = MaterialTheme.colors.onSurface,
+            color = MaterialTheme.colors.surface,
             shape = RoundedCornerShape(15.dp)
         ) {
             DateDialogContent(
@@ -420,7 +420,7 @@ fun SelectTimeDialog(
         Surface(
             modifier = Modifier
                 .width(220.dp),
-            color = MaterialTheme.colors.onSurface,
+            color = MaterialTheme.colors.surface,
             shape = RoundedCornerShape(15.dp)
         ) {
             TimeDialogContent(state, doOnMinutePick = doOnMinutePick, doOnHourPick = doOnHourPick)

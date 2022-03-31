@@ -67,7 +67,7 @@ fun WriteTodo(
                         Icon(Icons.Filled.ArrowBack, "back")
                     }
                 },
-                backgroundColor = MaterialTheme.colors.primary,
+                backgroundColor = MaterialTheme.colors.primaryVariant,
                 contentColor = Color.White,
                 elevation = 12.dp
             )

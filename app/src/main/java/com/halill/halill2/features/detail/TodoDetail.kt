@@ -22,6 +22,7 @@ import com.halill.halill2.features.list.DeadlineText
 import com.halill.halill2.features.list.DeleteButton
 import com.halill.halill2.features.list.DoneButton
 import com.halill.halill2.ui.theme.Teal700
+import com.halill.halill2.ui.theme.Teal900
 import com.halill.halill2.util.toRemainTimeText
 import kotlinx.coroutines.launch
 
@@ -74,7 +75,7 @@ fun TodoDetail(
                     }
 
                 },
-                backgroundColor = Color.White,
+                backgroundColor = MaterialTheme.colors.surface,
                 contentColor = Teal700,
                 elevation = 12.dp
             )
@@ -120,6 +121,6 @@ fun EditButton() {
             contentDescription = "editTodo"
         )
         val doneText = stringResource(id = R.string.edit)
-        Text(text = doneText, color = Color.Gray, fontSize = 12.sp)
+        Text(text = doneText, color = Teal900, fontSize = 12.sp)
     }
 }

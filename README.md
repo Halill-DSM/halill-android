@@ -5,10 +5,7 @@
 * MVI architecture
 * CleanArchitecture
 * Hilt
-* MutiModule
+* MultiModule
 * coroutine
 * Room
-* Retrofit 2
-
-## Ui
-
+* FireBase(Auth, FireStore)

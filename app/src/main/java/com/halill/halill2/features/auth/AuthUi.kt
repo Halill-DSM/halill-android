@@ -39,9 +39,9 @@ fun IdTextField(
         onValueChange = {
             doOnValueChange(it)
         },
-        label = { Text(label, color = Color.Black) },
+        label = { Text(label) },
         colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = Color.White
+            backgroundColor = MaterialTheme.colors.surface
         ),
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType,

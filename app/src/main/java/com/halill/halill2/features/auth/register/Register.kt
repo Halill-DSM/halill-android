@@ -24,7 +24,6 @@ import com.halill.halill2.base.observeWithLifecycle
 import com.halill.halill2.features.auth.IdTextField
 import com.halill.halill2.features.auth.PasswordTextField
 import com.halill.halill2.features.auth.login.LoginLayoutViews
-import com.halill.halill2.ui.theme.Teal700
 import com.halill.halill2.ui.theme.Teal900
 import kotlinx.coroutines.launch
 
@@ -50,7 +49,7 @@ fun Register(
                         Icon(Icons.Filled.ArrowBack, "")
                     }
                 },
-                backgroundColor = Teal700,
+                backgroundColor = MaterialTheme.colors.primaryVariant,
                 contentColor = Color.White,
                 elevation = 12.dp
             )

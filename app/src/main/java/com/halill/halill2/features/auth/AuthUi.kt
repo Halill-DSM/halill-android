@@ -14,7 +14,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
@@ -23,7 +22,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.halill.halill2.features.auth.login.LoginLayoutViews
-import com.halill.halill2.ui.theme.Gray200
 
 @Composable
 fun IdTextField(
@@ -39,7 +37,7 @@ fun IdTextField(
         onValueChange = {
             doOnValueChange(it)
         },
-        label = { Text(label) },
+        label = { Text(label, color = MaterialTheme.colors.onSurface) },
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = MaterialTheme.colors.surface
         ),
@@ -55,7 +53,7 @@ fun IdTextField(
                 focusManager.clearFocus()
             }
         ),
-        modifier = loginTextFieldModifier
+        modifier = AuthTextFieldModifier()
             .layoutId(layoutId)
     )
 }
@@ -74,16 +72,16 @@ fun PasswordTextField(
         mutableStateOf(false)
     }
     Column(
-        modifier = loginTextFieldModifier
+        modifier = AuthTextFieldModifier()
             .layoutId(layoutId)
     ) {
         TextField(value = text,
             onValueChange = {
                 doOnValueChange(it)
             },
-            label = { Text(label) },
+            label = { Text(label, color = MaterialTheme.colors.onSurface) },
             colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.White
+                backgroundColor = MaterialTheme.colors.surface
             ),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
@@ -122,12 +120,12 @@ fun PasswordTextField(
     }
 }
 
-private val loginTextFieldModifier by lazy {
+@Composable
+fun AuthTextFieldModifier() =
     Modifier
         .clip(RoundedCornerShape(30.dp))
         .border(
             width = 1.dp,
-            color = Gray200,
+            color = MaterialTheme.colors.surface,
             shape = RoundedCornerShape(30.dp)
         )
-}

@@ -30,9 +30,6 @@ import com.halill.domain.features.todo.entity.TodoEntity
 import com.halill.halill2.R
 import com.halill.halill2.base.EventFlow
 import com.halill.halill2.base.observeWithLifecycle
-import com.halill.halill2.ui.theme.Purple400
-import com.halill.halill2.ui.theme.Purple500
-import com.halill.halill2.ui.theme.Teal500
 import com.halill.halill2.ui.theme.Teal700
 import com.halill.halill2.util.toShowDeadlineText
 import java.time.LocalDateTime
@@ -46,18 +43,13 @@ fun ListPage(navController: NavController, viewModel: ListViewModel = hiltViewMo
         viewModel.loadTodoList()
     }
 
-    Column(horizontalAlignment = Alignment.End) {
-        SwitchContentDoneOrTodoText(mainState = state) {
-            viewModel.switchTodoOrDone()
-        }
-
-        MainPager(
-            state = state,
-            onItemClick = { id -> viewModel.startDetailTodo(id) },
-            onDoneClick = { id -> viewModel.doneTodo(id) },
-            onDeleteClick = { id -> viewModel.deleteTodo(id) }
-        )
-    }
+    ListPageContent(
+        state = state,
+        onSwitchContentClick = { viewModel.switchTodoOrDone() },
+        onItemClick = { id -> viewModel.startDetailTodo(id) },
+        onDoneClick = { id -> viewModel.doneTodo(id) },
+        onDeleteClick = { id -> viewModel.deleteTodo(id) }
+    )
 
     handleViewEffect(navController = navController, uiEvent = viewModel.listViewEffect)
 }
@@ -80,6 +72,29 @@ private fun handleViewEffect(
                 navController.navigate("todoDetail/${mainEvent.id}")
             }
         }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun ListPageContent(
+    state: ListState,
+    onSwitchContentClick: () -> Unit,
+    onItemClick: (Long) -> Unit,
+    onDoneClick: (Long) -> Unit,
+    onDeleteClick: (Long) -> Unit
+) {
+    Column(horizontalAlignment = Alignment.End) {
+        SwitchContentDoneOrTodoText(mainState = state) {
+            onSwitchContentClick()
+        }
+
+        MainPager(
+            state = state,
+            onItemClick = onItemClick,
+            onDoneClick = onDoneClick,
+            onDeleteClick = onDeleteClick
+        )
     }
 }
 

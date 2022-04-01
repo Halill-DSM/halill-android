@@ -263,7 +263,7 @@ fun LoginButton(
             onLoginButtonClick(doneInput(loginState))
         },
         colors = buttonColors(
-            backgroundColor = Teal900,
+            backgroundColor = if (loginState.isLoading) Color.Gray else Teal900,
             contentColor = Color.White
         ),
         modifier = Modifier

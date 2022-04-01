@@ -212,7 +212,7 @@ fun RegisterButton(
             }
         },
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = if (state.doneInput()) Teal900 else Color.Gray,
+            backgroundColor = if (state.doneInput() && !state.isLoading) Teal900 else Color.Gray,
             contentColor = Color.White
         ),
         modifier = Modifier

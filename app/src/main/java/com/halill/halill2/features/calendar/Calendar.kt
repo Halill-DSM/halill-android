@@ -5,10 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NavigateBefore
 import androidx.compose.material.icons.filled.NavigateNext
@@ -22,7 +19,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill2.features.list.TodoList
-import com.halill.halill2.ui.theme.*
 import com.halill.halill2.util.isToday
 import java.time.LocalDate
 
@@ -78,9 +74,9 @@ fun CalendarContent(
             doOnNextClick = doOnNextClick
         )
         WeekTextLinearLayout()
-        Divider(color = Gray100)
+        Divider(color = MaterialTheme.colors.onSurface)
         CalendarView(state, doOnDateSelect)
-        Divider(color = Gray200)
+        Divider(color = MaterialTheme.colors.onSurface)
         TodoList(
             todoList = state.selectedDateTodoList,
             onItemClick = doOnTodoClick,
@@ -98,7 +94,7 @@ fun WeekTextLinearLayout() {
         }
         weekTextList.forEach { weekText ->
             val textColor =
-                if (weekText == "일") Color.Red else if (weekText == "토") Color.Blue else Color.Black
+                if (weekText == "일") Color.Red else if (weekText == "토") Color.Blue else Color.Unspecified
             WeekText(weekText = weekText, textColor = textColor)
         }
     }
@@ -279,10 +275,12 @@ fun WeekLineLayout(content: @Composable () -> Unit) {
 
 @Composable
 fun CalendarDayItem(day: LocalDate, state: CalendarState, doOnDateSelect: (LocalDate) -> Unit) {
-    val borderColor = if (day.isToday()) Teal900 else Color.White
-    val textColor = if (day.isToday()) Color.White else Color.Black
+    val borderColor =
+        if (day.isToday()) MaterialTheme.colors.primary else MaterialTheme.colors.background
+    val textColor = if (day.isToday()) Color.White else Color.Unspecified
 
-    val backGroundColor = if (state.selectedDate == day) Teal700 else Color.White
+    val selectedBackGroundColor =
+        if (state.selectedDate == day) MaterialTheme.colors.primary else MaterialTheme.colors.background
     val interactionSource = remember { MutableInteractionSource() }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -294,12 +292,12 @@ fun CalendarDayItem(day: LocalDate, state: CalendarState, doOnDateSelect: (Local
             ) {
                 doOnDateSelect(day)
             }
-            .border(1.dp, color = backGroundColor)
+            .border(1.dp, color = selectedBackGroundColor)
     ) {
         Text(
             text = day.dayOfMonth.toString(),
-            color = textColor,
             textAlign = TextAlign.Center,
+            color = textColor,
             modifier = Modifier
                 .background(borderColor)
                 .size(25.dp)
@@ -311,7 +309,8 @@ fun CalendarDayItem(day: LocalDate, state: CalendarState, doOnDateSelect: (Local
                 dayTodoList.subList(0, 3)
             }
             dayTodoList.forEach { todo ->
-                val color = if (todo.isCompleted) Purple400 else Teal700
+                val color =
+                    if (todo.isCompleted) MaterialTheme.colors.secondary else MaterialTheme.colors.primary
                 Divider(thickness = 3.dp, color = color, modifier = Modifier.padding(0.dp, 2.dp))
             }
         }

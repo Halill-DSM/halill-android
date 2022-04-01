@@ -168,7 +168,7 @@ fun LoginLayout(
             .fillMaxWidth()
             .wrapContentHeight()
             .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
-            .background(color = Color.White)
+            .background(color = MaterialTheme.colors.background)
     ) {
         val coroutineScope = rememberCoroutineScope()
 
@@ -263,12 +263,12 @@ fun LoginButton(
             onLoginButtonClick(doneInput(loginState))
         },
         colors = buttonColors(
-            backgroundColor = Teal900,
+            backgroundColor = if (loginState.isLoading) Color.Gray else Teal900,
             contentColor = Color.White
         ),
         modifier = Modifier
             .layoutId(LoginLayoutViews.LoginButtonId)
-            .clip(RoundedCornerShape(30.dp))
+            .clip(RoundedCornerShape(50.dp))
     ) {
         val text =
             if (loginState.isLoading) stringResource(id = R.string.loading_comment)

@@ -1,5 +1,6 @@
 package com.halill.halill2.features.calendar
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -57,6 +58,7 @@ fun Calendar(navController: NavController, viewModel: CalendarViewModel = hiltVi
     )
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun CalendarContent(
     state: CalendarState,
@@ -75,7 +77,24 @@ fun CalendarContent(
         )
         WeekTextLinearLayout()
         Divider(color = MaterialTheme.colors.onSurface)
-        CalendarView(state, doOnDateSelect)
+
+        AnimatedContent(
+            targetState = state.showingMonthDate,
+            transitionSpec = {
+                if (targetState.isBefore(initialState)) {
+                    slideInHorizontally { horizontal -> -horizontal } + fadeIn() with
+                            slideOutHorizontally { horizontal -> horizontal } + fadeOut()
+                } else {
+                    slideInHorizontally { horizontal -> horizontal } + fadeIn() with
+                            slideOutHorizontally { horizontal -> -horizontal } + fadeOut()
+                }.using(
+                    SizeTransform(clip = false)
+                )
+            }
+        ) {
+            CalendarView(state, doOnDateSelect)
+        }
+
         Divider(color = MaterialTheme.colors.onSurface)
         TodoList(
             todoList = state.selectedDateTodoList,

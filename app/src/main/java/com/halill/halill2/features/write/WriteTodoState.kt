@@ -3,7 +3,6 @@ package com.halill.halill2.features.write
 import com.halill.halill2.base.MviState
 import java.time.LocalDateTime
 
-
 data class WriteTodoState(
     val title: String,
     val content: String,
@@ -14,6 +13,7 @@ data class WriteTodoState(
     val showDateSelectDialog: Boolean,
     val showHourSelectDialog: Boolean
 ): MviState {
+
     companion object {
         fun initial() =
             WriteTodoState(
@@ -26,6 +26,5 @@ data class WriteTodoState(
                 showDateSelectDialog = false,
                 showHourSelectDialog = false
             )
-
     }
 }

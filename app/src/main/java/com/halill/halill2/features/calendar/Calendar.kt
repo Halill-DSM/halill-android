@@ -21,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.halill.halill2.features.list.TodoList
 import com.halill.halill2.util.isToday
+import com.halill.halill2.util.toMontDayList
 import java.time.LocalDate
 
 @Composable
@@ -91,8 +92,8 @@ fun CalendarContent(
                     SizeTransform(clip = false)
                 )
             }
-        ) {
-            CalendarView(state, doOnDateSelect)
+        ) { showingDate ->
+            CalendarView(showingDate = showingDate, doOnDateSelect = doOnDateSelect)
         }
 
         Divider(color = MaterialTheme.colors.onSurface)
@@ -172,23 +173,24 @@ fun CalendarMonthLayout(
 }
 
 @Composable
-fun CalendarView(state: CalendarState, doOnDateSelect: (LocalDate) -> Unit) {
+fun CalendarView(
+    doOnDateSelect: (LocalDate) -> Unit,
+    showingDate: LocalDate
+) {
     Column(modifier = Modifier.padding(0.dp, 7.dp, 0.dp, 0.dp)) {
-        val monthDayList = state.showingMonthDayList
+        val monthDayList = showingDate.toMontDayList()
         val firstDayOfWeek = monthDayList[0].dayOfWeek.value
         val alreadyShowDateCount = if (firstDayOfWeek == 7) 7 else (7 - firstDayOfWeek)
         CalendarFirstWeekLayout(
-            state = state,
-            firstDayOfWeek = firstDayOfWeek,
-            doOnDateSelect = doOnDateSelect
+            monthDayList = monthDayList,
+            doOnDateSelect = doOnDateSelect,
+            showingMonthDayList = monthDayList
         )
         CalendarWeekLayout(
-            state = state,
             showingMonthDayList = monthDayList,
             alreadyShowDateCount = alreadyShowDateCount,
             doOnDateSelect = doOnDateSelect
         )
-
     }
 }
 
@@ -197,17 +199,17 @@ val calendarItemHeight = 55.dp
 
 @Composable
 fun CalendarFirstWeekLayout(
-    state: CalendarState,
-    firstDayOfWeek: Int,
+    monthDayList: List<LocalDate>,
+    showingMonthDayList: List<LocalDate>,
     doOnDateSelect: (LocalDate) -> Unit
 ) {
+    val firstDayOfWeek = monthDayList[0].dayOfWeek.value
     WeekLineLayout {
         CalendarFrontSpacer(dayOfWeek = firstDayOfWeek)
 
         FirstWeekLayout(
-            state = state,
-            showingMonthDayList = state.showingMonthDayList,
-            doOnDateSelect = doOnDateSelect
+            doOnDateSelect = doOnDateSelect,
+            showingMonthDayList = showingMonthDayList
         )
     }
 }
@@ -227,12 +229,11 @@ fun CalendarFrontSpacer(dayOfWeek: Int) {
 
 @Composable
 fun FirstWeekLayout(
-    state: CalendarState,
-    showingMonthDayList: List<LocalDate>,
-    doOnDateSelect: (LocalDate) -> Unit
+    doOnDateSelect: (LocalDate) -> Unit,
+    showingMonthDayList: List<LocalDate>
 ) {
     for (day in showingMonthDayList) {
-        CalendarDayItem(day, doOnDateSelect = doOnDateSelect, state = state)
+        CalendarDayItem(day, doOnDateSelect = doOnDateSelect)
         if (day.dayOfWeek.value == 6) {
             break
         }
@@ -241,7 +242,6 @@ fun FirstWeekLayout(
 
 @Composable
 fun CalendarWeekLayout(
-    state: CalendarState,
     showingMonthDayList: List<LocalDate>,
     alreadyShowDateCount: Int,
     doOnDateSelect: (LocalDate) -> Unit
@@ -268,8 +268,7 @@ fun CalendarWeekLayout(
                     } else {
                         CalendarDayItem(
                             showingMonthDayList[showedDateCount],
-                            doOnDateSelect = doOnDateSelect,
-                            state = state
+                            doOnDateSelect = doOnDateSelect
                         )
                         dayList.removeAt(0)
                         showedDateCount += 1
@@ -293,7 +292,12 @@ fun WeekLineLayout(content: @Composable () -> Unit) {
 }
 
 @Composable
-fun CalendarDayItem(day: LocalDate, state: CalendarState, doOnDateSelect: (LocalDate) -> Unit) {
+fun CalendarDayItem(
+    day: LocalDate,
+    doOnDateSelect: (LocalDate) -> Unit,
+    viewModel: CalendarViewModel = hiltViewModel()
+) {
+    val state = viewModel.state.collectAsState().value
     val borderColor =
         if (day.isToday()) MaterialTheme.colors.primary else MaterialTheme.colors.background
     val textColor = if (day.isToday()) Color.White else Color.Unspecified

@@ -4,6 +4,9 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -38,7 +41,7 @@ fun Calendar(navController: NavController, viewModel: CalendarViewModel = hiltVi
 
     CalendarContent(
         state = state,
-        doOnNextClick = {
+        doOnNextMonthClick = {
             viewModel.showNextMonth()
         },
         doOnBeforeMonthClick = {
@@ -64,7 +67,7 @@ fun Calendar(navController: NavController, viewModel: CalendarViewModel = hiltVi
 fun CalendarContent(
     state: CalendarState,
     doOnBeforeMonthClick: () -> Unit,
-    doOnNextClick: () -> Unit,
+    doOnNextMonthClick: () -> Unit,
     doOnDateSelect: (LocalDate) -> Unit,
     doOnTodoClick: (Long) -> Unit,
     doOnDoneClick: (Long) -> Unit,
@@ -74,7 +77,7 @@ fun CalendarContent(
         CalendarMonthLayout(
             state.showingMonthDate,
             doOnBeforeMonthClick = doOnBeforeMonthClick,
-            doOnNextClick = doOnNextClick
+            doOnNextMonthClick = doOnNextMonthClick
         )
         WeekTextLinearLayout()
         Divider(color = MaterialTheme.colors.onSurface)
@@ -93,7 +96,12 @@ fun CalendarContent(
                 )
             }
         ) { showingDate ->
-            CalendarView(showingDate = showingDate, doOnDateSelect = doOnDateSelect)
+            CalendarView(
+                showingDate = showingDate,
+                doOnDateSelect = doOnDateSelect,
+                showBeforeMonth = doOnBeforeMonthClick,
+                showNextMonth = doOnNextMonthClick
+            )
         }
 
         Divider(color = MaterialTheme.colors.onSurface)
@@ -134,7 +142,7 @@ fun WeekText(weekText: String, textColor: Color) {
 fun CalendarMonthLayout(
     showingDate: LocalDate,
     doOnBeforeMonthClick: () -> Unit,
-    doOnNextClick: () -> Unit
+    doOnNextMonthClick: () -> Unit
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -158,7 +166,7 @@ fun CalendarMonthLayout(
         Text(text = monthText, fontSize = 22.sp)
 
         IconButton(
-            onClick = doOnNextClick, modifier = Modifier
+            onClick = doOnNextMonthClick, modifier = Modifier
                 .padding(10.dp)
                 .size(60.dp)
         ) {
@@ -175,9 +183,32 @@ fun CalendarMonthLayout(
 @Composable
 fun CalendarView(
     doOnDateSelect: (LocalDate) -> Unit,
+    showNextMonth: () -> Unit,
+    showBeforeMonth: () -> Unit,
     showingDate: LocalDate
 ) {
-    Column(modifier = Modifier.padding(0.dp, 7.dp, 0.dp, 0.dp)) {
+    var currentDelta by remember {
+        mutableStateOf(0f)
+    }
+    Column(
+        modifier = Modifier
+            .padding(0.dp, 7.dp, 0.dp, 0.dp)
+            .scrollable(
+                orientation = Orientation.Vertical, state = rememberScrollableState { delta ->
+                    when {
+                        delta + 5 > currentDelta -> {
+                            showNextMonth()
+                            currentDelta = delta
+                        }
+                        delta - 5 < currentDelta -> {
+                            showBeforeMonth()
+                            currentDelta = delta
+                        }
+                    }
+                    delta
+                }
+            )
+    ) {
         val monthDayList = showingDate.toMontDayList()
         val firstDayOfWeek = monthDayList[0].dayOfWeek.value
         val alreadyShowDateCount = if (firstDayOfWeek == 7) 7 else (7 - firstDayOfWeek)

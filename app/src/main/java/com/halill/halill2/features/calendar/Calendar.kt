@@ -4,9 +4,7 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -187,26 +185,28 @@ fun CalendarView(
     showBeforeMonth: () -> Unit,
     showingDate: LocalDate
 ) {
-    var currentDelta by remember {
+    var changedDelta by remember {
         mutableStateOf(0f)
     }
     Column(
         modifier = Modifier
             .padding(0.dp, 7.dp, 0.dp, 0.dp)
-            .scrollable(
-                orientation = Orientation.Vertical, state = rememberScrollableState { delta ->
+            .draggable(
+                orientation = Orientation.Horizontal,
+                state = rememberDraggableState { delta ->
+                    changedDelta += delta
                     when {
-                        delta + 5 > currentDelta -> {
+                        changedDelta > 300 -> {
                             showNextMonth()
-                            currentDelta = delta
+                            changedDelta = 0f
                         }
-                        delta - 5 < currentDelta -> {
+                        changedDelta < -300 -> {
                             showBeforeMonth()
-                            currentDelta = delta
+                            changedDelta = 0f
                         }
                     }
-                    delta
-                }
+                },
+                reverseDirection = true
             )
     ) {
         val monthDayList = showingDate.toMontDayList()

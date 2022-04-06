@@ -30,9 +30,6 @@ import com.halill.domain.features.todo.entity.TodoEntity
 import com.halill.halill2.R
 import com.halill.halill2.base.EventFlow
 import com.halill.halill2.base.observeWithLifecycle
-import com.halill.halill2.ui.theme.Purple400
-import com.halill.halill2.ui.theme.Purple500
-import com.halill.halill2.ui.theme.Teal500
 import com.halill.halill2.ui.theme.Teal700
 import com.halill.halill2.util.toShowDeadlineText
 import java.time.LocalDateTime
@@ -46,18 +43,13 @@ fun ListPage(navController: NavController, viewModel: ListViewModel = hiltViewMo
         viewModel.loadTodoList()
     }
 
-    Column(horizontalAlignment = Alignment.End) {
-        SwitchContentDoneOrTodoText(mainState = state) {
-            viewModel.switchTodoOrDone()
-        }
-
-        MainPager(
-            state = state,
-            onItemClick = { id -> viewModel.startDetailTodo(id) },
-            onDoneClick = { id -> viewModel.doneTodo(id) },
-            onDeleteClick = { id -> viewModel.deleteTodo(id) }
-        )
-    }
+    ListPageContent(
+        state = state,
+        onSwitchContentClick = { viewModel.switchTodoOrDone() },
+        onItemClick = { id -> viewModel.startDetailTodo(id) },
+        onDoneClick = { id -> viewModel.doneTodo(id) },
+        onDeleteClick = { id -> viewModel.deleteTodo(id) }
+    )
 
     handleViewEffect(navController = navController, uiEvent = viewModel.listViewEffect)
 }
@@ -83,6 +75,29 @@ private fun handleViewEffect(
     }
 }
 
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun ListPageContent(
+    state: ListState,
+    onSwitchContentClick: () -> Unit,
+    onItemClick: (Long) -> Unit,
+    onDoneClick: (Long) -> Unit,
+    onDeleteClick: (Long) -> Unit
+) {
+    Column(horizontalAlignment = Alignment.End) {
+        SwitchContentDoneOrTodoText(mainState = state) {
+            onSwitchContentClick()
+        }
+
+        MainPager(
+            state = state,
+            onItemClick = onItemClick,
+            onDoneClick = onDoneClick,
+            onDeleteClick = onDeleteClick
+        )
+    }
+}
+
 @Composable
 fun SwitchContentDoneOrTodoText(mainState: ListState, doOnClick: () -> Unit) {
     val text = if (mainState.showDoneList) "완료한 할일" else "할일"
@@ -90,7 +105,8 @@ fun SwitchContentDoneOrTodoText(mainState: ListState, doOnClick: () -> Unit) {
         if (mainState.showDoneList) painterResource(id = R.drawable.ic_baseline_check_box_24)
         else painterResource(id = R.drawable.ic_baseline_check_box_outline_blank_24)
 
-    val color = if (mainState.showDoneList) Purple400 else Teal700
+    val color =
+        if (mainState.showDoneList) MaterialTheme.colors.secondary else MaterialTheme.colors.primaryVariant
     Surface(
         elevation = 4.dp,
         color = color,
@@ -222,7 +238,7 @@ fun TodoItem(todo: TodoEntity, onItemClick: (Long) -> Unit, onDoneClick: (Long) 
             DeadlineText(deadline = todo.deadline)
             Divider(
                 modifier = Modifier.padding(PaddingValues(0.dp, 8.dp)),
-                color = Teal500,
+                color = MaterialTheme.colors.primaryVariant,
                 thickness = 1.dp
             )
         }
@@ -275,7 +291,7 @@ fun DoneItem(done: TodoEntity, onItemClick: (Long) -> Unit, onDeleteClick: (Long
             DeadlineText(deadline = done.deadline, done = true)
             Divider(
                 modifier = Modifier.padding(PaddingValues(0.dp, 8.dp)),
-                color = Purple500,
+                color = MaterialTheme.colors.secondary,
                 thickness = 1.dp
             )
         }

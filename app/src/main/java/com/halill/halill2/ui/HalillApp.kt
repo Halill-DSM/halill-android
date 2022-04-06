@@ -3,6 +3,7 @@ package com.halill.halill2.ui
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -23,6 +24,8 @@ fun HalIllApp() {
     val systemUiController = rememberSystemUiController()
     val scaffoldState = rememberScaffoldState()
 
+    val textFieldBackgroundColor = compositionLocalOf { Color.White }
+
     if (isSystemInDarkTheme()) {
         systemUiController.setSystemBarsColor(
             color = Color.Black
@@ -31,6 +34,7 @@ fun HalIllApp() {
             color = Color.Black,
             darkIcons = false
         )
+        textFieldBackgroundColor.provides(Color.Gray)
     } else {
         systemUiController.setSystemBarsColor(
             color = Teal900
@@ -39,6 +43,7 @@ fun HalIllApp() {
             color = Color.White,
             darkIcons = true
         )
+        textFieldBackgroundColor.provides(Color.White)
     }
     NavHost(navController = navController, startDestination = "main") {
         composable("main") { Main(navController) }

@@ -1,11 +1,9 @@
 package com.halill.halill2.main
 
-import androidx.lifecycle.viewModelScope
 import com.halill.domain.features.auth.usecase.CheckLoginUseCase
 import com.halill.halill2.base.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel

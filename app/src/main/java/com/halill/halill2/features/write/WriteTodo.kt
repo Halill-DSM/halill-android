@@ -67,7 +67,7 @@ fun WriteTodo(
                         Icon(Icons.Filled.ArrowBack, "back")
                     }
                 },
-                backgroundColor = Teal700,
+                backgroundColor = MaterialTheme.colors.primaryVariant,
                 contentColor = Color.White,
                 elevation = 12.dp
             )
@@ -172,6 +172,11 @@ fun TitleTextField(state: WriteTodoState, doOnTitleChange: (String) -> Unit) {
             onDone = {
                 focusManager.moveFocus(FocusDirection.Down)
             }
+        ),
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = MaterialTheme.colors.primary,
+            unfocusedBorderColor = Color.Gray,
+            focusedLabelColor = MaterialTheme.colors.primary,
         )
     )
 }
@@ -192,6 +197,11 @@ fun ContentTextField(state: WriteTodoState, doOnContentChange: (String) -> Unit)
         },
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Default
+        ),
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = MaterialTheme.colors.primary,
+            unfocusedBorderColor = Color.Gray,
+            focusedLabelColor = MaterialTheme.colors.primary,
         )
     )
 }
@@ -326,7 +336,7 @@ fun SelectDateDialog(
         Surface(
             modifier = Modifier
                 .width(275.dp),
-            color = Color.White,
+            color = MaterialTheme.colors.surface,
             shape = RoundedCornerShape(15.dp)
         ) {
             DateDialogContent(
@@ -410,7 +420,7 @@ fun SelectTimeDialog(
         Surface(
             modifier = Modifier
                 .width(220.dp),
-            color = Color.White,
+            color = MaterialTheme.colors.surface,
             shape = RoundedCornerShape(15.dp)
         ) {
             TimeDialogContent(state, doOnMinutePick = doOnMinutePick, doOnHourPick = doOnHourPick)

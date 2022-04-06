@@ -24,6 +24,7 @@ import com.halill.halill2.features.list.TodoList
 import com.halill.halill2.util.isToday
 import com.halill.halill2.util.toMontDayList
 import java.time.LocalDate
+import kotlin.math.abs
 
 @Composable
 fun Calendar(navController: NavController, viewModel: CalendarViewModel = hiltViewModel()) {
@@ -194,7 +195,9 @@ fun CalendarView(
             .draggable(
                 orientation = Orientation.Horizontal,
                 state = rememberDraggableState { delta ->
-                    changedDelta += delta
+                    if (abs(delta) < 250) {
+                        changedDelta += delta
+                    }
                     when {
                         changedDelta > 300 -> {
                             showNextMonth()

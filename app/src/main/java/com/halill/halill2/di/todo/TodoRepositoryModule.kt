@@ -1,60 +1,56 @@
 package com.halill.halill2.di.todo
 
-import com.halill.data.features.todo.datasource.local.LocalTodoDataSource
-import com.halill.data.features.todo.datasource.remote.RemoteTodoDataSource
 import com.halill.data.features.todo.repository.*
 import com.halill.domain.features.todo.repository.*
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object TodoRepositoryModule {
-    @Singleton
-    @Provides
-    fun provideGetTodoListRepository(
-        localTodoDataSource: LocalTodoDataSource
-    ): FetchTodoListRepository =
-        FetchTodoListRepositoryImpl(localTodoDataSource)
+abstract class TodoRepositoryModule {
 
     @Singleton
-    @Provides
-    fun provideSaveTodoRepository(
-        localTodoDataSource: LocalTodoDataSource,
-        remoteTodoDataSource: RemoteTodoDataSource
-    ): SaveTodoRepository = SaveTodoRepositoryImpl(localTodoDataSource, remoteTodoDataSource)
+    @Binds
+    abstract fun provideGetTodoListRepository(
+        fetchTodoListRepositoryImpl: FetchTodoListRepositoryImpl
+    ): FetchTodoListRepository
 
     @Singleton
-    @Provides
-    fun provideDoneTodoRepository(
-        localTodoDataSource: LocalTodoDataSource,
-        remoteTodoDataSource: RemoteTodoDataSource
-    ): DoneTodoRepository = DoneTodoRepositoryImpl(localTodoDataSource, remoteTodoDataSource)
+    @Binds
+    abstract fun provideSaveTodoRepository(
+        saveTodoRepositoryImpl: SaveTodoRepositoryImpl
+    ): SaveTodoRepository
 
     @Singleton
-    @Provides
-    fun provideDeleteTodoRepository(
-        localTodoDataSource: LocalTodoDataSource
-    ): DeleteTodoRepository = DeleteTodoRepositoryImpl(localTodoDataSource)
+    @Binds
+    abstract fun provideDoneTodoRepository(
+        doneTodoRepositoryImpl: DoneTodoRepositoryImpl
+    ): DoneTodoRepository
 
     @Singleton
-    @Provides
-    fun provideGetTodoDetailRepository(
-        localTodoDataSource: LocalTodoDataSource
-    ): FetchTodoDetailRepository = FetchTodoDetailRepositoryImpl(localTodoDataSource)
+    @Binds
+    abstract fun provideDeleteTodoRepository(
+        deleteTodoRepositoryImpl: DeleteTodoRepositoryImpl
+    ): DeleteTodoRepository
 
     @Singleton
-    @Provides
-    fun provideEditTodoRepository(
-        localTodoDataSource: LocalTodoDataSource
-    ): EditTodoRepository = EditTodoRepositoryImpl(localTodoDataSource)
+    @Binds
+    abstract fun provideGetTodoDetailRepository(
+        fetchTodoDetailRepositoryImpl: FetchTodoDetailRepositoryImpl
+    ): FetchTodoDetailRepository
 
     @Singleton
-    @Provides
-    fun provideFetchAllTimeCountRepository(
-        remoteTodoDataSource: RemoteTodoDataSource
-    ): FetchAllTimeCountRepository = FetchAllTimeCountRepositoryImpl(remoteTodoDataSource)
+    @Binds
+    abstract fun provideEditTodoRepository(
+        editTodoRepositoryImpl: EditTodoRepositoryImpl
+    ): EditTodoRepository
+
+    @Singleton
+    @Binds
+    abstract fun provideFetchAllTimeCountRepository(
+        fetchAllTimeCountRepositoryImpl: FetchAllTimeCountRepositoryImpl
+    ): FetchAllTimeCountRepository
 }

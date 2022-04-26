@@ -101,7 +101,7 @@ fun BottomNavBar(
             },
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_checklist_24),
+                    painter = painterResource(id = BottomNavigationItem.List.iconResId),
                     contentDescription = null
                 )
             },
@@ -119,7 +119,7 @@ fun BottomNavBar(
             },
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_calendar_today_24),
+                    painter = painterResource(id = BottomNavigationItem.Calendar.iconResId),
                     contentDescription = null
                 )
             },
@@ -137,7 +137,7 @@ fun BottomNavBar(
             },
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_person_24),
+                    painter = painterResource(id = BottomNavigationItem.MyPage.iconResId),
                     contentDescription = null
                 )
             },

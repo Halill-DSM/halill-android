@@ -26,5 +26,4 @@ abstract class BaseViewModel<S : MviState, E: MviEvent> : ViewModel() {
     fun setState(state: S) {
         reducer.setState(state)
     }
-
 }

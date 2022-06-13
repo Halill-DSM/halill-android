@@ -2,7 +2,7 @@
 > 할일(TodoList)를 쉽게 정리합니다.
 ## Tech
 * JetPack Compose
-* MVI architecture
+* MVI
 * CleanArchitecture
 * Hilt
 * MultiModule

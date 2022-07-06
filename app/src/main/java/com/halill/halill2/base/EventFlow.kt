@@ -11,7 +11,6 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -61,15 +60,18 @@ private class EventFlowSlot<T>(val value: T) {
     fun markConsumed(): Boolean = consumed.getAndSet(true)
 }
 
+@InternalCoroutinesApi
 @Composable
 inline fun <reified T> Flow<T>.observeWithLifecycle(
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
-    noinline action: suspend(T) -> Unit
+    noinline action: suspend (T) -> Unit
 ) {
     LaunchedEffect(key1 = Unit) {
         lifecycleOwner.lifecycleScope.launch {
-            flowWithLifecycle(lifecycleOwner.lifecycle, minActiveState).collect(action)
+            flowWithLifecycle(lifecycleOwner.lifecycle, minActiveState).collect(FlowCollector {
+                action(it)
+            })
         }
     }
 }

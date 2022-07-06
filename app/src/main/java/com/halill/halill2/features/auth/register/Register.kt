@@ -25,6 +25,7 @@ import com.halill.halill2.features.auth.IdTextField
 import com.halill.halill2.features.auth.PasswordTextField
 import com.halill.halill2.features.auth.login.LoginLayoutViews
 import com.halill.halill2.ui.theme.Teal900
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
 
 @Composable
@@ -100,6 +101,7 @@ fun Register(
     handleViewEffect(scaffoldState = scaffoldState, navController = navController, event = event)
 }
 
+@OptIn(InternalCoroutinesApi::class)
 @Composable
 private fun handleViewEffect(
     scaffoldState: ScaffoldState,

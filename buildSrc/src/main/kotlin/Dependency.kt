@@ -47,7 +47,7 @@ object Dependency {
     }
 
     object Coroutine {
-        const val stdLib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Version.coroutineStdLib}"
+        const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Version.coroutine}"
         const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Version.coroutineAndroid}"
     }
 

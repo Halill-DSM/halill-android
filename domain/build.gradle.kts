@@ -39,5 +39,5 @@ dependencies {
     testImplementation(Dependency.Test.mockitoKotlin)
     testImplementation(Dependency.Test.mockitoInline)
 
-    implementation(Dependency.Coroutine.stdLib)
+    implementation(Dependency.Coroutine.core)
 }

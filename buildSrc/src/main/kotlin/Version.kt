@@ -24,7 +24,7 @@ object Version {
     const val mockitoKotlin = "2.2.0"
     const val mockitoInline = "2.21.0"
 
-    const val coroutineStdLib = "1.6.10"
+    const val coroutine = "1.6.3"
     const val coroutineAndroid = "1.5.2"
 
     const val jetpackCompose = "1.0.1"

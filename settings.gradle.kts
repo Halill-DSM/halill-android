@@ -1,2 +1,2 @@
 rootProject.name = "Halill_Android"
-include(":app", ":data", ":domain")
+include(":presentation", ":data", ":domain")

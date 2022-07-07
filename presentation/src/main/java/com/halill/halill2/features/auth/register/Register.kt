@@ -218,9 +218,9 @@ fun RegisterButton(
             contentColor = Color.White
         ),
         modifier = Modifier
-            .layoutId(LoginLayoutViews.LoginButtonId)
-            .width(200.dp)
             .clip(RoundedCornerShape(30.dp))
+            .size(250.dp, 40.dp)
+            .layoutId(LoginLayoutViews.LoginButtonId)
     ) {
         val text =
             if (state.isLoading) stringResource(id = R.string.loading_comment)

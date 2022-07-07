@@ -269,8 +269,9 @@ fun LoginButton(
             contentColor = Color.White
         ),
         modifier = Modifier
+            .clip(RoundedCornerShape(30.dp))
+            .size(250.dp, 40.dp)
             .layoutId(LoginLayoutViews.LoginButtonId)
-            .clip(RoundedCornerShape(50.dp))
     ) {
         val text =
             if (loginState.isLoading) stringResource(id = R.string.loading_comment)

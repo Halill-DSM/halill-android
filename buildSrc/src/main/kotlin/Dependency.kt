@@ -71,4 +71,8 @@ object Dependency {
         const val hilt = "com.google.dagger:hilt-android-gradle-plugin:${Version.hilt}"
         const val gmsService = "com.google.gms:google-services:${Version.service}"
     }
+
+    object ThreeTenAndroidBackport {
+        const val threeTenAbp = "com.jakewharton.threetenabp:threetenabp:${Version.threeTenAbp}"
+    }
 }

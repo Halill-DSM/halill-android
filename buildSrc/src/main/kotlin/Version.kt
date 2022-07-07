@@ -35,4 +35,6 @@ object Version {
 
     const val accompanistPager = "0.12.0"
     const val accompanistIconController = "0.17.0"
+
+    const val threeTenAbp = "1.4.0"
 }

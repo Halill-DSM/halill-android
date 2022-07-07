@@ -53,4 +53,6 @@ dependencies {
     implementation(platform(Dependency.FireBase.bom))
     implementation(Dependency.FireBase.auth)
     implementation(Dependency.FireBase.fireStore)
+
+    implementation(Dependency.ThreeTenAndroidBackport.threeTenAbp)
 }

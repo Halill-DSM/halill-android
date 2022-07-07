@@ -3,7 +3,7 @@ package com.halill.data.features.todo.datasource.local
 import com.halill.domain.features.todo.entity.TodoEntity
 import com.halill.domain.features.todo.param.EditTodoParam
 import com.halill.domain.features.todo.param.WriteTodoParam
-import java.time.LocalDate
+import org.threeten.bp.LocalDate
 
 interface LocalTodoDataSource {
 

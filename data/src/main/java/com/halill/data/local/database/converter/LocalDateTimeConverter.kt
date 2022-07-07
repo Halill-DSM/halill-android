@@ -1,8 +1,8 @@
 package com.halill.data.local.database.converter
 
 import androidx.room.TypeConverter
-import java.time.LocalDate
-import java.time.LocalDateTime
+import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
 
 class LocalDateTimeConverter {
     @TypeConverter

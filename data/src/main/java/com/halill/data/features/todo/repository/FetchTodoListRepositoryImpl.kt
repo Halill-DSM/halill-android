@@ -7,7 +7,7 @@ import com.halill.domain.features.todo.entity.UserTodoListEntity
 import com.halill.domain.features.todo.entity.toUserTodoListEntity
 import com.halill.domain.features.todo.repository.FetchTodoListRepository
 import kotlinx.coroutines.flow.*
-import java.time.LocalDate
+import org.threeten.bp.LocalDate
 import javax.inject.Inject
 
 class FetchTodoListRepositoryImpl @Inject constructor(

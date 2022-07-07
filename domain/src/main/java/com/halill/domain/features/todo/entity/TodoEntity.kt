@@ -1,6 +1,7 @@
 package com.halill.domain.features.todo.entity
 
-import java.time.LocalDateTime
+import org.threeten.bp.LocalDateTime
+
 
 data class TodoEntity(
     val id: Long,

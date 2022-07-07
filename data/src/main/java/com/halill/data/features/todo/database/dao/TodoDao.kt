@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.halill.data.features.todo.database.entity.TodoRoomEntity
-import java.time.LocalDate
+import org.threeten.bp.LocalDate
 
 @Dao
 interface TodoDao {

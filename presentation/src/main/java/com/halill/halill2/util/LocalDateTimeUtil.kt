@@ -1,8 +1,8 @@
 package com.halill.halill2.util
 
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
+import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.temporal.ChronoUnit
 
 fun LocalDateTime.changeYear(year: Int): LocalDateTime =
     LocalDateTime.of(year, this.month, this.dayOfMonth, this.hour, this.minute)

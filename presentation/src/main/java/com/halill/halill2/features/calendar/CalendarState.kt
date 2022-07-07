@@ -3,7 +3,7 @@ package com.halill.halill2.features.calendar
 import com.halill.domain.features.todo.entity.TodoEntity
 import com.halill.halill2.base.MviState
 import com.halill.halill2.util.toMontDayList
-import java.time.LocalDate
+import org.threeten.bp.LocalDate
 
 data class CalendarState(
     val currentDate: LocalDate,

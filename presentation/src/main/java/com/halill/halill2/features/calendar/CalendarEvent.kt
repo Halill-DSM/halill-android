@@ -2,7 +2,7 @@ package com.halill.halill2.features.calendar
 
 import com.halill.domain.features.todo.entity.TodoEntity
 import com.halill.halill2.base.MviEvent
-import java.time.LocalDate
+import org.threeten.bp.LocalDate
 
 sealed class CalendarEvent : MviEvent {
     data class SelectDate(val date: LocalDate) : CalendarEvent()

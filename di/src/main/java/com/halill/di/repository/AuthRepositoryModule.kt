@@ -1,4 +1,4 @@
-package com.halill.halill2.di.auth
+package com.halill.di.repository
 
 import com.halill.data.features.auth.repository.*
 import com.halill.domain.features.auth.repository.*

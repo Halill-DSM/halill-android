@@ -9,6 +9,7 @@ buildscript {
         classpath(Dependency.GradlePlugin.kotlin)
         classpath(Dependency.GradlePlugin.hilt)
         classpath(Dependency.GradlePlugin.gmsService)
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21")
     }
 }
 

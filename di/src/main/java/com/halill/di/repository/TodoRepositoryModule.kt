@@ -1,4 +1,4 @@
-package com.halill.halill2.di.todo
+package com.halill.di.repository
 
 import com.halill.data.features.todo.repository.*
 import com.halill.domain.features.todo.repository.*

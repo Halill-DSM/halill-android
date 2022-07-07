@@ -1,4 +1,4 @@
-package com.halill.halill2.di.auth
+package com.halill.di.datasource
 
 import com.halill.data.features.auth.datasource.local.LocalUserDataSource
 import com.halill.data.features.auth.datasource.local.LocalUserDataSourceImpl
@@ -14,7 +14,8 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class AuthDataSourceModule {
+abstract class AuthDatasourceModule {
+
 
     @Singleton
     @Binds

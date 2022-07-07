@@ -1,4 +1,4 @@
-package com.halill.halill2.di
+package com.halill.di
 
 import android.content.Context
 import com.halill.data.local.datastorage.LocalStorage

@@ -1,4 +1,4 @@
-package com.halill.halill2.di
+package com.halill.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth

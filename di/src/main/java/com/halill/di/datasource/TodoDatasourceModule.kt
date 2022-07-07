@@ -1,4 +1,4 @@
-package com.halill.halill2.di.todo
+package com.halill.di.datasource
 
 import com.halill.data.features.todo.datasource.local.LocalTodoDataSource
 import com.halill.data.features.todo.datasource.local.LocalTodoDataSourceImpl
@@ -12,7 +12,8 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class TodoDataSourceModule {
+abstract class TodoDatasourceModule {
+
     @Singleton
     @Binds
     abstract fun provideRemoteTodoDataSource(

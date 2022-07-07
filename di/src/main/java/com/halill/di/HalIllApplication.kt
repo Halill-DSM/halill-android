@@ -1,4 +1,4 @@
-package com.halill.halill2.di
+package com.halill.di
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

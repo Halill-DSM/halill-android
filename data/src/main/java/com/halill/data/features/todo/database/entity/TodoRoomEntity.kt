@@ -5,8 +5,8 @@ import androidx.room.PrimaryKey
 import com.halill.domain.features.todo.entity.TodoEntity
 import com.halill.domain.features.todo.param.EditTodoParam
 import com.halill.domain.features.todo.param.WriteTodoParam
-import java.time.LocalDate
-import java.time.LocalDateTime
+import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
 
 @Entity(tableName = "todolist")
 data class TodoRoomEntity(

@@ -1,7 +1,7 @@
 package com.halill.halill2.features.write
 
 import com.halill.halill2.base.MviEvent
-import java.time.LocalDateTime
+import org.threeten.bp.LocalDateTime
 
 sealed class WriteTodoEvent : MviEvent {
     data class InputTitle(val title: String) : WriteTodoEvent()

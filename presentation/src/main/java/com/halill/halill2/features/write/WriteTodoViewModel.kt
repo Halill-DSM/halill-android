@@ -10,7 +10,7 @@ import com.halill.halill2.base.BaseViewModel
 import com.halill.halill2.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
+import org.threeten.bp.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel

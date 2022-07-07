@@ -11,13 +11,11 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AndroidThreeTen.init(this)
         setContent {
             HalIll_AndroidTheme {
-                AndroidThreeTen.init(this)
-
                 Surface(color = MaterialTheme.colors.background) {
                     HalIllApp()
                 }

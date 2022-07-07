@@ -22,8 +22,9 @@ import com.halill.halill2.base.observeWithLifecycle
 import com.halill.halill2.features.calendar.Calendar
 import com.halill.halill2.features.list.ListPage
 import com.halill.halill2.features.mypage.MyPage
+import kotlinx.coroutines.InternalCoroutinesApi
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, InternalCoroutinesApi::class)
 @Composable
 fun Main(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     val scaffoldState = rememberScaffoldState()

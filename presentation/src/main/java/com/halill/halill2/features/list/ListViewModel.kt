@@ -10,7 +10,6 @@ import com.halill.halill2.base.EventFlow
 import com.halill.halill2.base.MutableEventFlow
 import com.halill.halill2.base.asEventFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

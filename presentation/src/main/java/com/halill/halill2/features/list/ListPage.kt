@@ -32,8 +32,9 @@ import com.halill.halill2.base.EventFlow
 import com.halill.halill2.base.observeWithLifecycle
 import com.halill.halill2.ui.theme.Teal700
 import com.halill.halill2.util.toShowDeadlineText
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
+import kotlinx.coroutines.InternalCoroutinesApi
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.temporal.ChronoUnit
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -54,6 +55,7 @@ fun ListPage(navController: NavController, viewModel: ListViewModel = hiltViewMo
     handleViewEffect(navController = navController, uiEvent = viewModel.listViewEffect)
 }
 
+@OptIn(InternalCoroutinesApi::class)
 @Composable
 private fun handleViewEffect(
     navController: NavController,

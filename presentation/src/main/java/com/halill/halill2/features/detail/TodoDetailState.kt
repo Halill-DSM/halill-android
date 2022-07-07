@@ -1,7 +1,7 @@
 package com.halill.halill2.features.detail
 
 import com.halill.halill2.base.MviState
-import java.time.LocalDateTime
+import org.threeten.bp.LocalDateTime
 
 data class TodoDetailState(
     val todoId: Long,

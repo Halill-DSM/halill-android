@@ -1,5 +1,6 @@
-package com.halill.halill2.ui
+package com.halill.halill2
 
+import android.app.Application
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -16,7 +17,8 @@ import com.halill.halill2.features.auth.register.Register
 import com.halill.halill2.features.detail.TodoDetail
 import com.halill.halill2.features.write.WriteTodo
 import com.halill.halill2.main.Main
-import com.halill.halill2.ui.theme.Teal900
+import com.halill.halill2.theme.Teal900
+import dagger.hilt.android.HiltAndroidApp
 
 @Composable
 fun HalIllApp() {
@@ -79,3 +81,6 @@ fun HalIllApp() {
         }
     }
 }
+
+@HiltAndroidApp
+class HalIllApplication: Application()

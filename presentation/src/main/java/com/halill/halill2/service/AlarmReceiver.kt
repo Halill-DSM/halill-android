@@ -10,7 +10,7 @@ import android.graphics.Color
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.halill.halill2.R
-import com.halill.halill2.ui.MainActivity
+import com.halill.halill2.main.MainActivity
 
 class AlarmReceiver : BroadcastReceiver() {
 

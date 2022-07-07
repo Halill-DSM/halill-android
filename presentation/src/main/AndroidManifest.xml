@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name="com.halill.halill2.com.halill.di.HalIllApplication"
+        android:name=".HalIllApplication"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,7 +17,7 @@
         android:theme="@style/Theme.Halill_Android"
         android:usesCleartextTraffic="true">
         <activity
-            android:name="com.halill.halill2.ui.MainActivity"
+            android:name="com.halill.halill2.main.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:screenOrientation="portrait"

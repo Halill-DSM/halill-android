@@ -20,8 +20,8 @@ import com.halill.halill2.R
 import com.halill.halill2.features.list.DeadlineText
 import com.halill.halill2.features.list.DeleteButton
 import com.halill.halill2.features.list.DoneButton
-import com.halill.halill2.ui.theme.Teal700
-import com.halill.halill2.ui.theme.Teal900
+import com.halill.halill2.theme.Teal700
+import com.halill.halill2.theme.Teal900
 import com.halill.halill2.util.toRemainTimeText
 import kotlinx.coroutines.launch
 

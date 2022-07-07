@@ -20,7 +20,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.halill.halill2.R
 import com.halill.halill2.base.observeWithLifecycle
-import com.halill.halill2.ui.theme.Teal900
+import com.halill.halill2.theme.Teal900
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
 

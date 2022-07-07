@@ -1,11 +1,12 @@
-package com.halill.halill2.ui
+package com.halill.halill2.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import com.halill.halill2.ui.theme.HalIll_AndroidTheme
+import com.halill.halill2.ui.HalIllApp
+import com.halill.halill2.theme.HalIll_AndroidTheme
 import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.hilt.android.AndroidEntryPoint
 

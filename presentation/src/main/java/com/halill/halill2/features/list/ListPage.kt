@@ -30,7 +30,7 @@ import com.halill.domain.features.todo.entity.TodoEntity
 import com.halill.halill2.R
 import com.halill.halill2.base.EventFlow
 import com.halill.halill2.base.observeWithLifecycle
-import com.halill.halill2.ui.theme.Teal700
+import com.halill.halill2.theme.Teal700
 import com.halill.halill2.util.toShowDeadlineText
 import kotlinx.coroutines.InternalCoroutinesApi
 import org.threeten.bp.LocalDateTime

@@ -31,7 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.chargemap.compose.numberpicker.NumberPicker
 import com.halill.halill2.R
-import com.halill.halill2.ui.theme.Teal900
+import com.halill.halill2.theme.Teal900
 import com.halill.halill2.util.lastDateOfMonth
 import kotlinx.coroutines.launch
 

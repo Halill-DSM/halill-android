@@ -1,4 +1,4 @@
-package com.halill.halill2.ui.theme
+package com.halill.halill2.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
